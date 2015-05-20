@@ -1,5 +1,5 @@
 # Better abstraction mechanisms for OpenSCAD
-OpenSCAD2 is a backward compatible redesign of the OpenSCAD language.
+OpenSCAD2 is a backward compatible redesign of the [OpenSCAD](http://openscad.org/) language.
 The goals are:
  1. to make OpenSCAD easier to use;
  2. to make OpenSCAD more expressive and powerful, not by adding complexity and piling on features, but by making the core language simpler and more uniform, and by removing restrictions on how language elements can be composed together to create larger components.
