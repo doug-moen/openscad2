@@ -8,3 +8,4 @@ To do this, we'll focus on improving OpenSCAD's abstraction mechanisms. In a pro
 
 ## RFC documents
 The design documentation is structured as a collection of RFCs, each with its own comment thread.
+* [First Class Values](rfc/First_Class_Values.md)
