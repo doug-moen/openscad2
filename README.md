@@ -11,5 +11,6 @@ The design documentation is structured as a collection of RFCs.
 To comment on an RFC, click on [Issues](//github.com/doug-moen/openscad2/issues)
 and either create a new issue with the same name as the RFC, or find the existing issue.
 * [Ease Of Use](rfc/Ease_Of_Use.md)
+* [Declarative Semantics](rfc/Declarative_Semantics.md)
 * [First Class Values](rfc/First_Class_Values.md)
 * [Definitions And Scoping](rfc/Definitions_And_Scoping.md)
