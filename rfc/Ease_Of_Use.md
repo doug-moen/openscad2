@@ -1,8 +1,16 @@
 # Ease Of Use
 
-OpenSCAD is meant to be easy to use.
-It has proven to have a low barrier of entry for beginners,
-and we want to preserve this.
+Two perspectives on ease of use:
+ 1. OpenSCAD is meant to be easy to use.
+    It has proven to have a low barrier of entry for beginners,
+    and we want to preserve this.
+
+    OpenSCAD2 helps by making the language simpler and more consistent.
+
+ 2. There are pain points in the language, where some common tasks involved
+    in geometric modelling require convoluted workarounds or complex code.
+
+    OpenSCAD2 helps by making the language more expressive and powerful.
 
 OpenSCAD is a powerful 3D modelling tool, not a programming language,
 and it is designed to meet the needs of people who want to do 3D modelling
