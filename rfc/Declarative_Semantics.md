@@ -9,7 +9,7 @@ When using the declarative programming style, your program
 directly describes the desired end result, instead of being a procedure
 that the machine should follow to build the desired result.
 (It's the opposite of "imperative programming" or "procedural programming".)
-As a result, programs are easier to understand and reason about.
+As a result, programs are easier to write, understand and reason about.
 
 Declarative programs and languages have these properties:
 * **a simple denotation semantics** <br>
@@ -66,4 +66,8 @@ Declarative programs and languages have these properties:
 * easy to reason about
 * useful mathematical properties for reasoning about programs
 
-http://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf
+
+## Bibliography
+* https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf
+* http://stackoverflow.com/questions/210835/what-is-referential-transparency/11740176#11740176
+* http://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf
