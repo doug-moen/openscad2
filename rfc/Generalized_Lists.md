@@ -68,7 +68,7 @@ The new slice notation is taken from Rust:
 * `seq[..end]`
 
 ## Unify Lists and Groups
-As part of First Class Values,
+As part of [First Class Values](First_Class_Values.md),
 we will make shapes into first class values.
 There is no longer a reason for lists and groups to be separate types,
 so we will replace groups with lists.
