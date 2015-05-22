@@ -13,7 +13,7 @@ but not all operations are supported on all sequence types.
 |                   |list |string|range|group|`children()`
 |-------------------|-----|------|-----|-----|----------
 |len(seq)           | yes | yes  | -   | -   |`$nchildren`
-|seq[i]             | yes | yes  | yes | -   |`children(i)`
+|seq[i]             | yes | yes  | -   | -   |`children(i)`
 |for (i=seq) ...    | yes | -    | yes | -   |-
 |concat(seq1, seq2) | yes | *    | -   | -   |-
 |has empty sequences| yes | yes  | -   | yes |yes
@@ -34,9 +34,13 @@ The rationale is simplicity, consistency and [Composability](Composable_Building
 Ranges are generalized so that empty ranges are supported.
 If the end of the range is < the start of the range (with positive step value),
 then the range is empty (consistent with Haskell).
+Plus, we extend all of the generic sequence operations to ranges.
 
 I'm concerned that this will affect backwards compatibility,
 since at present, `[10:1]` is equivalent to `[10:-1:1]`.
+Also, you can currently use r[0], r[1], r[2] to reference the start, step and end values of a range:
+maybe there's code out there that uses this.
+
 My solution is to introduce a new range syntax, which will
 support the new range semantics, and leave the old range values
 to work as they always have (but the old ranges will be deprecated).
@@ -54,7 +58,10 @@ and the result will be a list.
 Although new ranges are implemented internally using a more compact
 representation than lists, at the language and user level, they
 are operationally indistinguishable from lists, therefore they are lists.
-(Except that they are printed using range notation.)
+(Except that they are printed using range notation, instead of list notation?)
+Note that in Python2 and Haskell, ranges really are lists, and print as lists.
+Eg in Haskell, [1..5] prints as [1,2,3,4,5].
+That would be a valid choice for OpenSCAD as well.
 
 ## Generalized Slice Notation
 The only place we currently support slice notation is `children(i,j)`.
