@@ -15,3 +15,7 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * [Composable Building Blocks](rfc/Composable_Building_Blocks.md)
 * [First Class Values](rfc/First_Class_Values.md)
 * [Definitions And Scoping](rfc/Definitions_And_Scoping.md)
+* Generalized Lists
+* Generalized Functions
+* Including Library Files
+* Simple Objects
