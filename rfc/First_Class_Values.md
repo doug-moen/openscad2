@@ -35,6 +35,13 @@ Some possibilities:
   for the purpose of using a GUI to tweak model parameters, which would
   also use these type names.
 
+Actually, this is wrong-ish. What you actually need to test for is whether a
+given value has a desired behaviour, whether it obeys a particular contract.
+See also "duck typing". This is more useful than what you get by partitioning values
+into disjoint types based on how the value was constructed. The point is that
+values and behaviours are overlapping, not disjoint. Eg, there should be a Sequence
+type that tests if a value obeys the Sequence protocol.
+
 ## First Class Numbers
 Currently, numbers are not first class values.
 That's because `1/0` prints as `inf`,
