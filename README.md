@@ -15,7 +15,11 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * [Composable Building Blocks](rfc/Composable_Building_Blocks.md)
 * [First Class Values](rfc/First_Class_Values.md)
 * [Definitions And Scoping](rfc/Definitions_And_Scoping.md)
-* [Generalized Lists](rfc/Generalized_Lists.md)
+* [Generalized Lists](rfc/Generalized_Lists.md):
+  [Strings](rfc/Generalized_Lists.md#generalized-strings),
+  [Ranges](rfc/Generalized_Lists.md#generalized-ranges),
+  [Slice Notation](rfc/Generalized_Lists.md#generalized-slice-notation),
+  [Groups](rfc/Generalized_Lists.md#unify-lists-and-groups)
 * Generalized Functions
 * Including Library Files
 * Simple Objects
