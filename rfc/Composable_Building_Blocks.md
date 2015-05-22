@@ -10,8 +10,17 @@ Design Strategies for Composability:
 * orthogonality
   * unify features that are almost the same, but with unnecessary differences
   * split up features that do two things at once into separate features that can be composed
-* eliminate the need to write "glue" code through standard interfaces
+* eliminate the need to write "glue" code when composing elements, by using standard interfaces
 * remove restrictions on how language elements can be composed
 * eliminate syntactic overhead for common compositions
 
+Composability Failure in OpenSCAD:
+* can't pass a function as an argument to a module for generalized extrusion
+* can't compose `for` with `intersection`
+* `concat` has a variable-length argument list, can't be composed with an expression that generates a sequence of lists to be concatenated, eg a `for` loop, so users implement `flatten` instead. In Haskell, `concat` takes a single argument, which is a list of lists: this makes Haskell's `concat` highly composable, and eliminates the need for a separate `flatten` function.
+* can't compose `children()` with `for`, eg `for (shape=children()) ...`
+
 How OpenSCAD2 increases composability:
+
+## Bibliography
+* http://stackoverflow.com/questions/2887013/what-does-composability-mean-in-context-of-functional-programming
