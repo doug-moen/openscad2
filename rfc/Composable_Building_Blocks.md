@@ -22,7 +22,5 @@ Composability Failure in OpenSCAD:
 * Can't compose `children()` with `for`, eg `for (shape=children()) ...`.
   Fix: [Generalized Lists](Generalized_Lists.md).
 
-How OpenSCAD2 increases composability:
-
 ## Bibliography
 * http://stackoverflow.com/questions/2887013/what-does-composability-mean-in-context-of-functional-programming
