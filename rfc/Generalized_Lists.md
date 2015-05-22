@@ -22,7 +22,7 @@ but not all operations are supported on all sequence types.
 Note that strings can be concatenated using `str(s1,s2)`.
 
 The goal of this RFC is to make all features available to all sequence types.
-The rationale is simplicity, consistency and composability.
+The rationale is simplicity, consistency and [Composability](Composable_Building_Blocks.md).
 
 ## Generalized Strings
 * `for` is extended so that it iterates over the characters in a string
