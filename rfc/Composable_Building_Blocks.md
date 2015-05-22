@@ -15,10 +15,12 @@ Design Strategies for Composability:
 * eliminate syntactic overhead for common compositions
 
 Composability Failure in OpenSCAD:
-* can't pass a function as an argument to a module for generalized extrusion
+* Can't pass a function as an argument to a module for generalized extrusion.
+  Fix: [First Class Values](First_Class_Values.md).
 * can't compose `for` with `intersection`
 * `concat` has a variable-length argument list, can't be composed with an expression that generates a sequence of lists to be concatenated, eg a `for` loop, so users implement `flatten` instead. In Haskell, `concat` takes a single argument, which is a list of lists: this makes Haskell's `concat` highly composable, and eliminates the need for a separate `flatten` function.
-* can't compose `children()` with `for`, eg `for (shape=children()) ...`
+* Can't compose `children()` with `for`, eg `for (shape=children()) ...`.
+  Fix: [Generalized Lists](Generalized_Lists.md).
 
 How OpenSCAD2 increases composability:
 
