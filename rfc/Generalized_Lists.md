@@ -51,6 +51,11 @@ The new range values work with all of the generic sequence operations.
 You can `concat` two ranges, or a range and a list,
 and the result will be a list.
 
+Although new ranges are implemented internally using a more compact
+representation than lists, at the language and user level, they
+are operationally indistinguishable from lists, therefore they are lists.
+(Except that they are printed using range notation.)
+
 ## Generalized Slice Notation
 The only place we currently support slice notation is `children(i,j)`.
 Since this syntax is going to be deprecated,
