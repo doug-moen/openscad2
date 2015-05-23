@@ -59,7 +59,7 @@ Examples:
 
 ## User Defined Varieties
 
-This extends the *Simple Objects* facility
+This extends [Programming With Objects](Objects.md#programming-with-objects)
 so that developers can define new varieties,
 and specify which varieties an object implements.
 
