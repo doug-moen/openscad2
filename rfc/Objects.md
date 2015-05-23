@@ -1,6 +1,7 @@
 # Objects
-An OpenSCAD script denotes an object.
-(This statement fills a gap in OpenSCAD's [declarative semantics](Declarative_Semantics.md).)
+If OpenSCAD2 has a [declarative semantics](Declarative_Semantics.md),
+then an OpenSCAD script must have a meaning&mdash;what is it?
+The answer: a script denotes an object.
 
 A script consists of a set of top level definitions, plus some top level geometry statements.
 An object is what a script denotes, so an object is a set of named fields, plus a sequence of shapes.
@@ -93,4 +94,33 @@ More operations on objects:
    ```
    lollipop(radius=15); // more candy!
    ```
+
+## Programming with Objects
+The [First Class Values](First_Class_Values.md) principle requires object literals.
+
+An object literal is a script surrounded by brace brackets.
+```
+lollipop = {
+  radius   = 10; // candy
+  diameter = 3;  // stick
+  height   = 50; // stick
+
+  translate([0,0,height]) sphere(r=radius);
+  cylinder(d=diameter,h=height);
+};
+```
+
+This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD.
+It is very powerful.
+
+Objects can encapsulate a set of parameters for defining a model,
+and organize those parameters in a hierarchy,
+using dotted names like `model.component.subcomponent.param`.
+
+OpenSCAD evaluates a script to produce a tree of shapes: that's what the CSG tree is.
+With the introduction of object literals,
+we will now evaluate a script to produce a tree of shapes and objects.
+The root of this tree is the script's object.
+Objects are more powerful because they can encapsulate a model's geometry together with its parameters,
+so that functions can render a model's geometry and query its parameters using the same value.
 
