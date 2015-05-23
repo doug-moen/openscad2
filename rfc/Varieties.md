@@ -37,8 +37,17 @@ Here is a provisional hierarchy of built-in varieties:
 * Function
 * Shape
   * 2DShape
+    * ...
   * 3DShape
+    * Cube
+    * Sphere
+    * Intersection
+    * ...
 * Variety
+
+For example, you could write a module that takes either
+2D or 3D shapes as arguments, and uses `x isa 2DShape`
+to provide the correct behaviour, based on the dimensionality.
 
 ## User Defined Varieties
 
@@ -62,16 +71,6 @@ myobject = {
 
 Note that an `isa` declaration within an object must refer to a user-defined variety, not a built-in variety.
 
-This mechanism is bare-bones, and relies on documentation to establish what the contract for a variety is.
-Typically, the object is required to define certain fields, and those fields must obey some axioms
-or implement some contract.
-
-A fancier system would declare the names of required fields within the variety,
-and the system would check for the existence of these fields in the object.
-But this wouldn't capture the full essence of most varieties.
-At this point, the complexity of the design could take off as we bring in all of
-the mechanisms of a type system to describe the contract of a variety and
-automatically check this contract. But that's massive overkill for OpenSCAD.
-
-The bare-bones variety mechanism is acceptably simple, but we even for this,
-we still need to establish a need for it.
+This mechanism is quite simple, and makes no assumptions about what a variety means.
+A variety is just a boolean property that can be attached to an object.
+It's up to the user to document the meaning of each variety.
