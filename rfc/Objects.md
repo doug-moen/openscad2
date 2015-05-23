@@ -130,16 +130,16 @@ like `echo` and `parent_module`.
 The object tree is a pure value that contains all of the necessary metadata.
 It can become the basis of a better way to extract metadata.
 
-For example, you could write a script, `bom.scad`,
+For example, you could write a script, `makebom.scad`,
 which takes a target script as an argument.
-The BOM script traverses the target object tree,
+Makebom traverses the target object tree,
 and extracts metadata, which it returns as the 'bom'
 component of its object tree.
 If we provide a way to dump a selected part of the object tree as XML or JSON,
 then you can extract the BOM like this:
 
 ```
-openscad -Dtarget=mymodel.scad -ibom -oBOM.xml bom.scad
+openscad -D target=mymodel.scad -i bom -o bom.xml makebom.scad
 ```
 
 Once we start programming with object trees,
