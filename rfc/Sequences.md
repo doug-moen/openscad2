@@ -1,7 +1,7 @@
-# Generalized Lists
+# Sequences
 
-OpenSCAD has the following types for representing an ordered sequence of objects:
-* a list [a,b,c] is a sequence of values
+OpenSCAD has the following types for representing an ordered sequence of values:
+* a list [a,b,c] is a sequence of arbitrary values
 * a string "abc" is a sequence of Unicode code points
 * a range [1:10] is a sequence of numbers
 * a group `group(){cube(c);sphere(s);}` is a sequence of shapes.
@@ -58,7 +58,7 @@ and the result will be a list.
 Although new ranges are implemented internally using a more compact
 representation than lists, at the language and user level, they
 are operationally indistinguishable from lists, therefore they are lists.
-(Except that they are printed using range notation, instead of list notation?)
+(Except that maybe they are printed using range notation, instead of list notation?)
 Note that in Python2 and Haskell, ranges really are lists, and print as lists.
 Eg in Haskell, [1..5] prints as [1,2,3,4,5].
 That would be a valid choice for OpenSCAD as well.
