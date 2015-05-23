@@ -16,12 +16,13 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * [First Class Values](rfc/First_Class_Values.md)
 * [Definitions And Scoping](rfc/Definitions_And_Scoping.md)
 * [Sequences](rfc/Sequences.md):
-  [Strings](rfc/Sequences.md#generalized-strings),
-  [Ranges](rfc/Sequences.md#generalized-ranges),
-  [Slice Notation](rfc/Sequences.md#generalized-slice-notation),
-  [Groups](rfc/Sequences.md#unify-lists-and-groups)
-* Generalized Functions
+    [Strings](rfc/Sequences.md#generalized-strings),
+    [Ranges](rfc/Sequences.md#generalized-ranges),
+    [Slice Notation](rfc/Sequences.md#generalized-slice-notation),
+    [Groups](rfc/Sequences.md#unify-lists-and-groups)
+* Functions
 * [Objects](rfc/Objects.md):
-  [Library Files](rfc/Objects.md#library-files),
-  [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
+    [Library Files](rfc/Objects.md#library-files),
+    [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
 * [Varieties](rfc/Varieties.md)
+* Error Reporting
