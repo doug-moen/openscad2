@@ -124,3 +124,28 @@ The root of this tree is the script's object.
 Objects are more powerful because they can encapsulate a model's geometry together with its parameters,
 so that functions can render a model's geometry and query its parameters using the same value.
 
+Some users need to extract metadata from their model, eg to construct a "bill of materials".
+Unfortunately, they rely on kludgy and non-declarative features to extract this information,
+like `echo` and `parent_module`.
+The object tree is a pure value that contains all of the necessary metadata.
+It can become the basis of a better way to extract metadata.
+
+For example, you could write a script, `bom.scad`,
+which takes a target script as an argument.
+The BOM script traverses the target object tree,
+and extracts metadata, which it returns as the 'bom'
+component of its object tree.
+If we provide a way to dump a selected part of the object tree as XML or JSON,
+then you can extract the BOM like this:
+
+```
+openscad -Dtarget=mymodel.scad -ibom -oBOM.xml bom.scad
+```
+
+Once we start programming with object trees,
+we may want a few language extensions:
+* A way to test the type of an object node,
+  eg, `x isa Cube` or `y isa Gear`.
+  See [Varieties](Varieties.md) for a proposal.
+* Add parameter fields to built-in shape values.
+  Eg, `c = cube(1); c.size`.
