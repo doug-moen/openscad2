@@ -51,11 +51,10 @@ Examples:
 * You could write a module that takes either
   2D or 3D shapes as arguments, and uses `x isa 2DShape`
   to provide the correct behaviour, based on the dimensionality.
-* There is a proposal to extend `cube` so that the `center`
-  argument is either a Boolean or a List of 3 booleans.
-  How would you implement that in a user defined module?
-  You could test the `center` argument
-  using `center isa Boolean` and `center isa List`.
+* The `size` argument to `cube` is either a number or a list of 3 numbers.
+  A nice way to implement that in a user defined module
+  is to test the `size` argument
+  using `size isa Number` and `size isa List`.
 
 ## User Defined Varieties
 
