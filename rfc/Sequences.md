@@ -12,7 +12,7 @@ but not all operations are supported on all sequence types.
 
 |                   |list |string|range|group|`children()`
 |-------------------|-----|------|-----|-----|----------
-|len(seq)           | yes | yes  | -   | -   |`$nchildren`
+|len(seq)           | yes | yes  | -   | -   |`$children`
 |seq[i]             | yes | yes  | -   | -   |`children(i)`
 |for (i=seq) ...    | yes | -    | yes | -   |-
 |concat(seq1, seq2) | yes | *    | -   | -   |-
