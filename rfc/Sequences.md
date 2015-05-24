@@ -33,9 +33,10 @@ This will make it easier to create a library of generic sequence operations.
 
 Note that strings are not fully composable, so not all functions that operate on generic sequences
 will work on strings unless they handle strings as a special case. The problem is that
-list comprehensions don't generate strings. To fix that, we'd need to introduce
+list comprehensions don't generate strings: `[for(c="abc")c] != "abc"`. 
+To fix that, we'd need to introduce
 a character data type, such that `"abc"[0] == 'a'`,
-and we'd need to ensure that `"abc"==['a','b','c']`.
+and we'd need to ensure that `['a','b','c'] == "abc"`.
 Eg, Haskell does this. I'm not going to propose this change,
 since I think the implementation effort is too high relative to the benefits.
 
