@@ -55,13 +55,11 @@ The new range values work with all of the generic sequence operations.
 You can `concat` two ranges, or a range and a list,
 and the result will be a list.
 
-Although new ranges are implemented internally using a more compact
-representation than lists, at the language and user level, they
+Although new ranges are represented internally as 3 numbers,
+at the language and user level, they
 are operationally indistinguishable from lists, therefore they are lists.
-(Except that maybe they are printed using range notation, instead of list notation?)
-Note that in Python2 and Haskell, ranges really are lists, and print as lists.
-Eg in Haskell, [1..5] prints as [1,2,3,4,5].
-That would be a valid choice for OpenSCAD as well.
+For example, `echo([1..5])` prints `[1,2,3,4,5]`.
+Ranges in Python2 and Haskell work the same way.
 
 ## Generalized Slice Notation
 The only place we currently support slice notation is `children(i,j)`.
@@ -73,6 +71,21 @@ The new slice notation is taken from Rust:
 * `seq[start..end]`
 * `seq[start..]`
 * `seq[..end]`
+
+Slice notation makes it easier to write recursive functions over lists.
+Here is `sumv` from MichaelAtOz's `vectormath.scad`.
+The `i` and `s` parameters allow you to sum a either a slice of the list, or the entire list.
+
+```
+function sumv(v,i,s=0) = (i==s ? v[i] : v[i] + sumv(v,i-1,s));
+```
+
+Using slices, we can define a simpler function `sum`, which doesn't require the parameters `i` and `s`.
+If you need to sum only part of the list, you just pass a slice.
+
+```
+function sum(v) = v==[] ? 0 : v[0] + sum(v[1..]);
+```
 
 ## Unify Lists and Groups
 As part of [First Class Values](First_Class_Values.md),
