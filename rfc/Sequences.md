@@ -1,4 +1,4 @@
-# Sequences
+# Generic Sequence Operations
 
 OpenSCAD has the following types for representing an ordered sequence of values:
 * a list [a,b,c] is a sequence of arbitrary values
@@ -23,12 +23,21 @@ Note that strings can be concatenated using `str(s1,s2)`.
 
 The goal of this RFC is to make all features available to all sequence types.
 The rationale is simplicity, consistency and [Composability](Composable_Building_Blocks.md).
+This will make it easier to create a library of generic sequence operations.
 
 ## Generalized Strings
 * `for` is extended so that it iterates over the characters in a string
 * `concat` is extended so that it concatenates strings.
   The arguments to `concat` must be either all strings (the result is a string),
   or all non-strings (the result is a list).
+
+Note that strings are not fully composable, so not all functions that operate on generic sequences
+will work on strings unless they handle strings as a special case. The problem is that
+list comprehensions don't generate strings. To fix that, we'd need to introduce
+a character data type, such that `"abc"[0] == 'a'`,
+and we'd need to ensure that `"abc"==['a','b','c']`.
+Eg, Haskell does this. I'm not going to propose this change,
+since I think the implementation effort is too high relative to the benefits.
 
 ## Generalized Ranges
 Ranges are generalized so that empty ranges are supported.
