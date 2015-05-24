@@ -20,7 +20,13 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Ranges](rfc/Sequences.md#generalized-ranges),
     [Slice Notation](rfc/Sequences.md#generalized-slice-notation),
     [Groups](rfc/Sequences.md#unify-lists-and-groups)
-* Functions
+* [Functions](rfc/Functions.md):
+    [Function Literals](rfc/Functions.md#function-literals),
+    [Curried Functions](rfc/Functions.md#curried-functions),
+    [Right Associative Function Call](rfc/Functions.md#right-associative-function-call),
+    [Modules are Curried Functions](rfc/Functions.md#modules-are-curried-functions),
+    [User Defined Modules](rfc/Functions.md#user-defined-modules),
+    [Fixing the Module Composition Problem](rfc/Functions.md#fixing-the-module-composition-problem)
 * [Objects](rfc/Objects.md):
     [Library Files](rfc/Objects.md#library-files),
     [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
