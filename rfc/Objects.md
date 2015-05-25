@@ -95,7 +95,7 @@ More operations on objects:
    lollipop(radius=15); // more candy!
    ```
 
-## Programming with Objects
+## Object Literals
 The [First Class Values](First_Class_Values.md) principle requires object literals.
 
 An object literal is a script surrounded by brace brackets.
@@ -111,20 +111,37 @@ lollipop = {
 ```
 
 This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD.
-It is very powerful.
 
+## Programming with Objects
+
+Objects are powerful; they solve a variety of different problems in OpenSCAD.
+
+### Objects are Modules for Beginners
+In classic OpenSCAD, modules are parameterized shapes.
+Objects are also parameterized shapes, but they are easier to teach
+to beginners. You don't need to learn about two different parameter
+mechanisms (the parameter list, and `$children`/`children()`).
+Instead, you just create an exemplar object, which can be prototyped as a top level
+OpenSCAD script. Then you can selectively override parameters using function call syntax,
+as in the `lollipop` example given previously.
+
+### Dictionaries of Named Parameters
 Objects can encapsulate a set of parameters for defining a model,
 and organize those parameters in a hierarchy,
 using dotted names like `model.component.subcomponent.param`.
 
+Currently this is being done using lists of name/value pairs
+and the `search` function, but the resulting code is cryptic.
+
+### The Object Tree
 OpenSCAD evaluates a script to produce a tree of shapes: that's what the CSG tree is.
-With the introduction of object literals,
+With the introduction of objects,
 we will now evaluate a script to produce a tree of shapes and objects.
 The root of this tree is the script's object.
 Objects are more powerful because they can encapsulate a model's geometry together with its parameters,
 so that functions can render a model's geometry and query its parameters using the same value.
 
-## Bill of Materials
+### Bill of Materials
 
 Some users need to extract metadata from their model, eg to construct a "bill of materials".
 Unfortunately, they must rely on low level, non-declarative features to extract this information,
@@ -144,6 +161,7 @@ then you can extract the BOM like this:
 openscad -D target=mymodel.scad -i bom -o bom.xml makebom.scad
 ```
 
+### Future Language Extensions
 Once we start programming with object trees,
 we may want a few language extensions:
 * A way to test the type of an object node,
@@ -151,3 +169,4 @@ we may want a few language extensions:
   See [Varieties](Varieties.md) for a proposal.
 * Add parameter fields to built-in shape values.
   Eg, `c = cube(1); c.size`.
+  See [Standard Libraries](Standard_Libraries.md) for a way forward.
