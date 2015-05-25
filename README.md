@@ -32,6 +32,7 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
 * [Varieties](rfc/Varieties.md)
 * Small Changes: Booleans, Numbers, Strings
+* Redesigning the Geometric Primitives
 * Error Reporting
 * Backwards Compatibility
 * Implementation: Lexer, Parser, Analyzer, Evaluator, Pruner
