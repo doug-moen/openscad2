@@ -124,8 +124,10 @@ The root of this tree is the script's object.
 Objects are more powerful because they can encapsulate a model's geometry together with its parameters,
 so that functions can render a model's geometry and query its parameters using the same value.
 
+## Bill of Materials
+
 Some users need to extract metadata from their model, eg to construct a "bill of materials".
-Unfortunately, they rely on kludgy and non-declarative features to extract this information,
+Unfortunately, they must rely on low level, non-declarative features to extract this information,
 like `echo` and `parent_module`.
 The object tree is a pure value that contains all of the necessary metadata.
 It can become the basis of a better way to extract metadata.
