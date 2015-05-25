@@ -139,6 +139,9 @@ cannot be abbreviated as
 scale(10) % cube(1)
 ```
 because this is confused with the modulus operator.
+This caveat only applies to expressions, where module call syntax was not previously supported.
+Statement syntax is still fully backward compatible: the `<<` operator is the only binary operator
+supported at the statement level.
 
 ## User Defined Modules
 At this point, we have shown that modules are a special case of functions.
