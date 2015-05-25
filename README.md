@@ -31,4 +31,7 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Library Files](rfc/Objects.md#library-files),
     [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
 * [Varieties](rfc/Varieties.md)
+* Small Changes: Booleans, Numbers, Strings
 * Error Reporting
+* Backwards Compatibility
+* Implementation: Lexer, Parser, Analyzer, Evaluator, Pruner
