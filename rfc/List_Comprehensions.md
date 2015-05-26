@@ -12,3 +12,8 @@ The syntax and semantics of the list comprehension operators are unified
 across expression and statement syntax as much as possible, while
 preserving backward compatibility. Whatever you can do in one context,
 you can also do in the other context.
+These changes will make the language more consistent and more powerful.
+
+Also:
+* `*expression` is equivalent to `if (false) expression`.
+* `each sequence` equivalent to `for (i=sequence) i`.
