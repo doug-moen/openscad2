@@ -36,3 +36,5 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * Error Reporting
 * Backwards Compatibility
 * Implementation: Lexer, Parser, Analyzer, Evaluator, Pruner
+* [Generators](rfc/Generators.md): list comprehensions, `for`, `if`, etc
+* [Module Calls](rfc/Module_Calls.md)
