@@ -16,10 +16,10 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * [First Class Values](rfc/First_Class_Values.md)
 * [Definitions And Scoping](rfc/Definitions_And_Scoping.md)
 * [Generic Sequence Operations](rfc/Sequences.md):
-    [Strings](rfc/Sequences.md#generalized-strings),
-    [Ranges](rfc/Sequences.md#generalized-ranges),
-    [Slice Notation](rfc/Sequences.md#generalized-slice-notation),
-    [Groups](rfc/Sequences.md#unify-lists-and-groups)
+    [Strings](rfc/Sequences.md#strings),
+    [Ranges](rfc/Sequences.md#ranges),
+    [Slice Notation](rfc/Sequences.md#slice-notation),
+    [Groups](rfc/Sequences.md#groups)
 * [Functions](rfc/Functions.md):
     [Function Literals](rfc/Functions.md#function-literals),
     [Curried Functions](rfc/Functions.md#curried-functions),
