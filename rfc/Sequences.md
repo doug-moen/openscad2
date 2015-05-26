@@ -22,7 +22,7 @@ but not all operations are supported on all sequence types.
 Note that strings can be concatenated using `str(s1,s2)`.
 
 The goal of this RFC is to make all features available to all sequence types.
-The rationale is simplicity, consistency and [Composability](Composable_Building_Blocks.md).
+The rationale is simplicity, consistency and [composability](Composable_Building_Blocks.md).
 This will make it easier to create a library of generic sequence operations.
 
 ## Strings
@@ -31,7 +31,8 @@ This will make it easier to create a library of generic sequence operations.
   The arguments to `concat` must be either all strings (the result is a string),
   or all non-strings (the result is a list).
 
-Note that strings are not fully composable, so not all functions that operate on generic sequences
+Note that strings are not [fully composable](Composable_Building_Blocks.md),
+so not all functions that operate on generic sequences
 will work on strings unless they handle strings as a special case. The problem is that
 list comprehensions don't generate strings: `[for(c="abc")c] != "abc"`. 
 To fix that, we'd need to introduce
