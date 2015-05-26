@@ -25,7 +25,7 @@ The goal of this RFC is to make all features available to all sequence types.
 The rationale is simplicity, consistency and [Composability](Composable_Building_Blocks.md).
 This will make it easier to create a library of generic sequence operations.
 
-## Generalized Strings
+## Strings
 * `for` is extended so that it iterates over the characters in a string
 * `concat` is extended so that it concatenates strings.
   The arguments to `concat` must be either all strings (the result is a string),
@@ -37,10 +37,12 @@ list comprehensions don't generate strings: `[for(c="abc")c] != "abc"`.
 To fix that, we'd need to introduce
 a character data type, such that `"abc"[0] == 'a'`,
 and we'd need to ensure that `['a','b','c'] == "abc"`.
-Eg, Haskell does this. I'm not going to propose this change,
-since I think the implementation effort is too high relative to the benefits.
+Eg, Haskell does this. I'm not going to propose this change
+unless we can resolve backward compatibility issues,
+and demonstrate that the implementation effort is reasonable compared to the benefits.
+Right now I'm not sure.
 
-## Generalized Ranges
+## Ranges
 Ranges are generalized so that empty ranges are supported.
 If the end of the range is < the start of the range (with positive step value),
 then the range is empty (consistent with Haskell).
@@ -55,8 +57,11 @@ My solution is to introduce a new range syntax, which will
 support the new range semantics, and leave the old range values
 to work as they always have (but the old ranges will be deprecated).
 
-The new range syntax is taken from Haskell.
-I claim that the Haskell syntax is easier to understand,
+The new range syntax is taken from Haskell,
+which closely resembles the
+[set builder notation](http://en.wikipedia.org/wiki/Set-builder_notation)
+taught in high school math.
+As a result, this syntax is easier to understand for non-programmers,
 and that this will improve ease of use.
 * range with step 1: `[start..end]`
 * range with step k: `[start,start+k..end]`
@@ -71,7 +76,7 @@ are operationally indistinguishable from lists, therefore they are lists.
 For example, `echo([1..5])` prints `[1,2,3,4,5]`.
 Ranges in Python2 and Haskell work the same way.
 
-## Generalized Slice Notation
+## Slice Notation
 The only place we currently support slice notation is `children(i,j)`.
 Since this syntax is going to be deprecated,
 I'd like a new generalized slice notation syntax available to take its place
@@ -97,10 +102,10 @@ If you need to sum only part of the list, you just pass a slice.
 function sum(v) = v==[] ? 0 : v[0] + sum(v[1..]);
 ```
 
-## Unify Lists and Groups
-As part of [First Class Values](First_Class_Values.md),
-we will make shapes into first class values.
-There is no longer a reason for lists and groups to be separate types,
-so we will replace groups with lists.
-The old syntax that previously produced a group,
-will now produce a list of shapes.
+## Groups
+Groups no longer exist in OpenSCAD2.
+They have been replaced by [objects](Objects.md),
+as discussed [elsewhere](Module_Calls.md).
+An object consists of a set of named fields,
+combined with a sequence of shapes.
+As a sequence value, objects support all of the generic sequence operations.
