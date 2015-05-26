@@ -108,13 +108,17 @@ lollipop = {
   translate([0,0,height]) sphere(r=radius);
   cylinder(d=diameter,h=height);
 };
+lollipop(radius=15); // more candy!
 ```
 
 This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD.
 
 ## Programming with Objects
 
-Objects are powerful; they solve a variety of different problems in OpenSCAD.
+Objects are powerful; they solve a variety of different problems in OpenSCAD. The key features are:
+* An object is a collection of named fields that can be queried using `.` notation.
+* Objects can encapsulate a model's geometry together with its parameters.
+* An object can be "customized", using function call notation to override some fields and recompute the geometry.
 
 ### Objects are Modules for Beginners
 In classic OpenSCAD, modules are parameterized shapes.
@@ -138,8 +142,7 @@ OpenSCAD evaluates a script to produce a tree of shapes: that's what the CSG tre
 With the introduction of objects,
 we will now evaluate a script to produce a tree of shapes and objects.
 The root of this tree is the script's object.
-Objects are more powerful because they can encapsulate a model's geometry together with its parameters,
-so that functions can render a model's geometry and query its parameters using the same value.
+After the evaluator produces the object tree, an additional "pruning" step discards the named fields, producing the CSG tree (see [Implementation](Implementation.md)).
 
 ### Bill of Materials
 
@@ -159,6 +162,13 @@ then you can extract the BOM like this:
 
 ```
 openscad -D target=mymodel.scad -i bom -o bom.xml makebom.scad
+```
+with this implementation:
+```
+// makebom.scad
+target = undef;
+extract_bom = function(object) -> ...;
+bom = extract_bom(package(target));
 ```
 
 ### Future Language Extensions
