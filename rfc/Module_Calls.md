@@ -9,3 +9,6 @@ while retaining backward compatibility
 is the biggest challenge in the design of OpenSCAD2.
 
 ## Two Kinds of Modules
+## Modules are Functions
+## Module Calls in Statements
+## Module Calls in Expressions
