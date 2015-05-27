@@ -15,7 +15,7 @@ We call `for` a generator, because
 a `for` expression generates a series of values that are added to either
 a list or an object.
 
-There are 4 generators (not including the [modifier characters](#modifier-characters)),
+There are 4 generators (plus the [modifier characters](#modifier-characters)),
 all of them hard coded in the grammar.
 There are no user-defined generators.
 You cannot define a function that takes a generator as an argument,
