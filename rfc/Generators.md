@@ -112,3 +112,5 @@ the implementation and dodged some nasty problems.
 * In the expression syntax,
   I do not have to disambiguate between `scale(10) %cube(c)`
   and `f(x) % g(x)` (background vs modulus).
+  Likewise for `scale(10) *cube(c)` vs `f(x) * g(x)`.
+  I would have this ambiguity if modifier characters were shape operators.
