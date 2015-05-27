@@ -50,10 +50,7 @@ which is normally a list or an object.
 
 The `each` operator is new: it takes a sequence value as argument,
 and adds each element to the list being constructed.
-`each x` is equivalent to `for(i=x)i`,
-with the exception that, when used in an object literal,
-`each` will also transfer background shapes
-from one object to another (see [Modifier Characters](#modifier-characters)).
+`each x` is equivalent to `for(i=x)i`.
 
 This new list literal syntax is fully upward compatible with the old syntax.
 
@@ -71,6 +68,11 @@ discussed in [Backward Compatibility](Backward_Compatibility.md).
 
 Likewise, an `if` without an `else` has no effect if the condition is false.
 Previously, it would add an empty group to the group under construction in this situation.
+
+Within an object literal, `each` has additional semantics.
+If the argument is an object,
+`each` will transfer background shapes
+from one object to another (see [Modifier Characters](#modifier-characters)).
 
 ## Modifier Characters
 The `%`, `#`, `!` and `*` modifier characters are not operations on shapes.
@@ -98,6 +100,15 @@ How to implement this in OpenSCAD2 is an open question. Here's my current idea:
   one object to another, but during the evaluation phase, all other operations
   ignore background shapes.
 
-The `!` operator has even weirder semantics than `%`.
-I'll worry about the implementation later.
-For now, I've restricted `!
+The `!` operator (root) has even weirder semantics than `%`.
+I'll worry about the OpenSCAD2 semantics and implementation later.
+
+And `#` (debug).
+
+By syntactically restricting the use of the modifier characters
+to the 'generator' role within an object literal, I have simplified
+the implementation and dodged some nasty problems.
+* There's no extra overhead added to lists to support background shapes.
+* In the expression syntax,
+  I do not have to disambiguate between `scale(10) %cube(c)`
+  and `f(x) % g(x)` (background vs modulus).
