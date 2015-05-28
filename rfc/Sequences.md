@@ -103,10 +103,14 @@ If you need to sum only part of the list, you just pass a slice.
 function sum(v) = v==[] ? 0 : v[0] + sum(v[1..]);
 ```
 
-## Groups
-Groups no longer exist in OpenSCAD2.
-They have been replaced by [objects](Objects.md),
-as discussed [elsewhere](Module_Calls.md).
+## Objects
+Groups have been replaced by [objects](Objects.md).
 An object consists of a set of named fields,
-combined with a sequence of shapes.
-As a sequence value, objects support all of the generic sequence operations.
+combined with a sequence of geometric values (shapes and objects).
+
+When used with any of the sequence operations,
+an object behaves as if it were the list of its geometric elements.
+It is as if the object were automatically converted to a list.
+This is the dual of what happens when a list is used in a context
+requiring a geometric value: the list is implicitly converted
+to an object composed of the list's geometric values.
