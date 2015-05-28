@@ -1,4 +1,22 @@
 # Objects
+"Geometric objects", or "objects" for short,
+are a new kind of value which has multiple roles in OpenSCAD2.
+* Objects are the replacement for groups in the CSG tree.
+  An object contains geometry: a possibly empty sequence of shapes and objects,
+  which can be referenced using [sequence operations](Sequences.md).
+* An object also contains a possibly empty set of named fields,
+  which can be referenced using `.` notation: `object.name`.
+  These may be parameters or metadata which describe the contained geometry.
+  But objects can be used in any situation where a set of named fields is required.
+* An OpenSCAD2 script is evaluated to an object.
+* External library files are referenced as objects.
+  The `include` and `use` operators now take objects as arguments.
+* An object literal is a script enclosed in braces: `{script}`.
+* An object can be customized using function call notation:
+  `object(name1=val1,...)` re-evaluates the script with specified
+  definitions overridden by new values, and returns a new object.
+
+## Scripts are Objects
 If OpenSCAD2 has a [declarative semantics](Declarative_Semantics.md),
 then an OpenSCAD script must have a meaning&mdash;what is it?
 The answer: a script denotes an object.
@@ -113,34 +131,39 @@ lollipop(radius=15); // more candy!
 
 This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD.
 
-## Objects replace Groups
-In principle,
-there are two ways to construct a sequence of shapes,
-to pass as an argument to a module. You can use lists or objects.
-For example,
+## The CSG Tree
+Objects are the replacement for groups in the CSG tree.
+
+The root of the CSG tree is the object denoted by the main script.
+The leaf nodes of the CSG tree are shapes, and the non-leaf nodes are objects.
+
+A list of shapes and objects is operationally equivalent to
+an object containing the same geometry sequence.
+However, if such a list is used in a context where geometry is required,
+then the list is implicitly converted to an object.
+For example, if you write
 ```
-union() { cube(12,true); sphere(8); }
 union()([ cube(12,true), sphere(8) ]);
 ```
-In practice, users will prefer to use objects.
-* The syntax conforms to the classic language syntax.
-* You can only use modifier characters within objects.
+then the list is converted to an object, so the above code is equivalent to
+```
+union() { cube(12,true); sphere(8); }
+```
+The conversion from list to object discards any non-geometric values in the list.
+This conversion ensures that only objects and shapes appear in the final CSG tree.
 
-For these reasons, objects are the natural replacement for groups
-(groups don't exist in OpenSCAD2).
+The modifier characters `%`, `#` and `!` take a geometry value as an argument,
+and set a modifier flag in the value. If the argument is a list, it's first converted
+to an object, since only shape and object values contain storage for modifier flags.
 
 The undocumented `group` module has always been an identity function that returns its children:
 ```
 group(){ cube(12,true); sphere(8); }
 ```
-In OpenSCAD2, the above call to `group()` returns an object.
-
-## The Object Tree
-OpenSCAD evaluates a script to produce a tree of shapes: that's what the CSG tree is.
-In OpenSCAD1, the non-leaf nodes of this tree are groups.
-In OpenSCAD2, the non-leaf nodes are objects,
-and the root of the tree is the main script's object.
-After the evaluator produces the object tree, an additional "pruning" step discards the named fields, producing the CSG tree (see [Implementation](Implementation.md)).
+In OpenSCAD2, the above call to `group()` returns an object, and is equivalent to just
+```
+       { cube(12,true); sphere(8); }
+```
 
 ## Programming with Objects
 
@@ -171,15 +194,15 @@ and the `search` function, but the resulting code is cryptic.
 Some users need to extract metadata from their model, eg to construct a "bill of materials".
 Unfortunately, they must rely on low level, non-declarative features to extract this information,
 like `echo` and `parent_module`.
-The object tree is a pure value capable of storing all of the necessary metadata.
+The CSG tree is a pure value capable of storing all of the necessary metadata.
 It can become the basis of a better way to extract metadata.
 
 For example, you could write a script, `makebom.scad`,
 which takes a target script as an argument.
-Makebom traverses the target object tree,
+Makebom traverses the target CSG tree,
 and extracts metadata, which it returns as the 'bom'
-component of its object tree.
-If we provide a way to dump a selected part of the object tree as XML or JSON,
+component of its object.
+If we provide a way to dump a selected part of the CSG tree as XML or JSON,
 then you can extract the BOM like this:
 
 ```
@@ -196,7 +219,7 @@ Until we have standard conventions for representing BOM metadata,
 each project will need its own implementation of `makebom.scad`.
 
 ### Future Language Extensions
-Once we start programming with object trees,
+Once we start programming with objects,
 we may want a few language extensions:
 * A way to test the type of an object node,
   eg, `x isa Cube` or `y isa Gear`.
