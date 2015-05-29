@@ -17,6 +17,7 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * [Composable Building Blocks](rfc/Composable_Building_Blocks.md)
 * [First Class Values](rfc/First_Class_Values.md)
 * [Definitions And Scoping](rfc/Definitions_And_Scoping.md)
+* Simple Values: Booleans, Numbers, Strings
 * [Generic Sequence Operations](rfc/Sequences.md):
     [Strings](rfc/Sequences.md#strings),
     [Ranges](rfc/Sequences.md#ranges),
@@ -32,13 +33,12 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Fixing the Module Composition Problem](rfc/Functions.md#fixing-the-module-composition-problem)
 * [Module Calls](rfc/Module_Calls.md)
 * [Objects](rfc/Objects.md):
-    [Scripts are Objects](rfc/Objects.md#scripts-are-objects),
+    [Scripts denote Objects](rfc/Objects.md#scripts-denote-objects),
     [Library Files](rfc/Objects.md#library-files),
     [Object Literals](rfc/Objects.md#object-literals),
     [The CSG Tree](rfc/Objects.md#object-literals),
     [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
 * Brands [Varieties](rfc/Varieties.md)
-* Small Changes: Booleans, Numbers, Strings
 * Standard Libraries: Geometry, Lists, Linear Algebra
 * Error Reporting
 * Backwards Compatibility
