@@ -31,11 +31,13 @@ contains a comma separated list of generators.
 A generator is defined to be either an expression or a list comprehension.
 
 The goal of this unification is to provide equivalent syntax for
-both list literals and object literals. For example:
+both list literals and object literals. For example, given:
 ```
 [a(), if (b) c(), for (d=list) f(d), e()]
 {a(); if (b) c(); for (d=list) f(d); e();}
 ```
+then both expressions specify the same sequence of values.
+
 Here is a grammar for generators within a list literal:
 ```
 generator ::= for (i=sequence_expr) generator
@@ -46,7 +48,7 @@ generator ::= * generator
 generator ::= each sequence_expr
 generator ::= expression
 ```
-Note that `sequence_expr` is an expression that returns a [sequence value](Sequences.md),
+`sequence_expr` is an expression that returns a [sequence value](Sequences.md),
 which is normally a list or an object.
 
 The `*` operator is the disable modifier character.
@@ -65,10 +67,12 @@ The semantics are the same as for list literals, and this is a change.
 Previously, the `for` statement was actually a module instantiation which returned a group,
 which added a single element to the group under construction.
 Now, `for` behaves the same way as a `for` in a list comprehension.
-On each iteration, it adds zero or more elements to the object under construction.
-These new semantics are more desirable: OEP2 describes an alternate route to getting these
+On each iteration, it runs its generator argument, adding zero or more elements to the object under construction.
+These new semantics are more desirable, as discussed earlier:
+[OEP2](https://github.com/openscad/openscad/wiki/OEP2:-Implicit-Unions)
+describes an alternate route to getting these
 new semantics. But there is a backward compatibility concern,
-discussed in [Backward Compatibility](Backward_Compatibility.md).
+resolved in [Backward Compatibility](Backward_Compatibility.md).
 
 Likewise, an `if` without an `else` has no effect if the condition is false.
 Previously, it would add an empty group to the group under construction in this situation.
