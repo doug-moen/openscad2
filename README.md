@@ -17,7 +17,7 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * [Composable Building Blocks](rfc/Composable_Building_Blocks.md)
 * [First Class Values](rfc/First_Class_Values.md)
 * [Definitions And Scoping](rfc/Definitions_And_Scoping.md)
-* Simple Values: Booleans, Numbers, Strings
+* [Simple Values](rfc/Simple_Values.md): Booleans, Numbers, Strings
 * [Generic Sequence Operations](rfc/Sequences.md):
     [Strings](rfc/Sequences.md#strings),
     [Ranges](rfc/Sequences.md#ranges),
