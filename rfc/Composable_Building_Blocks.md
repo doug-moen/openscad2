@@ -23,5 +23,6 @@ Composability Failure in OpenSCAD:
   Fix: [Generic Sequences](Sequences.md).
 * Ranges can be composed with `for`, but can't be interchanged with lists of number
   in other contexts. Fix: [Generic Sequences](Sequences.md).
+
 ## Bibliography
 * http://stackoverflow.com/questions/2887013/what-does-composability-mean-in-context-of-functional-programming
