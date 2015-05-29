@@ -10,7 +10,7 @@ is the biggest challenge in the design of OpenSCAD2.
 
 ## Two Kinds of Modules
 OpenSCAD2 distinguishes between two kinds of modules.
-* A *childless* module has no children argument.
+* A *childless module* has no children argument.
   Examples are `cube`, and a user defined module
   that doesn't reference `children()`.
   A typical module call is `cube(10);`.
@@ -20,5 +20,41 @@ OpenSCAD2 distinguishes between two kinds of modules.
   A typical module call is `rotate(45) cube(10);`.
 
 ## Modules are Functions
+Because everything is a first class value in OpenSCAD2, functions are
+much more powerful: they can now do everything that a module does in OpenSCAD1.
+In OpenSCAD2, the module definition syntax (using the keyword `module`)
+now just defines a function, and builtin modules are now functions.
+
+There are two cases.
+
+1. A childless module is a function that maps an argument list to a shape.
+For example, `cube` is a simple function that returns a shape.
+`cube(10)` is a function call.
+
+2. A module with children is a function that may be invoked using
+a double function call, like this: `rotate(45)(cube(10))`.
+The second argument list always consists of a single argument,
+which is the children. The children can be a single shape,
+or it can be a list or object containing multiple shapes.
+
+Here's how the second case works.
+`rotate(45)` is an ordinary function call which returns
+a second function. This second function is then called with
+the children argument, and returns the geometry.
+This works because functions are first class values.
+A function call can return another function.
+
+For example, this OpenSCAD1 module definition:
+```
+module rot(a)
+   rotate([a,a,a]) children();
+```
+is equivalent to this OpenSCAD2 function definition:
+```
+rot = function(a)->(children)->
+   rotate([a,a,a])(children);
+```
+
+## Fixing the Module Composability Problem
 ## Module Calls in Statements
 ## Module Calls in Expressions
