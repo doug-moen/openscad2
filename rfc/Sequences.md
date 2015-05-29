@@ -1,4 +1,4 @@
-# Generic Sequence Operations
+# Generic Sequences
 
 OpenSCAD has the following types for representing an ordered sequence of values:
 * a list [a,b,c] is a sequence of arbitrary values
