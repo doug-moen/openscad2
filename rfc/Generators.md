@@ -60,8 +60,8 @@ and adds each element to the list being constructed.
 
 This new list literal syntax is fully upward compatible with the old syntax.
 
-## Using Generators in Object Literals
-The same syntax is available in object literals, except modified to use statements.
+## Using Generators in Scripts
+The same syntax is available in scripts and object literals, except modified to use statements.
 The semantics are the same as for list literals, and this is a change.
 
 Previously, the `for` statement was actually a module instantiation which returned a group,
@@ -76,3 +76,5 @@ resolved in [Backward Compatibility](Backward_Compatibility.md).
 
 Likewise, an `if` without an `else` has no effect if the condition is false.
 Previously, it would add an empty group to the group under construction in this situation.
+
+For consistency, `let` is now legal at the statement level.
