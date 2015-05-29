@@ -20,7 +20,8 @@ Composability Failure in OpenSCAD:
 * can't compose `for` with `intersection`
 * `concat` has a variable-length argument list, can't be composed with an expression that generates a sequence of lists to be concatenated, eg a `for` loop, so users implement `flatten` instead. In Haskell, `concat` takes a single argument, which is a list of lists: this makes Haskell's `concat` highly composable, and eliminates the need for a separate `flatten` function.
 * Can't compose `children()` with `for`, eg `for (shape=children()) ...`.
-  Fix: [Generalized Lists](Generalized_Lists.md).
-
+  Fix: [Generic Sequences](Sequences.md).
+* Ranges can be composed with `for`, but can't be interchanged with lists of number
+  in other contexts. Fix: [Generic Sequences](Sequences.md).
 ## Bibliography
 * http://stackoverflow.com/questions/2887013/what-does-composability-mean-in-context-of-functional-programming
