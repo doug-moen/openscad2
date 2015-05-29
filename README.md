@@ -4,7 +4,9 @@ The goals are:
  1. to make OpenSCAD easier to use;
  2. to make OpenSCAD more expressive and powerful, not by adding complexity and piling on features, but by making the core language simpler and more uniform, and by removing restrictions on how language elements can be composed together to create larger components.
 
-To do this, we'll focus on improving OpenSCAD's abstraction mechanisms. In a programming language, abstraction mechanisms are the mechanisms used to define new things in terms of existing things.
+**Summary**: Everything is now a first class value. Functions, modules, shapes, groups and even OpenSCAD scripts are first class values.
+
+**Why Is This So Big?** Making everything first class while retaining backward compatibility is a hard design problem: everything depends on everything else. It's important to map out all of the required changes in advance, before we start implementation.
 
 ## RFC documents
 The design documentation is structured as a collection of RFCs.
@@ -19,7 +21,8 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Strings](rfc/Sequences.md#strings),
     [Ranges](rfc/Sequences.md#ranges),
     [Slice Notation](rfc/Sequences.md#slice-notation),
-    [Groups](rfc/Sequences.md#groups)
+    [Objects](rfc/Sequences.md#objects)
+* [Generators](rfc/Generators.md): generalized list comprehensions, `for`, `if`, `let`, `each`
 * [Functions](rfc/Functions.md):
     [Function Literals](rfc/Functions.md#function-literals),
     [Curried Functions](rfc/Functions.md#curried-functions),
@@ -27,8 +30,12 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Modules are Curried Functions](rfc/Functions.md#modules-are-curried-functions),
     [User Defined Modules](rfc/Functions.md#user-defined-modules),
     [Fixing the Module Composition Problem](rfc/Functions.md#fixing-the-module-composition-problem)
+* [Module Calls](rfc/Module_Calls.md)
 * [Objects](rfc/Objects.md):
+    [Scripts are Objects](rfc/Objects.md#scripts-are-objects),
     [Library Files](rfc/Objects.md#library-files),
+    [Object Literals](rfc/Objects.md#object-literals),
+    [The CSG Tree](rfc/Objects.md#object-literals),
     [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
 * Brands [Varieties](rfc/Varieties.md)
 * Small Changes: Booleans, Numbers, Strings
@@ -36,5 +43,3 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * Error Reporting
 * Backwards Compatibility
 * Implementation: Lexer, Parser, Analyzer, Evaluator, Pruner
-* [Generators](rfc/Generators.md): list comprehensions, `for`, `if`, etc
-* [Module Calls](rfc/Module_Calls.md)
