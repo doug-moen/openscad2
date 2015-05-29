@@ -16,7 +16,7 @@ are a new kind of value which has multiple roles in OpenSCAD2.
   `object(name1=val1,...)` re-evaluates the script with specified
   definitions overridden by new values, and returns a new object.
 
-## Scripts are Objects
+## Scripts denote Objects
 If OpenSCAD2 has a [declarative semantics](Declarative_Semantics.md),
 then an OpenSCAD script must have a meaning&mdash;what is it?
 The answer: a script denotes an object.
