@@ -33,7 +33,7 @@ For example, `cube` is a simple function that returns a shape.
 
 2. A module with children is a function that may be invoked using
 a double function call, like this: `rotate(45)(cube(10))`.
-The second argument list always consists of a single argument,
+The second argument list consists of a single argument,
 which is the children. The children can be a single shape,
 or it can be a list or object containing multiple shapes.
 
@@ -56,5 +56,17 @@ rot = function(a)->(children)->
 ```
 
 ## Fixing the Module Composability Problem
+The new design for modules solves the module composition problem. In the old design,
+* A module takes a group of shapes as an argument (accessed with children()).
+* A module returns a group of shapes as a result.
+* But there is no way to take the group of shapes returned by one module M1, and pass that as the children() list to another module M2.
+* For example, you can't compose `intersection` with `for`.
+
+In the new design, there is no problem. `intersection()({for (i=x) f(i);})` just works.
+
 ## Module Calls in Statements
+* m(args) {...}
+* m(args) generator
+* m(args) m2(args);
+
 ## Module Calls in Expressions
