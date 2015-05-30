@@ -36,7 +36,7 @@ because it puts function names into a separate namespace
 This abbreviation for function definitions
 can also be used with named function arguments.
 Here is an example of a generalized extrusion API inspired by ImplicitCAD,
-where the `twist` argument is set to a function literal:
+where the `twist` argument is a function:
 ```
 linear_extrude (height=40, center=true, twist = function(h) 35*cos(h*2*pi/60)) {
     circle (10);
@@ -50,6 +50,27 @@ linear_extrude (height=40, center=true, twist(h) = 35*cos(h*2*pi/60)) {
 ```
 
 ### Curried Functions
+Since function values are first class, a function can return another function.
+We can use this to implement a technique called *currying*,
+where a function has more than one argument list.
+
+For example,
+```
+add(x) = function(y) x + y;
+```
+`add(2)` is a function that adds `2` to its argument.
+So `add(2)(3)
+
+
+This technique is widely used by functional programming languages
+to design flexible and composable library APIs,
+and OpenSCAD2 will make
+
+---------------------------------
+-----------------------------------
+-------------------------------
+------------------------------------
+---------------------------------
 Since function values are first class, a function can return another function.
 We can use this to implement a technique called *currying*, named after inventor Haskell Curry.
 This technique is so powerful that in typical functional programming languages, most functions are curried.
