@@ -22,13 +22,14 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Strings](rfc/Sequences.md#strings),
     [Ranges](rfc/Sequences.md#ranges),
     [Slice Notation](rfc/Sequences.md#slice-notation),
+    [Generalized Indexing](rfc/Sequences.md#generalized-indexing-using-an-index-vector),
     [Objects](rfc/Sequences.md#objects)
 * [Generators](rfc/Generators.md): generalized list comprehensions, `for`, `if`, `let`, `each`
 * [Functions](rfc/Functions.md):
     [Functions are Values](rfc/Functions.md#functions are values),
     [Modules are Functions](rfc/Functions.md#modules are-functions),
     [Module Call Syntax](rfc/Functions.md#module-call-syntax),
-    [Programming with Functions](rfc/Functions.md#programming-with-functions),
+    [Programming with Functions](rfc/Functions.md#programming-with-functions)
 * [Objects](rfc/Objects.md):
     [Scripts denote Objects](rfc/Objects.md#scripts-denote-objects),
     [Library Files](rfc/Objects.md#library-files),
