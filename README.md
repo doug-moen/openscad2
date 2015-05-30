@@ -40,4 +40,4 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * Standard Libraries: Geometry, Lists, Linear Algebra
 * Error Reporting
 * Backwards Compatibility
-* Implementation: Lexer, Parser, Analyzer, Evaluator, Pruner
+* [Implementation](rfc/Implementation.md): Lexer, Parser, Analyzer, Evaluator
