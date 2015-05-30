@@ -111,7 +111,7 @@ here is how children references are converted:
 |-----|-----|
 |`children()`|`children`|
 |`children(i)`|`children[i]`|
-|`children(i,j)`|`children[i..j]`|
+|`children([i:j])`|`children[i..j]`|
 |`$children`|`len(children)`|
 
 You don't have to use the double-function-call syntax for invoking modules
