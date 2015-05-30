@@ -17,7 +17,8 @@ but not all operations are supported on all sequence types.
 |for (i=seq) ...    | yes | -    | yes | -   |-
 |concat(seq1, seq2) | yes | *    | -   | -   |-
 |has empty sequences| yes | yes  | -   | yes |yes
-|slice notation     | -   | -    | -   | -   |`children(i,j)`
+|slice notation     | -   | -    | -   | -   |`children([i:j])`
+|seq[index_vector]  | -   | -    | -   | -   | `children(index_vector)`
 
 Note that strings can be concatenated using `str(s1,s2)`.
 
@@ -78,18 +79,21 @@ For example, `echo([1..5])` prints `[1,2,3,4,5]`.
 Ranges in Python2 and Haskell work the same way.
 
 ## Slice Notation
-The only place we currently support slice notation is `children(i,j)`.
-Since this syntax is going to be deprecated,
-I'd like a new generalized slice notation syntax available to take its place
-when code is upgraded to the new OpenSCAD2 syntax.
+The only place we currently support slice notation is `children([start:end])`.
+Slice notation is *important*.
+It makes it easier to write recursive functions over lists.
 
 The new slice notation is taken from Rust:
 * `seq[start..end]`
 * `seq[start..]`
 * `seq[..end]`
 
-Slice notation makes it easier to write recursive functions over lists.
-Here is `sumv` from MichaelAtOz's `vectormath.scad`.
+Slice notation makes it easier to write recursive functions over lists,
+and makes list functions more flexible, since they can now operate on a slice.
+
+Right now, recursive list functions need to have an auxiliary index parameter,
+usually called `i`, for keeping track where we are in the list during recursion.
+For example, here is `sumv` from MichaelAtOz's `vectormath.scad`.
 The `i` and `s` parameters allow you to sum a either a slice of the list, or the entire list.
 
 ```
@@ -100,8 +104,17 @@ Using slices, we can define a simpler function `sum`, which doesn't require the 
 If you need to sum only part of the list, you just pass a slice.
 
 ```
-function sum(v) = v==[] ? 0 : v[0] + sum(v[1..]);
+sum(v) = v==[] ? 0 : v[0] + sum(v[1..]);
 ```
+
+## Generalized Indexing using an Index Vector
+The only place we currently support generalized indexing is `children(v)`,
+where `v` is a vector of indexes (a list or a range).
+Since this syntax is deprecated,
+we need a new generalized indexing syntax available to take its place
+when code is upgraded to the new OpenSCAD2 syntax by the upgrade tool.
+
+So we'll support `seq[v]` for all sequence types.
 
 ## Objects
 Groups have been replaced by [objects](Objects.md).
