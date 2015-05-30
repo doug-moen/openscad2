@@ -13,6 +13,12 @@ Rationale: OpenSCAD is a 3D modelling tool for graphical designers.
 It should not assume prior experience with a C-like programming language.
 These names should be easier to understand.
 
+### if (cond) ... else ...
+I would like to support `if (condition) expr else expr` as an expression.
+This is more readable than `..?..:..` when conditional code extends
+over multiple lines, and is part of the unification of expression syntax
+with statement syntax (making the language more consistent).
+
 ## Numbers
 ### exponentiation
 I would like to add an exponentiation operator, `x^y`,
