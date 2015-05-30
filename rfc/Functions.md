@@ -72,6 +72,46 @@ to make library APIs more expressive and composable.
 OpenSCAD2 represents modules with children as curried functions.
 
 ## 2. Modules are Functions
+In OpenSCAD2, the module definition syntax (using the keyword `module`)
+now just defines a function, and builtin modules are now functions.
+
+There are two cases.
+* A *childless module* has no children argument.
+  Examples are `cube`, and a user defined module
+  that doesn't reference `children()`.
+  A childless module is a simple function that returns a shape.
+  For example, `cube(10)` is a function call.
+
+* A *module with children* has a children argument.
+  Examples are `rotate`, and a user defined module
+  that references `children()`.
+  A module with children is a curried function
+  that may be invoked using a double function call, such as: `rotate(45)(cube(10))`.
+  The second argument list consists of a single argument,
+  which is the children. The children can be a single shape,
+  or it can be a list or object containing multiple shapes.
+
+For example, this OpenSCAD1 module definition:
+```
+module rot(a)
+   rotate([a,a,a]) children();
+```
+is equivalent to this OpenSCAD2 function definition:
+```
+rot(a)(children) =
+   rotate([a,a,a])(children);
+```
+When converting a module definition to a function definition,
+here is how children references are converted:
+
+| old | new |
+|-----|-----|
+|`children()`|`children`|
+|`children(i)`|`children[i]`|
+|`children(i,j)`|`children[i..j]`|
+|`$children`|`len(children)`|
+
+## 3. Module Call Syntax
 ---------------------------------
 -----------------------------------
 -------------------------------
