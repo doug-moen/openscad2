@@ -9,7 +9,7 @@ This RFC deals with the following changes:
 * The [module composition problem](Composable_Building_Blocks.md) is fixed
   (eg, `for` can't be composed with `intersection`).
 
-## 1. Function Values
+## 1. Functions are Values
 ### Function Literals
 An anonymous function literal looks like this:
 
@@ -59,13 +59,19 @@ For example,
 add(x) = function(y) x + y;
 ```
 `add(2)` is a function that adds `2` to its argument.
-So `add(2)(3)
+So `add(2)(3) == 5`.
 
+The definition of `add` can be abbreviated as:
+```
+add(x)(y) = x + y;
+```
+and `add` is a curried function with 2 argument lists.
 
-This technique is widely used by functional programming languages
-to design flexible and composable library APIs,
-and OpenSCAD2 will make
+Currying is widely used by functional programming languages
+to make library APIs more expressive and composable.
+OpenSCAD2 represents modules with children as curried functions.
 
+## 2. Modules are Functions
 ---------------------------------
 -----------------------------------
 -------------------------------
