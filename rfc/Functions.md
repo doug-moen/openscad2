@@ -1,4 +1,4 @@
-# First Class Functions
+# Functions
 
 This RFC deals with the following changes:
 * Functions, modules and shapes are [first class values](First_Class_Values.md).
@@ -9,13 +9,31 @@ This RFC deals with the following changes:
 * The [module composition problem](Composable_Building_Blocks.md) is fixed
   (eg, `for` can't be composed with `intersection`).
 
-## Function Literals
+## 1. Function Values
+### Function Literals
 An anonymous function literal looks like this:
 
 ```
-function(x, y) -> sqrt(pow(x,2) + pow(y,2))
+function(x, y) sqrt(x^2 + y^2)
 ```
 
+### Function Definitions
+It is possible to define a named function using a function literal:
+```
+hypot = function(x, y) sqrt(x^2 + y^2);
+```
+
+However, we provide an abbreviation for this.
+The preferred definition syntax for named functions is now
+```
+hypot(x, y) = sqrt(x^2 + y^2);
+```
+
+The old function definition syntax is no longer preferred,
+because it put function names into a separate namespace
+(see [backward compatibility](Backward_Compatib
+
+lity.b 
 The `function` keyword can be omitted, when needed for brevity.
 
 The preferred definition syntax for named functions is now
