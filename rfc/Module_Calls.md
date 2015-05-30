@@ -51,7 +51,7 @@ module rot(a)
 ```
 is equivalent to this OpenSCAD2 function definition:
 ```
-rot = function(a)->(children)->
+rot(a)(children) =
    rotate([a,a,a])(children);
 ```
 
