@@ -14,6 +14,11 @@ It should not assume prior experience with a C-like programming language.
 These names should be easier to understand.
 
 ## Numbers
+### exponentiation
+I would like to add an exponentiation operator, `x^y`,
+as an alternative to `pow(x,y)`.
+It has higher precedence than `*`, and is right associative.
+
 ### mod
 I would like to add an infix `mod` operator, with the same precedence as `%`,
 except that unlike `%`, it correctly computes the modulus for both positive
