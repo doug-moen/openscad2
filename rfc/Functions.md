@@ -30,19 +30,26 @@ hypot(x, y) = sqrt(x^2 + y^2);
 ```
 
 The old function definition syntax is no longer preferred,
-because it put function names into a separate namespace
-(see [backward compatibility](Backward_Compatib
+because it puts function names into a separate namespace
+(see [backward compatibility](Backward_Compatibility.md)).
 
-lity.b 
-The `function` keyword can be omitted, when needed for brevity.
-
-The preferred definition syntax for named functions is now
-
+This abbreviation for function definitions
+can also be used with named function arguments.
+Here is an example of a generalized extrusion API inspired by ImplicitCAD,
+where the `twist` argument is set to a function literal:
 ```
-hypot = function(x, y) -> sqrt(pow(x,2) + pow(y,2));
+linear_extrude (height=40, center=true, twist = function(h) 35*cos(h*2*pi/60)) {
+    circle (10);
+}
+```
+We can abbreviate the setting for `twist` like this:
+```
+linear_extrude (height=40, center=true, twist(h) = 35*cos(h*2*pi/60)) {
+    circle (10);
+}
 ```
 
-## Curried Functions
+### Curried Functions
 Since function values are first class, a function can return another function.
 We can use this to implement a technique called *currying*, named after inventor Haskell Curry.
 This technique is so powerful that in typical functional programming languages, most functions are curried.
