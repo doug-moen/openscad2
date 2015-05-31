@@ -6,7 +6,7 @@ with a small number of orthogonal building blocks
 that can be composed together in many ways.
 
 Design Strategies for Composability:
-* declarative semantics
+* [declarative semantics](Declarative_Semantics.md)
 * orthogonality
   * unify features that are almost the same, but with unnecessary differences
   * split up features that do two things at once into separate features that can be composed
