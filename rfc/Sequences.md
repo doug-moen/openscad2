@@ -94,7 +94,7 @@ and makes list functions more flexible, since they can now operate on a slice.
 Right now, recursive list functions need to have an auxiliary index parameter,
 usually called `i`, for keeping track where we are in the list during recursion.
 For example, here is `sumv` from MichaelAtOz's `vectormath.scad`.
-The `i` and `s` parameters allow you to sum a either a slice of the list, or the entire list.
+The `i` and `s` parameters allow you to sum either a slice of the list, or the entire list.
 
 ```
 function sumv(v,i,s=0) = (i==s ? v[i] : v[i] + sumv(v,i-1,s));
