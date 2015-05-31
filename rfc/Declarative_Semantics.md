@@ -58,16 +58,27 @@ Declarative programs and languages have these properties:
   to understand a program.
   This means that commutative operators really are commutative:
   The expressions `a+b` and `b+a` are exactly equivalent
-  (which they wouldn't be if `a` and `b` had side effects).
+  (which they wouldn't be if `a` and `b` had side effects:
+  order of evaluation would be important).
 
 * **equational reasoning** <br>
+  In grade school algebra, you are taught to solve mathematical equations by
+  substituting like for like, and transforming the equation by apply rules like
+  the commutative and associative properties of addition and multiplication.
+  That's equational reasoning, and it can also be applied to a program written
+  in a declarative language. When you see `name = expr;` in an OpenSCAD2 program,
+  it means that wherever you see `name` in the program, you can substitute it
+  with `expr`, and vice versa. And you can transform programs by applying
+  algebraic rules like the commutative law (see *order independence* above).
 
-* compositional, composable
-* easy to reason about
-* useful mathematical properties for reasoning about programs
-
+* **composable** <br>
+  Your ability to create a system of [composable building blocks](Composable_Building_Blocks.md)
+  depends on the extent to which the building blocks have declarative semantics.
+  For a counterexample, imagine that `cube(10)` is a procedure with no return value,
+  but whose side effect is to
+  draw a cube onto a display. Then you wouldn't be able to compose `cube` with `intersect`,
+  `difference`, etc.
 
 ## Bibliography
 * https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf
-* http://stackoverflow.com/questions/210835/what-is-referential-transparency/11740176#11740176
 * http://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf
