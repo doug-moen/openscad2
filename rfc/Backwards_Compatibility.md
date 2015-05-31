@@ -1,5 +1,13 @@
 # Backwards Compatibility
 
+* Our goal is to maintain backwards compatibility with existing OpenSCAD scripts.
+* Nevertheless, the OpenSCAD2 language is not fully backwards compatible with OpenSCAD1.
+* To solve this problem, the openscad translator will detect whether a script is OpenSCAD2
+  or OpenSCAD1, and it will run OpenSCAD1 scripts using a "backwards compatibility mode".
+* There is a tool that upgrades OpenSCAD1 scripts to the OpenSCAD2 syntax.
+  You can invoke it from the GUI or from the command line.
+
+## Goal
 Our goal is to maintain backward compatibility with all published or archived
 OpenSCAD scripts that still work today, so that they continue to run.
 
@@ -10,51 +18,83 @@ where almost everything is legal, and there are virtually no error messages.
 So really, my goal for OpenSCAD2 is to not break the world any worse than
 a new release is normally expected to break things. We don't worry too much
 about the change in behaviour of weird edge cases that no real world script
-is expected to probe. But if 10% of the scripts on thingiverse stop working,
-then that is a showstopper.
+is expected to encounter. But if 10% of the scripts on thingiverse were to stop working,
+then that would be a serious bug.
 
-The main challenges to backward compatibility:
-* three namespaces
-* module composability problem
+## Reasons for Incompatibility
+Here are the features of OpenSCAD2 that can cause incompatibility:
+* Unified Namespace
+  (vs 3 namespaces for variables, functions and modules)
+* Lexical Scoping
+  (vs legacy `include` semantics)
+* [Stricter Error Reporting](Error_Reporting.md)
+* Composable Modules,
+  aka [Lazy Unions](https://github.com/openscad/openscad/wiki/OEP2:-Implicit-Unions)
+  (vs the module composability problem)
 
-## Three Namespaces
-In OpenSCAD2, everything is a first class value, including functions and modules.
-In order for this to work, we can't segregate names by type, as OpenSCAD1 does,
-with different namespaces for value, functions and modules. But we know that
-there are existing scripts where the same name is used for a function and a module,
-or for a module and a variable.
+This list will change as we implement and test OpenSCAD2.
 
-So we have 1 namespace for new OpenSCAD2 programs that take full advantage of
-the new language features, but we have 3 namespaces for legacy OpenSCAD scripts.
-The compiler analyzes each script, and uses a heuristic to determine whether the
-script is "legacy", and has 3 namespaces, or "modern", and has 1 namespace.
+## Backward Compatibility Mode
+### Mode Detection
+The compiler uses a heuristic to detect whether a script is OpenSCAD1 or OpenSCAD2.
+It works like this:
+* OpenSCAD2 introduces new syntax for defining functions and modules.
+  And it introduces new syntax that replaces `include <file>` and `use <file>`.
+* If the new syntax is consistently used within a script, then that script is "modern".
+* If the old syntax is consistently used, then that script is "legacy".
+* It's an error to mix the two definition syntaxes within the same script.
 
-The heuristic works like this.
-OpenSCAD2 introduces new syntax for defining functions and modules.
-If the new syntax is consistently used within a script, then that script is "modern".
-If the old syntax is consistently used, then that script is "legacy".
-It's an error to mix the two definition syntaxes within the same script.
+### Semantics of Backward Compatibility Mode
+In backwards compatibility mode,
+* There are 3 namespaces, for variables, functions and modules.
+* We emulate the bugs in `include <file>` as best we can,
+  especially the mechanism that lets an including script override parameters
+  in the included script.
+* As much as possible, fatal error messages are dialed back to non-fatal warnings.
+  However, see [Error Reporting](Error_Reporting.md):
+  errors will be reported only when it helps the user, not to cause problems or break things.
+  So this paragraph overstates the extent to which error messages are
+  a problem that needs to be fixed.
+* We will emulate the bugs in module call semantics which, eg,
+  prevent `for` from being composed with `intersection`.
 
-Once this is determined, legacy scripts are compiled and interpreted according to legacy
-rules, while modern scripts are compiled and interpreted according to modern rules.
+More generally, OpenSCAD probably has a lot of weird bugs in areas that people haven't
+fully explored. Since OpenSCAD2 is a rewrite, we'll probably fix a lot of these bugs,
+in many cases without realizing it. There is a fine line between a bug that just needs
+to be fixed, and an incompatible change. Our "backward compatibility mode"
+isn't going to emulate every bug we fix. For example, it's not clear to me if there
+are any scripts that people care about that actually depend on the module composability bug.
+Figuring out what bugs do and do not need to be emulated will be an
+ongoing process that we'll figure out during testing.
 
-It is legal for a legacy script to include or use a modern script,
-and vice versa. Each script is analyzed in isolation, independent of who uses it
-or who it uses.
+### Semantics of Script Inclusion
+What are the semantics when an OpenSCAD1 script includes an OpenSCAD2 script,
+or vice versa? How do we reconcile the difference between 1 namespace and 3 namespaces?
+* TBD
 
-## Lexical Scoping
-OpenSCAD2 has lexical scoping. A variable or parameter may only be referenced within the block
-where it is defined. Also, the scope of a definition extends from the following statement to the
-end of the containing block, *except that* forward references are legal within a function or module
-body: this makes recursive definitions possible.
+## Upgrade Tool
+The upgrade tool will automatically convert a script
+from OpenSCAD1 syntax to OpenSCAD2 syntax.
+* In the GUI, there's an a command in the Edit menu,
+  "Upgrade to OpenSCAD2 syntax", which operates on the text
+  in the current text buffer.
+* There is also a command line option that outputs OpenSCAD2 syntax
+  as an export format.
 
-OpenSCAD1 has weird rules and behaviour which conflict with the OpenSCAD2 semantics.
-The question is the extent to which published and archived scripts depend on this
-weird behaviour. Which bugs can we fix without breaking the world, and which bugs do
-we have to emulate in "backward compatibility mode" within legacy scripts?
+After performing the conversion, some things may no longer work,
+due to semantic changes. So the user needs to test the script
+and fix the problems. In the GUI version, we may be able to
+automatically detect certain problems and suggest solutions.
 
-In OpenSCAD2 it is illegal to define the same variable twice within the same scope.
-You get a duplicate definition error. I assume this is a safe change: probably no
-existing scripts depend on this.
+Here's what the tool will change:
+* Upgrade definition syntax. Convert function and module
+  definitions. Convert `include` and `use` statements.
+  * Maybe, we can detect the fact that the user is attempting
+    to override parameters in an included file, and change that
+    to OpenSCAD2 syntax? How commonly is this feature used?
+* Insert missing braces if a module argument is a *generator*,
+  eg it is a `for` statement.
+* Maybe, we insert extra braces to emulate the module composability bug.
 
-
+This list will change as we implement OpenSCAD2
+and test it against existing scripts.
