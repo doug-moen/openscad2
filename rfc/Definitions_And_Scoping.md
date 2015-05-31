@@ -100,3 +100,12 @@ causes unpredictable behaviour and chaos, as discussed in several forum posts.
 However, this feature has also been deliberately used to allow the includer to override
 parameters in the includee. OpenSCAD2 provides a safe, lexically scoped mechanism for
 overriding definitions in an included script, [as discussed here](Objects.md).
+
+## Missing and Multiple Definitions
+In OpenSCAD2 it is illegal to define the same name twice within the same scope.
+You get a duplicate definition error. (I assume this is a safe change: probably no
+existing scripts depend on this.)
+
+It is also illegal to refer to a name that isn't defined.
+That also produces an error message. (This is more likely to cause problems
+with existing scripts.)
