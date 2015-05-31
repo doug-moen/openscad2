@@ -39,5 +39,5 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
 * Brands [Varieties](rfc/Varieties.md)
 * Standard Libraries: Geometry, Lists, Linear Algebra
 * Error Reporting
-* Backwards Compatibility
+* [Backwards Compatibility](rfc/Backwards_Compatibility.md)
 * [Implementation](rfc/Implementation.md): Lexer, Parser, Analyzer, Evaluator
