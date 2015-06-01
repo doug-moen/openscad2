@@ -36,7 +36,7 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Object Literals](rfc/Objects.md#object-literals),
     [The CSG Tree](rfc/Objects.md#object-literals),
     [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
-* Brands [Varieties](rfc/Varieties.md)
+* [Varieties](rfc/Varieties.md)
 * [Standard Libraries](rfc/Standard_Libraries.md): redefining the geometric primitives, etc
 * [Error Reporting](rfc/Error_Reporting.md)
 * [Backwards Compatibility](rfc/Backwards_Compatibility.md)
