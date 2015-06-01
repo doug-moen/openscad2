@@ -20,3 +20,15 @@ This has two negative consequences:
    by reinterpreting illegal programs as legal ones.
 
 For these reasons, OpenSCAD2 has stricter error reporting.
+
+OpenSCAD2 should report errors for:
+* Definitions and Scoping
+  * reference to undefined name
+  * name defined multiple times in same scope
+* Functions
+  * function call f(x) where f is not a function or object
+  * function call with too few parameters
+  * function call with too many parameters
+  * function call with unknown named parameter
+* Objects
+  * adding a value that is not a shape or an object
