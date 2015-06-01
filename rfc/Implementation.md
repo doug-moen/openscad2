@@ -54,7 +54,7 @@ parse tree according to whether we are using backward compatibility mode
 or OpenSCAD2 runtime semantics.
 
 The AST produced by the analyzer is used by the upgrade tool to upgrade a script
-to OpenSCAD2 syntax and produce the modified text file.
+to OpenSCAD2 syntax and output the modified source file.
 
 ## Coder
 
