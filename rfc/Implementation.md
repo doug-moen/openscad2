@@ -1,9 +1,9 @@
 # Implementation
 
 OpenSCAD2 has a somewhat different implementation than OpenSCAD1.
-The main difference is the addition of a new stage into the translator,
-which is the Analyzer. Also, the data transmitted between each stage has
-changed somewhat.
+The main difference is the addition of new stages to the translator,
+which are the Analyzer and Coder.
+Also, the data transmitted between each stage has changed.
 ```
 Lexer
 --tokens--> Parser
@@ -61,7 +61,7 @@ to OpenSCAD2 syntax and produce the modified text file.
 The Coder or Code Generator takes the AST and generates executable
 code for the Evaluator. It figures out the run time data structures
 needed to represent local and global variables, and converts bound
-identifiers into indexes into the appropriate run time table.
+identifiers into indexes into the appropriate run time environment table.
 The output is an executable code tree.
 
 ## Evaluator
