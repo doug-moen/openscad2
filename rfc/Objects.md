@@ -217,13 +217,3 @@ bom = extract_bom(package(target));
 ```
 Until we have standard conventions for representing BOM metadata,
 each project will need its own implementation of `makebom.scad`.
-
-### Future Language Extensions
-Once we start programming with objects,
-we may want a few language extensions:
-* A way to test the type of an object node,
-  eg, `x isa Cube` or `y isa Gear`.
-  See [Varieties](Varieties.md) for a proposal.
-* Add parameter fields to built-in shape values.
-  Eg, `c = cube(1); c.size`.
-  See [Standard Libraries](Standard_Libraries.md) for a way forward.
