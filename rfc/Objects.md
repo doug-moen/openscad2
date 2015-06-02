@@ -74,13 +74,13 @@ However, this mechanism is quite buggy, as discussed in several forum threads.
 
 We are going to provide a better interface.
 
-To reference an external library file, use the `package` function.
+To reference an external library file, use the `script` function.
 It reads a file, and returns the resulting object.
 For example,
 ```
-lollipop = package("lollipop.scad");
-math = package("MCAD/math.scad");
-shapes = package("MCAD/shapes.scad");
+lollipop = script("lollipop.scad");
+math = script("MCAD/math.scad");
+shapes = script("MCAD/shapes.scad");
 ```
 Now you can use `math.PI` and `shapes.box(1,2,3)`.
 
@@ -90,13 +90,13 @@ More operations on objects:
   For example,
 
    ```
-   include package("examples/example020.scad");
+   include script("examples/example020.scad");
    ```
 
 * `use object;` includes just the top level definitions, not the shapes.
 
    ```
-   use package("examples/example020.scad");
+   use script("examples/example020.scad");
    spring();
    ```
 
@@ -213,7 +213,7 @@ with this implementation:
 // makebom.scad
 target = undef;
 extract_bom = function(object) -> ...;
-bom = extract_bom(package(target));
+bom = extract_bom(script(target));
 ```
 Until we have standard conventions for representing BOM metadata,
 each project will need its own implementation of `makebom.scad`.
