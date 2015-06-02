@@ -111,8 +111,8 @@ can also be used for labeled arguments in a function call.
 Here's an example of a generalized extrusion API:
 the `twist` argument is a function.
 ```
-linear_extrude (height=40, twist(h) = 35*cos(h*2*pi/60)) {
-    circle (10);
+linear_extrude(height=40, twist(h)=35*cos(h*2*pi/60)) {
+    square(10);
 }
 ```
 
