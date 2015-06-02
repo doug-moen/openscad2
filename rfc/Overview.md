@@ -91,16 +91,16 @@ box(x,y,z) = cube([x,y,z]);
 <tr>
 <td>
 <pre>
-module elongate() {
+module elongate(n) {
   for (i = [0 : $children-1])
-    scale([10, 1, 1]) children(i);
+    scale([n, 1, 1]) children(i);
 }
 </pre>
 <td>
 <pre>
-elongate()(children) = {
+elongate(n)(children) = {
   for (c = children)
-    scale([10, 1, 1]) c;
+    scale([n, 1, 1]) c;
 };
 </pre>
 </tr>
