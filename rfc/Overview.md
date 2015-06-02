@@ -52,7 +52,7 @@ we need to have a single namespace,
 instead of 3 namespaces for variables, functions and modules.
 
 In order to make this change and also retain backward compatibility,
-there is new syntax for function & module definitions, and
+we need new syntax for function & module definitions, and
 for the `include`/`use` operators.
 If you use the new syntax, you get one namespace, and full access to the
 features of OpenSCAD2. If you use the old definition syntax, you are in
@@ -126,11 +126,10 @@ Objects have multiple roles in OpenSCAD2.
 * An OpenSCAD2 script is evaluated to an object.
 * Objects are the replacement for groups in the CSG tree.
 * Library script files are referenced as objects.
-  The `include` and `use` operators now take objects as arguments.
 * An object literal is a script enclosed in braces: `{script}`.
 
 An OpenSCAD script may contain top level definitions and geometry statements.
-An object is a value representing a script.
+An object is the value that results from evaluating a script.
 An object has a set of named fields and a sequence of geometry values.
 
 The fields within an object are referenced using `object.name` notation.
