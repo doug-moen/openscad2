@@ -38,14 +38,14 @@ can also be used with named function arguments.
 Here is an example of a generalized extrusion API inspired by ImplicitCAD,
 where the `twist` argument is a function:
 ```
-linear_extrude (height=40, center=true, twist = function(h) 35*cos(h*2*pi/60)) {
-    circle (10);
+linear_extrude (height=40, twist = function(h) 35*cos(h*2*pi/60)) {
+    square(10);
 }
 ```
 We can abbreviate the setting for `twist` like this:
 ```
-linear_extrude (height=40, center=true, twist(h) = 35*cos(h*2*pi/60)) {
-    circle (10);
+linear_extrude (height=40, twist(h) = 35*cos(h*2*pi/60)) {
+    square(10);
 }
 ```
 
