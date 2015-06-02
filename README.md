@@ -8,6 +8,8 @@ The goals are:
 
 **Why Is This So Big?** Making everything first class while retaining backward compatibility is a hard design problem: everything depends on everything else. It's important to map out all of the required changes in advance, before we start implementation.
 
+[**Overview: >> READ ME FIRST <<**](rfc/Overview.md)
+
 ## RFC documents
 The design documentation is structured as a collection of RFCs.
 To comment on an RFC, click on [Issues](//github.com/doug-moen/openscad2/issues)
