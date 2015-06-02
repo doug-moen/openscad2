@@ -137,12 +137,13 @@ The fields within an object are referenced using `object.name` notation.
 They may be parameters or metadata which describe the contained geometry.
 But objects can be used in any situation where a set of named fields is required.
 
-The `script` function reads a script file and returns an object.
+To reference an external library file, use the `script` function.
+It reads the file and returns the resulting object.
 ```
+use script("MCAD/math.scad");
 shapes = script("MCAD/shapes.scad");
+shapes.box(1,2,3);
 ```
-You can `use shapes;` or `use script("MCAD/shapes.scad");`
-or you can reference individual shape modules as `shapes.box(1,2,3)`.
 
 An object can be customized using function call notation:
 `object(name1=val1,...)` re-evaluates the script
