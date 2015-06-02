@@ -121,3 +121,45 @@ Objects are a powerful new addition to OpenSCAD,
 but they arise naturally as the answer to some questions:
 how can I make library scripts into first class values,
 and what does <tt>{</tt><i>script</i><tt>}</tt> mean in an expression?
+
+Objects have multiple roles in OpenSCAD2.
+* An OpenSCAD2 script is evaluated to an object.
+* Objects are the replacement for groups in the CSG tree.
+* Library script files are referenced as objects.
+  The `include` and `use` operators now take objects as arguments.
+* An object literal is a script enclosed in braces: `{script}`.
+
+An OpenSCAD script may contain top level definitions and geometry statements.
+An object is a value representing a script.
+An object has a set of named fields and a sequence of geometry values.
+
+The fields within an object are referenced using `object.name` notation.
+They may be parameters or metadata which describe the contained geometry.
+But objects can be used in any situation where a set of named fields is required.
+
+The `script` function reads a script file and returns an object.
+```
+shapes = script("MCAD/shapes.scad");
+```
+You can `use shapes;` or `use script("MCAD/shapes.scad");`
+or you can reference individual shape modules as `shapes.box(1,2,3)`.
+
+An object can be customized using function call notation:
+`object(name1=val1,...)` re-evaluates the script
+with specified definitions overridden by new values, and returns a new object.
+
+For example,
+```
+lollipop = {
+  radius   = 10; // candy
+  diameter = 3;  // stick
+  height   = 50; // stick
+
+  translate([0,0,height]) sphere(r=radius);
+  cylinder(d=diameter,h=height);
+};
+lollipop(radius=15); // more candy!
+```
+
+There's lots more that can be done with objects.
+Read the [full OpenSCAD2 proposal](../README.md) and explore.
