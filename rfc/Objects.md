@@ -84,26 +84,30 @@ shapes = script("MCAD/shapes.scad");
 ```
 Now you can use `math.PI` and `shapes.box(1,2,3)`.
 
+Note: this is consistent with the way that all other external files are
+referenced: you pass a filename argument to a function that reads the file
+and returns a value. But it's the `import` function that's called in those
+other cases. Why not just use `import` for reading library scripts? The problem is that `import` uses the filename extension to decide what type of file it is reading. I'm told that users are not consistent in using the extension ".scad" for files referenced by `include` and `use`. I don't want to force people to rename their files before they can upgrade to OpenSCAD2.
+
 More operations on objects:
 
 * `include object;` includes all of the top level definitions and shapes from the object into your script.
+  This is like "inheritance" for objects.
   For example,
-
    ```
    include script("examples/example020.scad");
    ```
 
-* `use object;` includes just the top level definitions, not the shapes.
+* `use object;` makes the top level definitions in *object* available for
+  lookup from the current scope, but doesn't include those definitions
+  into the current object. This is for the benefit of library scripts that don't
+  want to export all of the definitions that they make use of from other
+  libraries. If your script happens to define an object with the same name
+  as a binding visible via `use`, then your definition takes precedence.
 
    ```
-   use script("examples/example020.scad");
-   spring();
-   ```
-
-* `using(name1,name2,...) object;` imports specified names from an object.
-
-   ```
-   using(box, ellipsoid, cone) shapes;
+   use script("MCAD/shapes.scad");
+   box(1,2,3);
    ```
 
 * `object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
