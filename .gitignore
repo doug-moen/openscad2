@@ -1,0 +1,6 @@
+# vim temp files
+.swp
+.*.swp
+
+# misc temp files
+,*
