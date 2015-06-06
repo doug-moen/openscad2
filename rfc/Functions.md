@@ -182,15 +182,19 @@ module call syntax. But there is a choice to be made.
 In this RFC, I'll assume the new improved semantics.
 The other option is discussed in [backwards compatibility](Backwards_Compatibility.md).
 
-### Right-Associative Function Calls
-Traditional module call syntax looks like this:
+### Pipeline Notation
+OpenSCAD provides a nice readable syntax
+for a chain of geometric transformations
+applied to a shape. It looks like this:
 ```
 scale([0.5,1,1.5])
   rotate([45,45,45])
     translate([10,20,30])
       cube(10)
 ```
-If this is converted to double-function-call syntax, it looks like this:
+I call this a pipeline. You can think of the shape data flowing from
+bottom to top, or from right to left, through a sequence of transformations.
+If converted to double-function-call syntax, the pipeline looks like this:
 ```
 scale([0.5,1,1.5])
   (rotate([45,45,45])
@@ -199,12 +203,7 @@ scale([0.5,1,1.5])
 ```
 with the result that parentheses pile up at the end.
 
-Traditional module call syntax is, in effect,
-a *right associative function call* syntax
-that reduces the number of parentheses needed
-when geometric transformations are chained together.
-
-Most functional programming languages provide an explicit right associative function call operator,
+Most functional programming languages provide an explicit pipeline operator
 for exactly the same reasons: it reduces the number of parentheses required when chaining transformations.
 
 OpenSCAD2 provides both options.
@@ -220,7 +219,7 @@ OpenSCAD2 provides both options.
   (other than modifier characters in the statement syntax),
   then `<<` can be omitted.
 
-Abbreviated function call syntax:
+Abbreviated pipeline notation:
 
 | expression | abbreviation
 |------------|-------------
@@ -237,7 +236,7 @@ translate([10,20,30])
 cube(10);
 ```
 This is difficult to read. In my experiments, I find that writing `<<` explicitly
-makes the code clearer when a chain of transformations extends across multiple lines:
+makes the code clearer when a pipeline extends across multiple lines:
 ```
 scale([0.5,1,1.5])
 << rotate([45,45,45])
