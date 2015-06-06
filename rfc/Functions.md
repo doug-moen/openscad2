@@ -101,8 +101,8 @@ to an equivalent OpenSCAD2 function definition:
 
 <tr>
 <td>
-<td> <b>old</b>
-<td> <b>new</b>
+<td align=center> <b>old</b>
+<td align=center> <b>new</b>
 
 <tr>
 <td> childless
