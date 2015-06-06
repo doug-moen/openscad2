@@ -176,14 +176,26 @@ Most functional programming languages provide an explicit right associative func
 for exactly the same reasons: it reduces the number of parentheses required when chaining transformations.
 
 OpenSCAD2 provides both options.
-* The `<<` operator is a low precedence, right associative function call operator,
+* The pipeline operator `<<` is a low precedence, right associative function call operator,
   which is available in both statement and expression syntax.
+  You can think of `h << g << f << x` as a pipeline
+  where data flows from right to left through a series of transformations:
+  it's equivalent to `h(g(f(x)))`.
 * The `<<` operator can be omitted in certain contexts,
   which correspond to the traditional module call syntax.
   If the right argument of `<<` begins with a token other than `(` or `[`,
   and if the right argument doesn't contain unary or binary operators
   (other than modifier characters in the statement syntax),
   then `<<` can be omitted.
+
+Abbreviated function call syntax:
+
+| expression | abbreviation
+|------------|-------------
+| `f(x)`     | `f x`
+| `f(1)`     | `f 1`
+| `f(g(h(1)))` | `f g h 1`
+| `rotate(45)(cube(10))` | `rotate(45) cube(10)`
 
 Some people write a chain of transformations like this:
 ```
@@ -203,10 +215,10 @@ scale([0.5,1,1.5])
 
 ### Limitations on Modifier Characters
 There is a syntactic conflict between OpenSCAD statement and expression syntax.
-In the statement syntax, `f(x) % g(x)` calls the module `f(x)` with `%g(x)`
+In the statement syntax, `f(x) % g(x)` calls the module `f(x)` with `%g(x)`
 as its children. In the expression syntax, the same phrase invokes the remainder operator (`%`)
 with the arguments `f(x)` and `g(x)`. A similar problem occurs with `*`.
-As a result, if you want to convert the statement `rotate(45) %cube(10);`
+As a result, if you want to convert the statement `rotate(45) %cube(10);`
 to an expression, you have a couple of choices:
 * `rotate(45) << %cube(10)`
 * `rotate(45)(%cube(10))`
@@ -225,10 +237,10 @@ However, the compiler will insert the missing braces, and convert this to:
 rotate(45) {for (i=x) m(i);}
 ```
 The "upgrade to modern syntax" command will also insert the missing braces.
-(Once you upgrade to modern syntax, OpenSCAD2 will create an object
+Once you upgrade to modern syntax, OpenSCAD2 will create an object
 if and only if there are brace brackets in the syntax to denote an object literal.
 This is different from the way that OpenSCAD1 implicitly creates groups
-even when you don't want it to, leading to the module composability problem.)
+even when you don't want it to, leading to the module composability problem.
 
 This syntax is not allowed in expressions.
 You must place the `for` in a list or object literal.
