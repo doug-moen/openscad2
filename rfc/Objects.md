@@ -221,3 +221,31 @@ bom = extract_bom(script(target));
 ```
 Until we have standard conventions for representing BOM metadata,
 each project will need its own implementation of `makebom.scad`.
+
+### the Conway Polyhedron Operators
+Mathematician John Conway has designed
+[a language for generating symmetric polyhedra](http://en.wikipedia.org/wiki/Conway_polyhedron_notation).
+It consists of some primitive polyhedra, plus operators for transforming one polyhedron
+into another. It is a powerful geometric solid modelling language that fits
+well with OpenSCAD, with little overlap.
+
+[Kit Wallace has implemented this for OpenSCAD](https://github.com/KitWallace/openscad/blob/master/conway.scad).
+
+To implement Conway operators in OpenSCAD1, you need to define an abstract data type for a polyhedron. It has to be implemented as an array, containing vertices, faces, and whatever else is needed. The Conway operators become functions that map a poly to another poly. There needs to be a separate module to render a Conway polyhedron.
+
+We can do better than this in OpenSCAD2.
+A Conway polyhedron can be represented as an object,
+with named fields for the vertices, faces, etc.
+The polyhedron object can contain its own geometry,
+so there is no need for a user to invoke a separate render operation.
+The goal is [composability](Composable_Building_Blocks.md):
+from a user's perspective, we'd like polyhedrons constructed by `conway.scad`
+to be interoperable with primitive polyhedrons.
+
+An open question is whether built-in modules can be redesigned to
+return an object, containing the necessary fields, so that library
+functions such as the Conway operators can operate on them.
+
+To answer this question, we should look at existing libraries
+that construct and operate on polygon values, and try to determine
+a standard interface.
