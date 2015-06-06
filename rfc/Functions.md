@@ -94,16 +94,48 @@ There are two cases.
   or it can be a list or object containing multiple shapes.
 
 ### Converting Module Definitions to Function Definitions
-For example, this OpenSCAD1 module definition:
-```
-module rot(a)
-   rotate([a,a,a]) children();
-```
-is equivalent to this OpenSCAD2 function definition:
-```
-rot(a)(children) =
-   rotate([a,a,a])(children);
-```
+Here's how to convert an OpenSCAD1 module definition
+to an equivalent OpenSCAD2 function definition:
+
+<table>
+
+<tr>
+<td>
+<td> <b>old</b>
+<td> <b>new</b>
+
+<tr>
+<td> childless
+<td>
+<pre>
+module box(x,y,z)
+   cube([x,y,z]);
+</pre>
+<td>
+<pre>
+box(x,y,z) =
+   cube([x,y,z]);
+</pre>
+
+<tr>
+<td> with children
+<td>
+<pre>
+module elongate(n) {
+  for (i = [0 : $children-1])
+    scale([n, 1, 1]) children(i);
+}
+</pre>
+<td>
+<pre>
+elongate(n)(children) = {
+  for (c = children)
+    scale([n, 1, 1]) c;
+};
+</pre>
+
+</table>
+
 When converting a module definition to a function definition,
 here is how children references are converted:
 
