@@ -68,25 +68,43 @@ let (a = 2, f(x) = x + 1) f(a)
 is an expression that returns `3`.
 
 ## Lexical Scoping
-OpenSCAD2 uses simple, consistent scoping rules that apply
-uniformly to all definitions and bindings.
+OpenSCAD2 is a block structured, lexically scoped language
+with simple, consistent scoping rules that apply
+uniformly to all bindings.
 
-The scope of a definition begins at the following statement
-(or at the following definition in a `let` bound definition list),
-and continues to the end of the script or `let` expression.
-As a special case, forward references are legal within function or
+A block is a syntactic construct that binds identifiers to values,
+and delimits the scope of those bindings. Lexical scoping means
+that a binding is not visible outside of its block.
+* An [object literal](Objects.md#object-literals)
+  `{script}` is a block.
+  Within the script, definitions bind identifiers to values.
+* An OpenSCAD script file is a block.
+  It's a special case of an object literal:
+  top level definitions bind identifers to values,
+  and there is no need for brace brackets to delimit the script.
+* A `let` construct is a block.
+  The syntax is `let (definitions) expression`
+  or `let (definitions) statement`.
+  The parenthesized list of definitions bind identifiers to values.
+* A function literal is a block.
+  The formal parameters are the identifiers
+  that are bound to values by a function call.
+
+The scope of a binding begins at the following statement
+(for a script), or at the following definition (in a `let` bound definition list)
+or at the following formal parameter (for a function literal),
+and continues to the end of the block.
+As a special case, forward references are legal within nested function or
 module bodies: this makes recursive definitions possible.
 
-Scopes are nested. Definitions in an inner scope
+Scopes are nested. Bindings in an inner scope
 shadow or hide bindings inherited from an outer scope.
 * The outermost scope is the *global* scope,
   which contains all of the built-in bindings,
   such as `true`, `cos`, and `cube`.
 * Inside of that is the file-level scope for each *.scad script file.
-* An object literal (syntax: `{script}`) introduces a nested scope.
-* A `let` construct introduces a nested scope.
-* A `function` or `module` introduces a nested scope which contains
-  the formal parameters.
+* Inside of that are the object literals, let constructs, and function literals
+  contained in the script file.
 
 The `include` operator has changed in OpenSCAD2 to support lexical scoping.
 
@@ -107,7 +125,7 @@ and global names that it references are resolved independent of any script that 
 
 In OpenSCAD1, this mixing together of the definitions from the includer and the includee
 causes unpredictable behaviour and chaos, as discussed in several forum posts.
-However, this feature has also been deliberately used to allow the includer to override
+However, this feature is also deliberately used to allow the includer to override
 parameters in the includee. OpenSCAD2 provides a safe, lexically scoped mechanism for
 overriding definitions in an included script, [as discussed here](Objects.md).
 
