@@ -88,12 +88,22 @@ shadow or hide bindings inherited from an outer scope.
 * A `function` or `module` introduces a nested scope which contains
   the formal parameters.
 
-To preserve lexical scoping, the `include` operator has a new implementation
-in OpenSCAD2. It no longer performs a textual substitution, similar to `#include` in C.
-Instead, the referenced script is separately compiled,
-and then its top level definitions are imported
-into the scope of the including script. This means that definitions in the including
-script are not visible to the code in the script being included.
+The `include` operator has changed in OpenSCAD2 to support lexical scoping.
+
+In OpenSCAD1, `include <F>` works by textually including the specified file F.
+Let's say this is done at the "top level" of a script S.
+Then top level definitions of S are mixed together with top level definitions from F.
+For example, if script S happens to define
+```
+/* return vertex list for i'th tan from the game of tangrams */
+function tan(i) = ...;
+```
+for its own reasons, and script F happens to call `tan`, expecting to get the builtin tangent function, then F will instead get S's version of `tan`.
+
+By contrast, OpenSCAD2 is lexically scoped. Within script S, the scope of `tan` is restricted
+to the script itself; it doesn't bleed into other scripts that it includes.
+To implement this, the included script F is separately compiled
+and global names that it references are resolved independent of any script that happens to include it.
 
 In OpenSCAD1, this mixing together of the definitions from the includer and the includee
 causes unpredictable behaviour and chaos, as discussed in several forum posts.
