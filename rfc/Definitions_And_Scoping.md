@@ -11,7 +11,7 @@ to define 3D shapes.
 In OpenSCAD2, [everything is a first class value](First_Class_Values.md),
 including functions and modules.
 Anything can be passed as an argument to a function or returned as a result.
-In order to make this work, OpenSCAD2 has a single namespace for all named values.
+In order to make this work, OpenSCAD2 has a single namespace.
 
 This creates a backward compatibility problem, which is resolved by
 "backward compatibility mode" for OpenSCAD1 scripts.
@@ -25,10 +25,11 @@ the 3 different namespaces:
 * `module name(parameters) statement` defines a module, in the module namespace.
 
 Note that OpenSCAD1 calls `x = 5;` an *assignment statement*,
-which implies that `x` is a mutable variable that can later be assigned a different value.
-This is misleading terminology, and `x` is not really a variable in the imperative
-language sense.
-[OpenSCAD1 is actually a functional language.](Declarative_Semantics.md)
+which implies that `x` is a mutable variable of the kind found
+in imperative programming languages.
+That's not the case;
+[OpenSCAD1 is actually a functional language](Declarative_Semantics.md).
+To avoid confusion, OpenSCAD2 uses the term *definition* instead.
 
 In OpenSCAD2, there is a single unified definition syntax.
 Within a script,
@@ -39,8 +40,6 @@ is a definition that binds `name` to the value denoted by `expression`.
 This means that `name` can be substituted for `expression`,
 or vice versa, anywhere in the scope of the definition,
 without changing the meaning of the program.
-
-We call `name` a named value, or a binding.
 
 As a special case, you can abbreviate a definition whose right side is
 a [function literal](Functions.md#function-literals)
