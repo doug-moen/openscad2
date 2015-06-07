@@ -42,7 +42,8 @@ without changing the meaning of the program.
 
 We call `name` a named value, or a binding.
 
-As a special case, you can abbreviate
+As a special case, you can abbreviate a definition whose right side is
+a [function literal](Functions.md#function-literals)
 ```
 hypot = function(x,y) sqrt(x^2 + y^2);
 ```
