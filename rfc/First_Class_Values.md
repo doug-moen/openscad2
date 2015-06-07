@@ -10,7 +10,7 @@ This means:
 * It can be printed as a valid OpenSCAD expression using `echo`.
 * It can be given a name using definition syntax: `name = value;`.
 
-This can't happen until the value, function and module namespaces
+This can't happen until the variable, function and module namespaces
 have been unified into a single namespace.
 Fixed by [Definitions and Scoping](Definitions_And_Scoping.md).
 
