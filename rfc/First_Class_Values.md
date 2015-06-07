@@ -14,8 +14,15 @@ This can't happen until the variable, function and module namespaces
 have been unified into a single namespace.
 Fixed by [Definitions and Scoping](Definitions_And_Scoping.md).
 
-## First Class Numbers
-Currently, numbers are not first class values.
-That's because `1/0` prints as `inf`,
-and `0/0` prints as `nan`,
-but neither `inf` nor `nan` are valid expressions.
+The goal of First Class Values is to improve [composability](Composable_Building_Blocks.md).
+
+## Violations of First Class Values in OpenSCAD1
+
+* Functions and modules are not first class. Fixed by [Functions](Functions.md).
+* Shapes are not first class.
+* Groups are not first class. Fixed by [Objects](Objects.md).
+* Number are not first class,
+  because `1/0` prints as `inf`,
+  and `0/0` prints as `nan`,
+  but neither `inf` nor `nan` are valid expressions.
+  Fixed by [Simple Values](Simple_Values.md).
