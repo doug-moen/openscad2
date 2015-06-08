@@ -74,6 +74,7 @@ However, this mechanism is quite buggy, as discussed in several forum threads.
 
 We are going to provide a better interface.
 
+### the `script` function
 To reference an external library file, use the `script` function.
 It reads a file, and returns the resulting object.
 For example,
@@ -86,18 +87,53 @@ Now you can use `math.PI` and `shapes.box(1,2,3)`.
 
 Note: this is consistent with the way that all other external files are
 referenced: you pass a filename argument to a function that reads the file
-and returns a value. But it's the `import` function that's called in those
+and returns a value.
+Other examples are `import()`, `dxf_cross()` and `surface()`.
+
+<!--
+But it's the `import` function that's called in those
 other cases. Why not just use `import` for reading library scripts? The problem is that `import` uses the filename extension to decide what type of file it is reading. I'm told that users are not consistent in using the extension ".scad" for files referenced by `include` and `use`. I don't want to force people to rename their files before they can upgrade to OpenSCAD2.
+-->
 
-More operations on objects:
+### the `include` operator
 
-* `include object;` includes all of the top level definitions and shapes from the object into your script.
-  This is like "inheritance" for objects.
-  For example,
-   ```
-   include script("examples/example020.scad");
-   ```
+`include object;` includes all of the top level definitions and shapes from the object into your script.
+It can be used for referencing library files, and it is like "inheritance" for objects.
 
+The upgrade tool converts OpenSCAD1 `include <filename>` commands
+to `include script("filename");`.
+It is legal for an OpenSCAD2 script to include an OpenSCAD1 script file:
+the details are in [Backward Compatibility](Backward_Compatibility.md).
+
+For example,
+```
+include script("examples/example020.scad");
+```
+
+### the `use` operator
+According to the OpenSCAD1 User Manual,
+> `use <filename>` imports modules and functions, but does not execute any commands other than those definitions.
+
+The upgrade tool needs to be able to translate this into equivalent OpenSCAD2 code.
+We could add a `use object;` command, similar to the `include` operator.
+The meaning is clear as long as the referenced script is written in OpenSCAD1.
+
+But things get fuzzy if you `use` an OpenSCAD2 script, since the compiler doesn't
+have a general ability to distinguish function definitions from other definitions: we might
+not know until runtime what type of value is bound by a particular definition.
+The easy thing to do is to restrict `use` to only importing definitions that use
+"function definition syntax". So `f(x)=x+1;` would be imported,
+but `rot45=rotate(45);` would not be imported. That is very arbitrary,
+and to me it is unpleasant, since it creates the possibility that changing the
+way that a library function is defined (eg, computing the function using higher
+order functions) could break clients, even if the interface doesn't change.
+If we defined `use` in this way, I would want to immediately deprecate it.
+
+There are other possible ways to translate `use <filename>` in the upgrade tool,
+and there are other possible semantics we could give to the `use` operator.
+I'm leaving this as an open question for further research.
+
+<!--
 * `use object;` makes the top level definitions in *object* available for
   lookup from the current scope, but doesn't include those definitions
   into the current object. This is for the benefit of library scripts that don't
@@ -109,13 +145,15 @@ More operations on objects:
    use script("MCAD/shapes.scad");
    box(1,2,3);
    ```
+-->
 
-* `object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
-  by re-evaluating the script and returning a new object.
+### Customizing an object
+`object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
+by re-evaluating the script and returning a new object.
   
-   ```
-   lollipop(radius=15); // more candy!
-   ```
+```
+lollipop(radius=15); // more candy!
+```
 
 ## Object Literals
 The [First Class Values](First_Class_Values.md) principle requires object literals.
