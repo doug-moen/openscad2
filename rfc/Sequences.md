@@ -45,15 +45,24 @@ and demonstrate that the implementation effort is reasonable compared to the ben
 Right now I'm not sure.
 
 ## Ranges
-Ranges are generalized so that empty ranges are supported.
+OpenSCAD1 does not support empty ranges. The consequence is that if you write this code:
+```
+for (i = [0:len(list)-1]) ... list[i] ...
+```
+then your code will not work if `list` is empty, unless you check for that first.
+What happens is that for an empty list, the above `for` loop will iterate twice
+with `i=-1` and `i=0`. This is a potential bug lurking in many OpenSCAD1 scripts.
+
+OpenSCAD2 fixes this bug and supports empty ranges.
 If the end of the range is < the start of the range (with positive step value),
 then the range is empty (consistent with Haskell).
 Plus, we extend all of the generic sequence operations to ranges.
 
-I'm concerned that this will affect backwards compatibility,
-since at present, `[10:1]` is equivalent to `[10:-1:1]`.
-Also, you can currently use r[0], r[1], r[2] to reference the start, step and end values of a range:
-maybe there's code out there that uses this.
+I'm concerned that this change would affect backwards compatibility,
+since at present, `[10:1]` is equivalent to `[10:-1:1]`,
+instead of yielding the empty range.
+Also, you can currently use r[0], r[1], r[2] to reference the start, step and end values of a range.
+Maybe there's code out there that relies on this.
 
 My solution is to introduce a new range syntax, which will
 support the new range semantics, and leave the old range values
@@ -67,6 +76,15 @@ As a result, this syntax is easier to understand for non-programmers,
 and that this will improve ease of use.
 * range with step 1: `[start..end]`
 * range with step k: `[start,start+k..end]`
+
+If `list` is `[]`, then `[0..len(list)-1]` is `[0..-1]` which is `[]`.
+Note that `[z..a]` is empty whenever `z > a`.
+In general, the sequence of values specified by `[start,start+k..end]`
+is given by this C pseudocode:
+```
+for (i = start; i <= end; i += k)
+   yield(i);
+```
 
 The new range values work with all of the generic sequence operations.
 You can `concat` two ranges, or a range and a list,
