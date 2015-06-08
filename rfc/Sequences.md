@@ -73,7 +73,7 @@ which closely resembles the
 [set builder notation](http://en.wikipedia.org/wiki/Set-builder_notation)
 taught in high school math.
 As a result, this syntax is easier to understand for non-programmers,
-and that this will improve ease of use.
+and will improve ease of use.
 * range with step 1: `[start..end]`
 * range with step k: `[start,start+k..end]`
 
