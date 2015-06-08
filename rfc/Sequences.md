@@ -93,8 +93,9 @@ and the result will be a list.
 Although new ranges are represented internally as 3 numbers,
 at the language and user level, they
 are operationally indistinguishable from lists, therefore they are lists.
-For example, `echo([1..5])` prints `[1,2,3,4,5]`.
-Ranges in Python2 and Haskell work the same way.
+* `echo([1..5])` prints `[1,2,3,4,5]`.
+  Ranges in Python2 and Haskell work the same way.
+* `[0..-1] == []` is `true`.
 
 ## Slice Notation
 The only place we currently support slice notation is `children([start:end])`.
