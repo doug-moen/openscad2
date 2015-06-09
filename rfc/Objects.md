@@ -152,6 +152,7 @@ This interface matches the feature set of Python, but it's more
 powerful because it is more [composable](Composable_Building_Blocks.md).
 * `script(filename)` is an expression that can be used in any context
   where an object is wanted.
+* The argument to `script` is an expression: it need not be a string literal.
 * The *object* argument of `include` is an expression
   that evaluates to an object, rather than a fixed filename.
   (So it could be an object name, an object literal, an object customization.)
