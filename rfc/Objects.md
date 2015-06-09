@@ -196,28 +196,55 @@ lollipop_and_mint = {
 };
 ```
 
+You can combine these two idioms and inherit from a customized base object.
+Insert example here.
+
+### Advanced Features: `$self` and `$super`
+Up to this point, I've shown that we get most of the power of OOP using
+features that weren't designed for this purpose, and need to be there for other reasons.
+
 In order to support the full power of inheritance in an object oriented language,
 we need just two more features, the special variables `$self` and `$super`.
-Sorry, I haven't constructed good geometric examples for these yet.
-Warning: these features might not get implemented right away.
+Although these variables are hard to understand, the good news is that they
+would only be needed by expert users. This is consistent with:
+"simple things should be easy; complex things should be possible".
+We can have the full power of OOP without forcing extra complexity on beginners.
+The corollary is that these features are not urgent.
+
+The special variable `$self` denotes the smallest enclosing object literal, or the object for the script file itself if referenced outside an object literal. The trick here is that a reference to `$self` in a base object is rebound when the base object is included in a derived object: now that same `$self` refers to the derived object.
+
+I still need to construct clear examples of when this feature is needed.
+And clear examples of when you might think it was needed, but actually,
+the compiler is smart enough to do the right thing so that `$self` isn't
+actually needed. I want to minimize the actual required use cases for `$self`
+so that users don't get in trouble by not being aware of it.
+In other words, I want to make sure that object literals, `include` and customization
+compose correctly, that you don't need `$self` to work around bugs in how they compose.
 
 If you want to override a function 'f' that you are inheriting from a base object, you can do this:
 ```
 include parent(f(x) = g(x) + h(x));
 ```
-
-OpenSCAD2 is lexically scoped, so in the above statement, 'g(x) + h(x)' is resolved in the current lexical environment, not in the environment of the object you are including. If 'g' and 'h' are only defined in the base object that is being included, is the compiler smart enough to resolve these references? Possibly not.
-The alternative is to write:
+Suppose that `g` and `h` are defined in the base object that is being included,
+and are therefore inherited by the derived object.
+In that case, this code should be equivalent to:
 ```
 include parent(f(x) = $self.g(x) + $self.h(x));
 ```
-The special variable `$self` denotes the smallest enclosing object literal, or the object for the script file itself if referenced outside an object literal. The trick here is that a reference to `$self` in a base object is rebound when the base object is included in a derived object: now that same `$self` refers to the derived object.
+But you shouldn't actually need to write `$self`, the right thing should just happen automatically.
 
 Now suppose that the new definition of 'f' needs to refer to the original 'f' from the base object. That's what `$super` is for.
 ```
 include parent(f(x) = $super.f(x) + 1);
 ```
 The only context where `$super` is meaningful is in the argument list of object customization.
+
+Without `$super`, the obvious thing to write is:
+```
+include parent(f(x) = parent.f(x) + 1);
+```
+Is there any difference between these two statements? Obviously I would like the second version
+to do the right thing, and I'd like `$super` to be unnecessary.
 
 ## Library Files
 The current OpenSCAD interface for referencing external library files looks like this:
