@@ -82,6 +82,73 @@ by re-evaluating the script and returning a new object.
 lollipop(radius=15);
 ```
 
+## Prototypes vs Modules
+There are two programming styles used
+for creating reusable scripts that render a model:
+the "module" style, and the "prototype" style.
+
+In the "module" style, you put all of your logic into modules.
+At the end of the script, the main module is invoked to render the model.
+The intent of this style is that other scripts can reuse the logic
+by `use`ing the script.
+
+For example,
+```
+module lollipop(
+  radius   = 10,
+  diameter = 3,
+  height   = 50)
+{
+  translate([0,0,height]) sphere(r=radius);
+  cylinder(d=diameter,h=height);
+}
+
+lollipop();
+```
+
+In the "prototype" style,
+you put parameter definitions at the top of your script.
+This allows inexperienced users to find and tweak the parameters,
+without necessarily understanding how the rest of the code works.
+On Thingiverse, the parameters are given Customizer annotations,
+so that visitors to Thingiverse.com can tweak the parameters
+using the Customizer GUI, without even reading the script.
+OpenSCAD is soon getting its own Customizer GUI, and this will
+be an important part of the experience of using OpenSCAD2.
+
+In the "prototype" style,
+you don't need a main module.
+It is simpler to write out the body of the main module
+as top level geometry statements that reference the parameters
+as top level definitions.
+
+For example,
+```
+radius   = 10; // candy
+diameter = 3;  // stick
+height   = 50; // stick
+
+translate([0,0,height]) sphere(r=radius);
+cylinder(d=diameter,h=height);
+```
+
+In OpenSCAD2, the prototype style is just as powerful as the module style
+for code reuse. Instead of writing
+```
+use <lollipop.scad>
+lollipop(radius=15);
+```
+in the module style, you can instead write
+```
+lollipop = script("lollipop.scad");
+lollipop(radius=15);
+```
+in the prototype style.
+
+The prototype style is the preferred style for use with the
+new Customizer GUI that is under development.
+This style is also easier for beginners to understand.
+
 ## Library Files
 The current OpenSCAD interface for referencing external library files looks like this:
 * `include <filename.scad>`
