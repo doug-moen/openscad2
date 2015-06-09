@@ -351,7 +351,7 @@ with this implementation:
 ```
 // makebom.scad
 target = undef;
-extract_bom = function(object) -> ...;
+extract_bom(object) = ...;
 bom = extract_bom(script(target));
 ```
 Until we have standard conventions for representing BOM metadata,
