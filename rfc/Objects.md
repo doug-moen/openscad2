@@ -51,7 +51,36 @@ then
   * `len(lollipop) == 2`
   * `lollipop[1] == cylinder(3,50)`
 
-Some more operations on objects are described in the next section.
+## Object Literals
+The [First Class Values](First_Class_Values.md) principle requires object literals.
+
+An object literal is a script surrounded by brace brackets.
+```
+// define the lollipop object
+lollipop = {
+  radius   = 10; // candy
+  diameter = 3;  // stick
+  height   = 50; // stick
+
+  translate([0,0,height]) sphere(r=radius);
+  cylinder(d=diameter,h=height);
+};
+
+// now add some lollipops to our geometry list
+translate([-50,0,0]) lollipop;
+translate([50,0,0]) lollipop;
+```
+
+This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD1.
+
+## Customizing an object
+`object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
+by re-evaluating the script and returning a new object.
+  
+```
+// add a lollipop with bigger candy than the rest
+lollipop(radius=15);
+```
 
 ## Library Files
 The current OpenSCAD interface for referencing external library files looks like this:
@@ -72,7 +101,68 @@ radius = 15; // more candy!
 ```
 However, this mechanism is quite buggy, as discussed in several forum threads.
 
-We are going to provide a better interface.
+We are going to provide a better interface for referencing library files.
+Here's how the new interface compares to Python:
+
+<table>
+
+<tr>
+<td align=center> <b>Python</b>
+<td align=center> <b>OpenSCAD2</b>
+
+<tr>
+<td>
+<pre>
+import math
+print math.pi
+</pre>
+<td>
+<pre>
+math = script("MCAD/math.scad");
+echo(math.PI);
+</pre>
+
+<tr>
+<td>
+<pre>
+from math import *
+print degrees(pi)
+</pre>
+<td>
+<pre>
+include script("MCAD/math.scad");
+echo(deg(PI));
+</pre>
+
+<tr>
+<td>
+<pre>
+from math import degrees, pi
+print degrees(pi)
+</pre>
+<td>
+<pre>
+use (deg, PI) script("MCAD/math.scad");
+echo(deg(PI));
+</pre>
+
+</table>
+
+This interface matches the feature set of Python, but it's more
+powerful because it is more [composable](Composable_Building_Blocks.md).
+* `script(filename)` is an expression that can be used in any context
+  where an object is wanted.
+* The *object* argument of `include` is an expression
+  that evaluates to an object, rather than a fixed filename.
+  (So it could be an object name, an object literal, an object customization.)
+* Ditto for `use`.
+
+You can selectively override parameters within an included script
+by using object customization.
+```
+lollipop = script("lollipop.scad");
+include lollipop(radius=15); // more candy!
+```
 
 ### the `script` function
 To reference an external library file, use the `script` function.
@@ -102,8 +192,9 @@ It can be used for referencing library files, and it is like "inheritance" for o
 
 The upgrade tool converts OpenSCAD1 `include <filename>` commands
 to `include script("filename");`.
-It is legal for an OpenSCAD2 script to include an OpenSCAD1 script file:
-the details are in [Backward Compatibility](Backward_Compatibility.md).
+It is legal for an OpenSCAD2 script to include an OpenSCAD1 script file,
+and vice versa.
+The details are in [Backward Compatibility](Backward_Compatibility.md).
 
 For example,
 ```
@@ -129,9 +220,33 @@ way that a library function is defined (eg, computing the function using higher
 order functions) could break clients, even if the interface doesn't change.
 If we defined `use` in this way, I would want to immediately deprecate it.
 
-There are other possible ways to translate `use <filename>` in the upgrade tool,
+But there are other possible ways to translate `use <filename>` in the upgrade tool,
 and there are other possible semantics we could give to the `use` operator.
-I'm leaving this as an open question for further research.
+
+Consider what problem the `use` command appears to have been designed to solve:
+* We don't want to include the script's geometry, and we don't want to include all of the
+  top level definitions, because some may conflict with local definitions.
+
+My approach is to create a fresh solution to this problem,
+achieving feature parity with Python,
+and recycling the `use` keyword for the new operation.
+
+So
+```
+use (name1, name2, ...) object;
+```
+is an abbreviation for
+```
+name1 = object.name1;
+name2 = object.name2;
+...
+```
+As mentioned earlier, this is inspired by `from module import name1,name2,...` in Python.
+
+The upgrade tool converts `use <filename>` by
+opening `filename`, making a list of function and module definitions,
+and putting this list into an OpenSCAD2 `use` statement. The user running the
+upgrade tool can edit this list of names as desired.
 
 <!--
 * `use object;` makes the top level definitions in *object* available for
@@ -146,32 +261,6 @@ I'm leaving this as an open question for further research.
    box(1,2,3);
    ```
 -->
-
-### Customizing an object
-`object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
-by re-evaluating the script and returning a new object.
-  
-```
-lollipop(radius=15); // more candy!
-```
-
-## Object Literals
-The [First Class Values](First_Class_Values.md) principle requires object literals.
-
-An object literal is a script surrounded by brace brackets.
-```
-lollipop = {
-  radius   = 10; // candy
-  diameter = 3;  // stick
-  height   = 50; // stick
-
-  translate([0,0,height]) sphere(r=radius);
-  cylinder(d=diameter,h=height);
-};
-lollipop(radius=15); // more candy!
-```
-
-This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD.
 
 ## The CSG Tree
 Objects are the replacement for groups in the CSG tree.
