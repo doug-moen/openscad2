@@ -148,7 +148,13 @@ in the prototype style.
 
 The prototype style is the preferred style for use with the
 new Customizer GUI that is under development.
-This style is also easier for beginners to understand.
+This style is also easier for beginners.
+Scripts are shorter and easier to read and write,
+and for simple models, you don't need to write function definitions.
+
+## Prototypes with Auxiliary Functions
+
+## Inheritance
 
 ## Library Files
 The current OpenSCAD interface for referencing external library files looks like this:
