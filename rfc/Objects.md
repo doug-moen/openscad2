@@ -101,8 +101,8 @@ radius = 15; // more candy!
 ```
 However, this mechanism is quite buggy, as discussed in several forum threads.
 
-We are going to provide a better interface for referencing library files.
-Here's how the new interface compares to Python:
+We are going to provide a better interface.
+Here's how it compares to Python:
 
 <table>
 
@@ -158,7 +158,7 @@ powerful because it is more [composable](Composable_Building_Blocks.md).
 * Ditto for `use`.
 
 You can selectively override parameters within an included script
-by using object customization.
+by using object customization:
 ```
 lollipop = script("lollipop.scad");
 include lollipop(radius=15); // more candy!
@@ -167,13 +167,21 @@ include lollipop(radius=15); // more candy!
 ### the `script` function
 To reference an external library file, use the `script` function.
 It reads a file, and returns the resulting object.
+
+If you just want to drop a single lollipop into your model,
+you could do this:
+```
+// add a lollipop to our geometry list
+script("lollipop.scad");
+```
+
+If you want to reference the same script more than once,
+you can give it a name.
 For example,
 ```
-lollipop = script("lollipop.scad");
 math = script("MCAD/math.scad");
-shapes = script("MCAD/shapes.scad");
+echo(math.deg(math.PI));
 ```
-Now you can use `math.PI` and `shapes.box(1,2,3)`.
 
 Note: this is consistent with the way that all other external files are
 referenced: you pass a filename argument to a function that reads the file
