@@ -196,6 +196,28 @@ lollipop_and_mint = {
 };
 ```
 
+In order to support the full power of inheritance in an object oriented language,
+we need to add two special variables, `$self` and `$super`.
+Sorry, I haven't constructed good geometric examples for these yet.
+
+If you want to override a function 'f' that you are inheriting from a base object, you can do this:
+```
+include parent(f(x) = g(x) + h(x));
+```
+
+OpenSCAD2 is lexically scoped, so in the above statement, 'g(x) + h(x)' is resolved in the current lexical environment, not in the environment of the object you are including. If 'g' and 'h' are only defined in the base object that is being included, is the compiler smart enough to resolve these references? Possibly not.
+The alternative is to write:
+```
+include parent(f(x) = $self.g(x) + $self.h(x));
+```
+The special variable `$self` denotes the smallest enclosing object literal, or the object for the script file itself if referenced outside an object literal.
+
+Now suppose that the new definition of 'f' needs to refer to the original 'f' from the base object. That's what `$super` is for.
+```
+include parent(f(x) = $super.f(x) + 1);
+```
+The only context where `$super` is meaningful is in the argument list of object customization.
+
 ## Library Files
 The current OpenSCAD interface for referencing external library files looks like this:
 * `include <filename.scad>`
