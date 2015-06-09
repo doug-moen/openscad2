@@ -83,7 +83,7 @@ lollipop(radius=15);
 ```
 
 ## Prototypes vs Modules
-There are two programming styles used
+Here are two programming styles that can be used
 for creating reusable scripts that render a model:
 the "module" style, and the "prototype" style.
 
@@ -117,7 +117,8 @@ OpenSCAD is soon getting its own Customizer GUI, and this will
 be an important part of the experience of using OpenSCAD2.
 
 In the "prototype" style,
-you don't need a main module.
+you don't need a main module,
+although you may need auxiliary modules.
 It is simpler to write out the body of the main module
 as top level geometry statements that reference the parameters
 as top level definitions.
