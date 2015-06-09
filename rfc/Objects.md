@@ -155,6 +155,46 @@ and for simple models, you don't need to write function definitions.
 ## Prototypes with Auxiliary Functions
 
 ## Inheritance
+The "prototype" style of OpenSCAD programming
+is named after the classless style of object oriented programming
+called [Prototype-based programming](http://en.wikipedia.org/wiki/Prototype-based_programming).
+Prototype based programming was designed to be just as powerful as class-based programming,
+except that it's a lot simpler.
+
+In a prototype based language,
+instead of class definitions, you have object literals.
+Instead of constructing an instance of a class,
+you clone an existing "prototype" object, and make changes to it.
+This is done using "object customization" in OpenSCAD2.
+
+Prototype based languages have inheritance,
+where an object is defined to be just like a base object,
+except with some changes, which are made by overriding existing
+fields and adding new fields.
+Just as with classes in class-based OOP languages,
+base objects need to be designed with inheritance in mind.
+They need to provide fields that are "hooks" that can be overridden
+by derived objects.
+
+In OpenSCAD2, the simplest kind of inheritance is done using customization,
+where you just override existing fields.
+```
+big_lollipop = lollipop(radius=15, height=60);
+```
+
+The `include` command adds all of the fields and geometry of a specified object
+to the current object. It comes from OpenSCAD1, but the syntax has changed
+from `include <filename>` to `include object;`.
+
+You can extend a base object with new fields and geometry using the `include` command.
+```
+lollipop_and_mint = {
+   include lollipop;
+   mint_diameter = 15;
+   translate([mint_diameter*2, 0, 0])
+      cylinder(h=mint_diameter/4, d=mint_diameter);
+};
+```
 
 ## Library Files
 The current OpenSCAD interface for referencing external library files looks like this:
