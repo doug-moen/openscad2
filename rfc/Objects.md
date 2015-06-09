@@ -176,7 +176,7 @@ base objects need to be designed with inheritance in mind.
 They need to provide fields that are "hooks" that can be overridden
 by derived objects.
 
-In OpenSCAD2, the simplest kind of inheritance is done using customization,
+In OpenSCAD2, the simplest kind of inheritance is customization,
 where you just override existing fields.
 ```
 big_lollipop = lollipop(radius=15, height=60);
@@ -197,8 +197,9 @@ lollipop_and_mint = {
 ```
 
 In order to support the full power of inheritance in an object oriented language,
-we need to add two special variables, `$self` and `$super`.
+we need just two more features, the special variables `$self` and `$super`.
 Sorry, I haven't constructed good geometric examples for these yet.
+Warning: these features might not get implemented right away.
 
 If you want to override a function 'f' that you are inheriting from a base object, you can do this:
 ```
@@ -210,7 +211,7 @@ The alternative is to write:
 ```
 include parent(f(x) = $self.g(x) + $self.h(x));
 ```
-The special variable `$self` denotes the smallest enclosing object literal, or the object for the script file itself if referenced outside an object literal.
+The special variable `$self` denotes the smallest enclosing object literal, or the object for the script file itself if referenced outside an object literal. The trick here is that a reference to `$self` in a base object is rebound when the base object is included in a derived object: now that same `$self` refers to the derived object.
 
 Now suppose that the new definition of 'f' needs to refer to the original 'f' from the base object. That's what `$super` is for.
 ```
