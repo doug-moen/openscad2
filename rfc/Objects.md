@@ -39,17 +39,46 @@ cylinder(d=diameter,h=height);
 The lollipop script denotes an object with 3 named fields
 (radius, diameter, height) and two shapes, a sphere and a cylinder.
 
-In accordance with [First Class Values](First_Class_Values.md),
-we are going to make objects into first class values.
-If `lollipop` is the object denoted by the lollipop.scad script,
-then
+## The `script` function
+To reference a script file, use the `script` function.
+Given a filename argument,
+it reads a script file, and returns the resulting object.
+
+If you just want to drop a single lollipop into your model,
+you could do this:
+```
+// add a lollipop to our geometry list
+script("lollipop.scad");
+```
+
+If you want to reference the same script more than once,
+you can give it a name.
+For example,
+```
+lollipop = script("lollipop.scad");
+```
+
+Note: this is consistent with the way that all other external files are
+referenced: you pass a filename argument to a function that reads the file
+and returns a value.
+Other examples are `import()`, `dxf_cross()` and `surface()`.
+
+## The Object API
+Objects are [First Class Values](First_Class_Values.md).
+
+An object contains a set of named fields that can be referenced using `.` notation.
 * `lollipop.height` is the stick height
-* `lollipop` is interpreted as a sequence of shapes, in any context that
-  expects a shape or list of shapes. For example, `scale(10) lollipop`.
-* An object can be used in any context expecting a list,
-  and it behaves like a list of shapes. For example,
-  * `len(lollipop) == 2`
-  * `lollipop[1] == cylinder(3,50)`
+
+An object is a geometric object containing a sequence of shapes.
+It can be used in any context requiring a shape or sequence of shapes.
+For example,
+* `scale(10) lollipop`
+* `intersection() lollipop // intersection of the stick and candy`
+
+Objects support all of the
+[generic sequence operations](Sequences.md):
+* `len(lollipop) == 2`
+* `lollipop[1] == cylinder(3,50)`
 
 ## Object Literals
 The [First Class Values](First_Class_Values.md) principle requires object literals.
