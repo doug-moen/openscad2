@@ -52,7 +52,8 @@ hypot(x,y) = sqrt(x^2 + y^2);
 ```
 The two definition syntaxes are entirely equivalent,
 and the abbreviation is allowed wherever `name=expr` is legal,
-including in function calls.
+including in function calls
+and in `-D` command line arguments.
 
 Another way to specify a set of local definitions
 is using `let`. This syntax is valid in both expressions and statements.
