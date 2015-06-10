@@ -196,7 +196,6 @@ This interface matches the feature set of Python, but it's more
 powerful because it is more [composable](Composable_Building_Blocks.md).
 * `script(filename)` is an expression that can be used in any context
   where an object is wanted.
-* The argument to `script` is an expression: it need not be a string literal.
 * The *object* argument of `use` is an expression
   that evaluates to an object, rather than a fixed filename.
   (So it could be an object name, an object literal, an object customization.)
@@ -206,7 +205,7 @@ powerful because it is more [composable](Composable_Building_Blocks.md).
 
 There is an almost universal desire among the authors of library scripts
 to include example code that demonstrates how to use the API.
-So we should support this.
+So we should support this better.
 
 There should be a standard way for library scripts to include example code
 that you can interact with using the new Customizer GUI, without having to
@@ -227,111 +226,3 @@ Annotations for the customizer GUI are out of scope for this RFC,
 but the new `use` command supports all of the other requirements.
 You just need to use identifiers starting with `_` for definitions
 that are part of the demo code.
-
-## Old Stuff
-
-### the `script` function
-To reference an external library file, use the `script` function.
-It reads a file, and returns the resulting object.
-
-If you just want to drop a single lollipop into your model,
-you could do this:
-```
-// add a lollipop to our geometry list
-script("lollipop.scad");
-```
-
-If you want to reference the same script more than once,
-you can give it a name.
-For example,
-```
-math = script("MCAD/math.scad");
-echo(math.deg(math.PI));
-```
-
-Note: this is consistent with the way that all other external files are
-referenced: you pass a filename argument to a function that reads the file
-and returns a value.
-Other examples are `import()`, `dxf_cross()` and `surface()`.
-
-<!--
-But it's the `import` function that's called in those
-other cases. Why not just use `import` for reading library scripts? The problem is that `import` uses the filename extension to decide what type of file it is reading. I'm told that users are not consistent in using the extension ".scad" for files referenced by `include` and `use`. I don't want to force people to rename their files before they can upgrade to OpenSCAD2.
--->
-
-### the `include` operator
-
-`include object;` includes all of the top level definitions and shapes from the object into your script.
-It can be used for referencing library files, and it is like "inheritance" for objects.
-
-The upgrade tool converts OpenSCAD1 `include <filename>` commands
-to `include script("filename");`.
-It is legal for an OpenSCAD2 script to include an OpenSCAD1 script file,
-and vice versa.
-The details are in [Backward Compatibility](Backward_Compatibility.md).
-
-For example,
-```
-include script("examples/example020.scad");
-```
-
-### the `use` operator
-According to the OpenSCAD1 User Manual,
-> `use <filename>` imports modules and functions, but does not execute any commands other than those definitions.
-
-The upgrade tool needs to be able to translate this into equivalent OpenSCAD2 code.
-We could add a `use object;` command, similar to the `include` operator.
-The meaning is clear as long as the referenced script is written in OpenSCAD1.
-
-But things get fuzzy if you `use` an OpenSCAD2 script, since the compiler doesn't
-have a general ability to distinguish function definitions from other definitions: we might
-not know until runtime what type of value is bound by a particular definition.
-The easy thing to do is to restrict `use` to only importing definitions that use
-"function definition syntax". So `f(x)=x+1;` would be imported,
-but `rot45=rotate(45);` would not be imported. That is very arbitrary,
-and to me it is unpleasant, since it creates the possibility that changing the
-way that a library function is defined (eg, computing the function using higher
-order functions) could break clients, even if the interface doesn't change.
-If we defined `use` in this way, I would want to immediately deprecate it.
-
-But there are other possible ways to translate `use <filename>` in the upgrade tool,
-and there are other possible semantics we could give to the `use` operator.
-
-Consider what problem the `use` command appears to have been designed to solve:
-* We don't want to include the script's geometry, and we don't want to include all of the
-  top level definitions, because some may conflict with local definitions.
-
-My approach is to create a fresh solution to this problem,
-achieving feature parity with Python,
-and recycling the `use` keyword for the new operation.
-
-So
-```
-use (name1, name2, ...) object;
-```
-is an abbreviation for
-```
-name1 = object.name1;
-name2 = object.name2;
-...
-```
-As mentioned earlier, this is inspired by `from module import name1,name2,...` in Python.
-
-The upgrade tool converts `use <filename>` by
-opening `filename`, making a list of function and module definitions,
-and putting this list into an OpenSCAD2 `use` statement. The user running the
-upgrade tool can edit this list of names as desired.
-
-<!--
-* `use object;` makes the top level definitions in *object* available for
-  lookup from the current scope, but doesn't include those definitions
-  into the current object. This is for the benefit of library scripts that don't
-  want to export all of the definitions that they make use of from other
-  libraries. If your script happens to define an object with the same name
-  as a binding visible via `use`, then your definition takes precedence.
-
-   ```
-   use script("MCAD/shapes.scad");
-   box(1,2,3);
-   ```
--->
