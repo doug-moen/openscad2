@@ -83,12 +83,17 @@ OpenSCAD2 should provide a standard interface that works for
 referencing any library script, regardless of whether it contains example code,
 and regardless of whether the API includes mathematical constants.
 
-The obvious solution is to provide a variant of the `use` command
+The obvious solution is to provide a `use` command
 which doesn't include geometry, but which does include all of the
 top level definitions, even if they are numeric constants.
 The syntax is `use object;`.
-As a special case, definitions of `$` variables like `$fn` are not included;
-they are considered part of the geometry.
+As a special case,
+* Definitions of `$` variables like `$fn` are not included;
+  they are considered part of the geometry.
+* Definitions of names beginning with `_` are not included;
+  they are considered internal to the library.
+  OpenSCAD2 does *not* support rigorous information hiding&mdash;this is
+  merely a convention of the `use` command.
 
 In OpenSCAD2, the `include` and `use` commands have well defined
 and distinct use cases:
