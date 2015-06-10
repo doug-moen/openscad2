@@ -146,8 +146,7 @@ OpenSCAD is soon getting its own Customizer GUI, and this will
 be an important part of the experience of using OpenSCAD2.
 
 In the "prototype" style,
-you don't need a main module,
-although you may need auxiliary modules.
+you don't need a main module.
 It is simpler to write out the body of the main module
 as top level geometry statements that reference the parameters
 as top level definitions.
@@ -161,6 +160,11 @@ height   = 50; // stick
 translate([0,0,height]) sphere(r=radius);
 cylinder(d=diameter,h=height);
 ```
+
+You may need auxiliary modules, but they can directly refer to top level
+parameters as "global variables". In this style, there is no need to
+pass all parameters as arguments, which saves a lot of code if you
+have many model parameters.
 
 In OpenSCAD2, the prototype style is just as powerful as the module style
 for code reuse. Instead of writing
@@ -180,8 +184,6 @@ new Customizer GUI that is under development.
 This style is also easier for beginners.
 Scripts are shorter and easier to read and write,
 and for simple models, you don't need to write function definitions.
-
-## Prototypes with Auxiliary Functions
 
 ## Inheritance
 The "prototype" style of OpenSCAD programming
