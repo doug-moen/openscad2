@@ -55,7 +55,7 @@ but you don't get the geometry from example code. You have to read the library s
 figure out what style it is written in, then choose either `include` or `use`
 based on this research.
 
-This is true even for the latest versions of the MCAD scripts.
+This is true even for the June 2015 versions of the MCAD scripts.
 * Some MCAD scripts export mathematical constants as part of their API.
   You must use `include`. Examples are `math.scad` and `materials.scad`.
 * Some MCAD scripts define mathematical constants that are used within
@@ -83,14 +83,14 @@ OpenSCAD2 should provide a standard interface that works for
 referencing any library script, regardless of whether it contains example code,
 and regardless of whether the API includes mathematical constants.
 
-The obvious solution is to provide a `use` command
-which doesn't include geometry, but which does include all of the
+The obvious solution is a `use` command
+which doesn't import geometry, but which does import all of the
 top level definitions, even if they are numeric constants.
 The syntax is `use object;`.
 As a special case,
-* Definitions of `$` variables like `$fn` are not included;
+* Names beginning with `$` (like `$fn`) are not imported;
   they are considered part of the geometry.
-* Definitions of names beginning with `_` are not included;
+* Names beginning with `_` are not imported;
   they are considered internal to the library.
   OpenSCAD2 does *not* support rigorous information hiding&mdash;this is
   merely a convention of the `use` command.
@@ -99,13 +99,13 @@ In OpenSCAD2, the `include` and `use` commands have well defined
 and distinct use cases:
 * `include` is not intended for use with library scripts.
   It's designed for model scripts, since it includes the model's geometry.
-  More generally, `include` implements *object inheritance*
+  More generally, `include` is a form of
+  [*object inheritance*](Objects.md#inheritance)
   in the OpenSCAD2 object system.
   It is backward compatible with the OpenSCAD1 `include` command.
 * `use` is specifically designed for library scripts.
-  It includes top level definitions but not geometry.
-  It is not fully backwards compatible with the OpenSCAD1 `use` command,
-  because it includes all definitions, even numeric constants.
+  It imports top level definitions but not geometry or internal definitions.
+  It is not fully backwards compatible with the OpenSCAD1 `use` command.
 
 Most modern programming languages have a "module system" for referencing
 external libraries. The standard features are:
@@ -134,7 +134,7 @@ name2 = object.name2;
 The `using` command will be useful in porting some cases
 of the OpenSCAD1 `use` command, where there are name conflicts
 because the OpenSCAD2 `use` command imports too many names.
-For example,
+For example, you might want
 ```
 using (epitrochoid,hypotrochoid) script("MCAD/trochoids.scad");
 ```
@@ -147,10 +147,12 @@ Here's how OpenSCAD2 compares to the Python module system:
 <table>
 
 <tr>
+<td>
 <td align=center> <b>Python</b>
 <td align=center> <b>OpenSCAD2</b>
 
 <tr>
+<td> <b>Qualified<br>Reference</b>
 <td>
 <pre>
 import math
@@ -163,18 +165,7 @@ echo(math.PI);
 </pre>
 
 <tr>
-<td>
-<pre>
-from math import *
-print degrees(pi)
-</pre>
-<td>
-<pre>
-use script("MCAD/math.scad");
-echo(deg(PI));
-</pre>
-
-<tr>
+<td> <b>Selective<br>Import</b>
 <td>
 <pre>
 from math import degrees, pi
@@ -183,6 +174,19 @@ print degrees(pi)
 <td>
 <pre>
 using (deg, PI) script("MCAD/math.scad");
+echo(deg(PI));
+</pre>
+
+<tr>
+<td> <b>Import<br>Everything</b>
+<td>
+<pre>
+from math import *
+print degrees(pi)
+</pre>
+<td>
+<pre>
+use script("MCAD/math.scad");
 echo(deg(PI));
 </pre>
 
@@ -209,20 +213,20 @@ that you can interact with using the new Customizer GUI, without having to
 uncomment example code. When you reference a library script for the purpose
 of using its API, the example code is not included in your model.
 
-
-In OpenSCAD2, there is a new coding standard for writing library scripts.
-It supports the following requirements:
+OpenSCAD2 will support the following requirements for writing library scripts:
 * The script may contain example code that demonstrates how to use the API,
   and it doesn't have to be commented out.
-* The example code should be annotated for the Customizer GUI.
+* The example code can be annotated for the Customizer GUI.
 * There are sometimes multiple examples.
   The customizer GUI should provide a mechanism for selecting between
   alternative models.
 * The top level parameters that control the example code are not part of the
-  library API. They shouldn't be visible in contexts where the API is being used,
-  so they should somehow be made private.
+  library API. They shouldn't be imported by `use`.
 
-The OpenSCAD2 interface for referencing an external library script ...
+Annotations for the customizer GUI are out of scope for this RFC,
+but the new `use` command supports all of the other requirements.
+You just need to use identifiers starting with `_` for definitions
+that are part of the demo code.
 
 ## Old Stuff
 
