@@ -108,9 +108,23 @@ This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCA
 ## Constructing New Objects from Old
 
 There are two ways to build a new object from an existing object:
-inclusion and customization. (These both have a resemblance to
-inheritance in object-oriented programming, except that the
-inheritance happens at the object level, not the class level.)
+customization and inclusion.
+
+### Customization
+
+`object(name1=value1, name2=value2, ...)` customizes an object,
+overriding specified definitions with new values,
+by re-evaluating the script and returning a new object.
+  
+```
+// add a lollipop with bigger candy to the geometry list
+lollipop(radius=15);
+```
+
+Customization can also be specified on the command line with the `-D` flag.
+```
+openscad -Dname1=value1 -Dname2=value2 ... myscript.scad
+```
 
 ### Inclusion
 
@@ -132,15 +146,37 @@ lollipop_and_mint = {
 As a special case, `include script("filename");`
 is the OpenSCAD2 syntax for `include <filename>` in OpenSCAD1.
 
-### Customization
+### Composing Customization with Inclusion
 
-`object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
-by re-evaluating the script and returning a new object.
-  
+By composing the two operations, you have the general ability
+to create a new object by "inheriting" from an old object,
+overriding existing fields and adding new fields.
+This is like inheritance in object oriented programming,
+except at the object level instead of the class level.
+
 ```
-// add a lollipop with bigger candy than the rest
-lollipop(radius=15);
+big_lollipop_and_mint = {
+   include lollipop(radius=15, length=60);
+   mint_diameter = 15;
+   translate([mint_diameter*2, 0, 0])
+      cylinder(h=mint_diameter/4, d=mint_diameter);
+};
 ```
+
+OpenSCAD1 supports this same operation at the script level, using a different syntax:
+```
+// big_lollipop_and_mint.scad
+include <lollipop.scad>
+radius=15;
+length=60;
+mint_diameter=15;
+translate([mint_diameter*2, 0, 0])
+  cylinder(h=mint_diameter/4, d=mint_diameter);
+```
+The OpenSCAD1 version of this API suffers from bugs, which are described
+in [Definitions and Scoping](Definitions_And_Scoping.md).
+The OpenSCAD2 implementation of customization and inclusion is intended
+to preserve support for this feature, with better semantics.
 
 ## The CSG Tree
 Objects are the replacement for groups in the CSG tree.
