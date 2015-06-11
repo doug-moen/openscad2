@@ -102,10 +102,8 @@ and distinct use cases:
   More generally, `include` is a form of
   [*object inheritance*](Objects.md#inheritance)
   in the OpenSCAD2 object system.
-  It is backward compatible with the OpenSCAD1 `include` command.
 * `use` is specifically designed for library scripts.
   It imports top level definitions but not geometry or internal definitions.
-  It is not fully backwards compatible with the OpenSCAD1 `use` command.
 
 Most modern programming languages have a "module system" for referencing
 external libraries. The standard features are:
@@ -131,16 +129,9 @@ name1 = object.name1;
 name2 = object.name2;
 ...
 ```
-The `using` command will be useful in porting some cases
-of the OpenSCAD1 `use` command, where there are name conflicts
-because the OpenSCAD2 `use` command imports too many names.
-For example, you might want
-```
-using (epitrochoid,hypotrochoid) script("MCAD/trochoids.scad");
-```
-because `use` will import the parameters for the trochoid demo code.
-Currently, all of the other MCAD library scripts
-work fine with OpenSCAD2's `use` command.
+The `using` command will be useful in porting OpenSCAD1 library `use` and `include`
+in cases where OpenSCAD2 reports name conflicts, eg caused by two libraries
+defining the same name, or a conflict between a library definition and a local definition.
 
 Here's how OpenSCAD2 compares to the Python module system:
 
