@@ -76,6 +76,9 @@ You may need auxiliary modules, but they can directly refer to top level
 parameters as "global variables". In this style, there is no need to
 pass all parameters as arguments, which saves a lot of code if you
 have many model parameters.
+Don't worry, the script-level variables aren't actually "global",
+because the script can be instantiated with different parameter values
+as many times as needed.
 
 In OpenSCAD2, the prototype style is just as powerful as the module style
 for code reuse. Instead of writing
