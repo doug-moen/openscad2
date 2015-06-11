@@ -68,6 +68,7 @@ let (a = 2, f(x) = x + 1) f(a)
 ```
 is an expression that returns `3`.
 
+<!-- Deprecated in favour of <+
 ## `use` and `using`
 
 `using(name1=value1, name2=value2, ...) object;` is an abbreviation for:
@@ -96,6 +97,7 @@ with [object customization](Objects.md#customization).
 If `defaults` and `overrides` are two objects,
 then `defaults(use overrides)` is a new object where
 the fields of `overrides` override fields of `defaults` with the same name.
+-->
 
 ## Lexical Scoping
 OpenSCAD2 is a block structured, lexically scoped language
@@ -251,8 +253,8 @@ it has to be done explicitly using customization syntax: `object(overrides)`.
    include <overrides.scad>
    ...
    ```
-   Once again, you need to use the syntax for explicitly customizing an object.
+   This is translated into OpenSCAD2 using the object composition operator `<+`.
    ```
-   include script("defaults.scad")(use script("overrides.scad"));
+   include script("defaults.scad") <+ script("overrides.scad");
    ...
    ```
