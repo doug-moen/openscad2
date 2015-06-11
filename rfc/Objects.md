@@ -112,19 +112,21 @@ customization and inclusion.
 
 ### Customization
 
-`object(name1=value1, name2=value2, ...)` customizes an object,
-overriding specified definitions with new values,
-by re-evaluating the script and returning a new object.
+`object(name1=value1, name2=value2, ...)` customizes an object
+by overriding specified definitions with new values,
+re-evaluating the script and returning a new object.
   
 ```
 // add a lollipop with bigger candy to the geometry list
 lollipop(radius=15);
 ```
 
-Customization can also be specified on the command line with the `-D` flag.
+A script can be customized on the command line with the `-D` flag.
 ```
 openscad -Dname1=value1 -Dname2=value2 ... myscript.scad
 ```
+
+The new Customizer GUI under development does the same thing, only interactively.
 
 ### Inclusion
 
