@@ -196,7 +196,7 @@ then the list is converted to an object, so the above code is equivalent to
 ```
 union() { cube(12,true); sphere(8); }
 ```
-The conversion from list to object discards any non-geometric values in the list.
+The conversion from list to object reports an error if non-geometric values occur in the list.
 This conversion ensures that only objects and shapes appear in the final CSG tree.
 
 The modifier characters `%`, `#` and `!` take a geometry value as an argument,
