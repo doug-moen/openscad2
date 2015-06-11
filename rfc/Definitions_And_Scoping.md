@@ -131,10 +131,61 @@ parameters in the includee. OpenSCAD2 provides a safe, lexically scoped mechanis
 overriding definitions in an included script, [as discussed here](Objects.md).
 
 ## Missing and Multiple Definitions
-In OpenSCAD2 it is illegal to define the same name twice within the same scope.
-You get a duplicate definition error. (I assume this is a safe change: probably no
-existing scripts depend on this.)
-
+In OpenSCAD2 it is illegal to define the same name twice within the same scope:
+you get a duplicate definition error.
 It is also illegal to refer to a name that isn't defined.
-That also produces an error message. (This is more likely to cause problems
-with existing scripts.)
+
+The purpose of these errors is to make you aware that something funny is going on
+in your code, so that you can fix any problems.
+
+This creates a backward compatibility issue.
+There is existing OpenSCAD1 code that won't work when these restrictions are enforced.
+This code is expected to work okay in backward compatibility mode, but after
+upgrading the code to OpenSCAD2 syntax, the code will need to be changed.
+
+If there are missing definitions, the problem should be easy to fix: just define the missing bindings.
+Eg, just write `x=undef;` to eliminate an "x is not defined" error message.
+
+Duplicate definitions can happen by accident.
+* You have `use`d two different library scripts that define the same name,
+  and you never noticed the conflict. To fix this problem, use selective import
+  (the `using` command) to import only the names you actually want from one of the libraries.
+* You have `use`d a library script and imported a name X which you have also defined locally.
+  Let's assume this is an accident, and that you did not intend to modify the internal workings
+  of the library by replacing its internal implementation of X with your X.
+  In that case, use selective import (`using`) to only import the names that you want
+  from the library.
+
+There are existing idioms that rely on duplicate definitions.
+If your code uses these idioms, you'll have to change it to use new idioms.
+You can override definitions in OpenSCAD2, but it can't happen accidently,
+it has to be done explicitly.
+
+1. You have `include`d a script S that defines X,
+   and you have defined your own version of X.
+   ```
+   include <S.scad>
+   X = 42;
+   ```
+   Your intent is to customize the behaviour of S
+   by overriding its definition of X with your own.
+   In OpenSCAD2, you have to explicitly customize S
+   using function call notation: `S(X=42)`,
+   and then `include` the resulting object.
+   ```
+   include script("S.scad")(X = 42);
+   ```
+
+2. You `include` a script containing default parameter settings,
+   then you `include` another script containing project-specific overrides.
+   This is followed by code that uses the resulting settings.
+   ```
+   include <defaults.scad>
+   include <overrides.scad>
+   ...
+   ```
+   Once again, you need to use the syntax for explicitly customizing an object.
+   ```
+   include script("defaults.scad")(use script("overrides.scad"));
+   ...
+   ```
