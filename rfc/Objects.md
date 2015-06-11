@@ -179,11 +179,24 @@ lollipop(radius=15);
 ```
 in the prototype style.
 
+In the module style, you have a main module to which you pass all of the
+model parameters as arguments (you can provide defaults for all the arguments).
+You invoke the module to build the geometry.
+
+In the prototype style, you have an object that represents the model:
+it acts as a container for all of the model parameters,
+and also contains the geometry, and contains any auxiliary functions used
+to build the model.
+
 The prototype style is the preferred style for use with the
-new Customizer GUI that is under development.
+new Customizer GUI that is under development, since it puts
+the parameters at the top level of a script where the Customizer can see them.
 This style is also easier for beginners.
 Scripts are shorter and easier to read and write,
 and for simple models, you don't need to write function definitions.
+
+Finally, using objects to group model parameters together with geometry
+is a powerful idea which enables some new programming idioms.
 
 ## Inheritance
 The "prototype" style of OpenSCAD programming
