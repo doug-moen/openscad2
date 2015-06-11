@@ -159,7 +159,7 @@ Duplicate definitions can happen by accident.
 There are existing idioms that rely on duplicate definitions.
 If your code uses these idioms, you'll have to change it to use new idioms.
 You can override definitions in OpenSCAD2, but it can't happen accidently,
-it has to be done explicitly.
+it has to be done explicitly using customization syntax: `object(overrides)`.
 
 1. You have `include`d a script S that defines X,
    and you have defined your own version of X.
@@ -186,6 +186,6 @@ it has to be done explicitly.
    ```
    Once again, you need to use the syntax for explicitly customizing an object.
    ```
-   include script("defaults.scad")(use script("overrides.scad"));
+   include script("defaults.scad")(include script("overrides.scad"));
    ...
    ```
