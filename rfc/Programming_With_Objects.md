@@ -109,6 +109,31 @@ and for simple models, you don't need to write function definitions.
 Finally, using objects to group model parameters together with geometry
 is a powerful idea which enables some new programming idioms.
 
+## Prototype-Based Programming
+The "prototype" style of OpenSCAD programming
+is named after the classless style of object oriented programming
+called [Prototype-based programming](http://en.wikipedia.org/wiki/Prototype-based_programming).
+Prototype based programming was designed to be just as powerful as class-based programming,
+except that it can be a lot simpler, requiring less complicated language mechanisms.
+
+In a prototype based language,
+* Instead of class definitions, you have object literals. We have them.
+* Instead of constructing an instance of a class,
+  you clone an existing "prototype" object, and make changes to it.
+  This is done using "object customization" in OpenSCAD2.
+* There is some form of inheritance,
+  where an object is defined to be just like a base object,
+  except with some changes, which are specified by
+  overriding existing fields and adding new fields.
+  This is done using [customization and inclusion](Objects.md#constructing-new-objects-from-old).
+
+In short, OpenSCAD2 appears to have all of the necessary language mechanisms
+required to support object oriented programming.
+Whether this is completely true will become clear in time, as OpenSCAD2 is implemented.
+However, it seems that prototype based programming can be mined for idioms and design patterns
+that can be used in OpenSCAD2.
+
+<!--
 ## Inheritance
 The "prototype" style of OpenSCAD programming
 is named after the classless style of object oriented programming
@@ -170,6 +195,7 @@ three features:
 
 And this is awesome, because the more syntax and language features we need
 to make OOP work, the harder it is to learn and use.
+-->
 
 ## Bill of Materials
 
