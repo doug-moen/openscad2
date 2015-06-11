@@ -107,8 +107,8 @@ This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCA
 
 ## Constructing New Objects from Old
 
-There are two ways to build a new object from an existing object:
-customization and inclusion.
+There are three ways to build a new object from an existing object:
+customization, inclusion and composition.
 
 ### Customization
 
@@ -179,6 +179,25 @@ The OpenSCAD1 version of this API suffers from bugs, which are described
 in [Definitions and Scoping](Definitions_And_Scoping.md).
 The OpenSCAD2 implementation of customization and inclusion is intended
 to preserve support for this feature, with better semantics.
+
+### Object Composition
+If `defaults` and `overrides` are both objects,
+then `defaults <+ overrides` is the composition or union of those two objects.
+The resulting object has all of the fields found in either object,
+but if both objects define the same name, then the right argument `overrides` wins.
+
+This operator simulates the behaviour of `include` in OpenSCAD1.
+In OpenSCAD2,
+```
+include script("defaults") <+ script("overrides");
+```
+has the same effect as
+```
+include <defaults>
+include <overrides>
+```
+in OpenSCAD1. Therefore, the object composition operator
+is expected to help in porting code to the new language.
 
 ## The CSG Tree
 Objects are the replacement for groups in the CSG tree.
