@@ -1,4 +1,5 @@
 # Objects
+
 "Geometric objects", or "objects" for short,
 are a new kind of value which has multiple roles in OpenSCAD2.
 * Objects are the replacement for groups in the CSG tree.
@@ -17,6 +18,7 @@ are a new kind of value which has multiple roles in OpenSCAD2.
   definitions overridden by new values, and returns a new object.
 
 ## Scripts denote Objects
+
 If OpenSCAD2 has a [declarative semantics](Declarative_Semantics.md),
 then an OpenSCAD script must have a meaning&mdash;what is it?
 The answer: a script denotes an object.
@@ -64,6 +66,7 @@ and returns a value.
 Other examples are `import()`, `dxf_cross()` and `surface()`.
 
 ## The Object API
+
 Objects are [First Class Values](First_Class_Values.md).
 
 An object contains a set of named fields that can be referenced using `.` notation.
@@ -102,135 +105,21 @@ translate([50,0,0]) lollipop;
 
 This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD1.
 
-## Customizing an object
-`object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
-by re-evaluating the script and returning a new object.
-  
-```
-// add a lollipop with bigger candy than the rest
-lollipop(radius=15);
-```
+## Constructing New Objects from Old
 
-## Prototypes vs Modules
-Here are two programming styles that can be used
-for creating reusable scripts that render a model:
-the "module" style, and the "prototype" style.
+There are two ways to build a new object from an existing object:
+inclusion and customization. (These both have a resemblance to
+inheritance in object-oriented programming, except that the
+inheritance happens at the object level, not the class level.)
 
-In the "module" style, you put all of your logic into modules.
-At the end of the script, the main module is invoked to render the model.
-The intent of this style is that other scripts can reuse the logic
-by `use`ing the script.
+### Inclusion
 
-For example,
-```
-module lollipop(
-  radius   = 10,
-  diameter = 3,
-  height   = 50)
-{
-  translate([0,0,height]) sphere(r=radius);
-  cylinder(d=diameter,h=height);
-}
+`include object;` includes all of the fields and geometry
+of a specified base object into the current object under construction.
 
-lollipop();
-```
-
-In the "prototype" style,
-you put parameter definitions at the top of your script.
-This allows inexperienced users to find and tweak the parameters,
-without necessarily understanding how the rest of the code works.
-On Thingiverse, the parameters are given Customizer annotations,
-so that visitors to Thingiverse.com can tweak the parameters
-using the Customizer GUI, without even reading the script.
-OpenSCAD is soon getting its own Customizer GUI, and this will
-be an important part of the experience of using OpenSCAD2.
-
-In the "prototype" style,
-you don't need a main module.
-It is simpler to write out the body of the main module
-as top level geometry statements that reference the parameters
-as top level definitions.
-
-For example,
-```
-radius   = 10; // candy
-diameter = 3;  // stick
-height   = 50; // stick
-
-translate([0,0,height]) sphere(r=radius);
-cylinder(d=diameter,h=height);
-```
-
-You may need auxiliary modules, but they can directly refer to top level
-parameters as "global variables". In this style, there is no need to
-pass all parameters as arguments, which saves a lot of code if you
-have many model parameters.
-
-In OpenSCAD2, the prototype style is just as powerful as the module style
-for code reuse. Instead of writing
-```
-use <lollipop.scad>
-lollipop(radius=15);
-```
-in the module style, you can instead write
-```
-lollipop = script("lollipop.scad");
-lollipop(radius=15);
-```
-in the prototype style.
-
-In the module style, you have a main module to which you pass all of the
-model parameters as arguments (you can provide defaults for all the arguments).
-You invoke the module to build the geometry.
-
-In the prototype style, you have an object that represents the model:
-it acts as a container for all of the model parameters,
-and also contains the geometry, and contains any auxiliary functions used
-to build the model.
-
-The prototype style is the preferred style for use with the
-new Customizer GUI that is under development, since it puts
-the parameters at the top level of a script where the Customizer can see them.
-This style is also easier for beginners.
-Scripts are shorter and easier to read and write,
-and for simple models, you don't need to write function definitions.
-
-Finally, using objects to group model parameters together with geometry
-is a powerful idea which enables some new programming idioms.
-
-## Inheritance
-The "prototype" style of OpenSCAD programming
-is named after the classless style of object oriented programming
-called [Prototype-based programming](http://en.wikipedia.org/wiki/Prototype-based_programming).
-Prototype based programming was designed to be just as powerful as class-based programming,
-except that it's a lot simpler.
-
-In a prototype based language,
-instead of class definitions, you have object literals.
-Instead of constructing an instance of a class,
-you clone an existing "prototype" object, and make changes to it.
-This is done using "object customization" in OpenSCAD2.
-
-Prototype based languages have inheritance,
-where an object is defined to be just like a base object,
-except with some changes, which are made by overriding existing
-fields and adding new fields.
-Just as with classes in class-based OOP languages,
-base objects need to be designed with inheritance in mind.
-They need to provide fields that are "hooks" that can be overridden
-by derived objects.
-
-In OpenSCAD2, the simplest kind of inheritance is customization,
-where you just override existing fields.
-```
-big_lollipop = lollipop(radius=15, height=60);
-```
-
-The `include` command adds all of the fields and geometry of a specified object
-to the current object. It comes from OpenSCAD1, but the syntax has changed
-from `include <filename>` to `include object;`.
-
-You can extend a base object with new fields and geometry using the `include` command.
+Using the `include` operator, you can create a new object
+that is an extension of an base object.
+For example, `lollipop_with_mint` extends `lollipop` with new fields and geometry:
 ```
 lollipop_and_mint = {
    include lollipop;
@@ -240,25 +129,18 @@ lollipop_and_mint = {
 };
 ```
 
-You can combine these two idioms and inherit from a customized base object.
-Insert example here.
+As a special case, `include script("filename");`
+is the OpenSCAD2 syntax for `include <filename>` in OpenSCAD1.
 
-### Inheritance and Self Reference
-OpenSCAD2 has the same power as a single-dispatch object oriented language.
-The syntax `obj.f(x)` has the semantics of invoking a method within an object.
-This means we need to implement the semantics of "self reference".
-In Smalltalk, this feature is embodied by the `self` and `super` keywords.
-In OpenSCAD2, *self* and *super* are opcodes in the virtual machine,
-and it's the compiler's responsibility to insert these opcodes in the correct places.
-In other words, I don't think we need any additional syntax to make inheritance
-with single dispatch work. All of the OOP semantics come from composing these
-three features:
-* object literals
-* `include`
-* object customization
+### Customization
 
-And this is awesome, because the more syntax and language features we need
-to make OOP work, the harder it is to learn and use.
+`object(p1=val1,p2=val2,...)` customizes an object, overriding specified definitions with new values,
+by re-evaluating the script and returning a new object.
+  
+```
+// add a lollipop with bigger candy than the rest
+lollipop(radius=15);
+```
 
 ## The CSG Tree
 Objects are the replacement for groups in the CSG tree.
