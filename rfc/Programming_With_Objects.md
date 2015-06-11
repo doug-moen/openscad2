@@ -130,8 +130,8 @@ In a prototype based language,
 In short, OpenSCAD2 appears to have all of the necessary language mechanisms
 required to support object oriented programming.
 Whether this is completely true will become clear in time, as OpenSCAD2 is implemented.
-However, it seems that prototype based programming can be mined for idioms and design patterns
-that can be used in OpenSCAD2.
+However, it seems that prototype based programming can be mined for useful idioms and design patterns
+that can be reused in OpenSCAD2.
 
 <!--
 ## Inheritance
