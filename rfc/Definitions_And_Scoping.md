@@ -68,6 +68,35 @@ let (a = 2, f(x) = x + 1) f(a)
 ```
 is an expression that returns `3`.
 
+## `use` and `using`
+
+`using(name1=value1, name2=value2, ...) object;` is an abbreviation for:
+```
+name1 = object.name1;
+name2 = object.name2;
+...
+```
+This syntax is also legal in `let`, and for specifying labelled arguments in function calls.
+
+`use object;` is similar to `using`, except that it imports all of the names defined in `object`
+that don't begin with `$` or `_`. This syntax is also legal in `let` and in function calls.
+
+This syntax is normally used to [import names from libraries](Library_Scripts.md),
+but it has other specialized uses. For example,
+```
+cylinder_args = {
+  h = 50;
+  d = 10;
+};
+cylinder(use cylinder_args);
+```
+
+This syntax is useful when composed
+with [object customization](Objects.md#customization).
+If `defaults` and `overrides` are two objects,
+then `defaults(use overrides)` is a new object where
+the fields of `overrides` override fields of `defaults` with the same name.
+
 ## Lexical Scoping
 OpenSCAD2 is a block structured, lexically scoped language
 with simple, consistent scoping rules that apply
@@ -130,6 +159,41 @@ However, this feature is also deliberately used to allow the includer to overrid
 parameters in the includee. OpenSCAD2 provides a safe, lexically scoped mechanism for
 overriding definitions in an included script, [as discussed here](Objects.md).
 
+## Dynamic Scoping
+OpenSCAD1 supports dynamic scoping in function and module calls.
+
+Officially, there are a few documented special variables beginning with `$`
+that have dynamic scope, like `$fn`.
+
+Unofficially, you can pass a labelled argument with any name you want, and it will be
+bound as a local variable in the body of the function or module,
+shadowing a global variable of the same name.
+This is not a feature, it is an undocumented artifact of the current implementation.
+Marius has asked users who have discovered this not to rely on it.
+
+In OpenSCAD2, I don't currently plan to support dynamic binding at all,
+even in backwards compatibility mode, except for those cases where it is documented to work
+(`$fn` et al).
+In OpenSCAD2, you will get an error message if you pass a labeled argument to a function
+that doesn't declare that label in its formal parameter list. This is a feature:
+passing bad arguments to a function is a common bug, and it's really helpful to
+get an error message so you can fix the bug.
+
+If your code happens to be relying on the undocumented form of dynamic binding, then there may be
+an alternate idiom that you can use in OpenSCAD2 to get the same effect.
+Let's suppose that you are doing this to override a global variable X defined within a library script S.
+You are overriding the value of X in a call to module M.
+Your current code:
+```
+include <S.scad>
+M(X=42);
+```
+In OpenSCAD2, you can get the same effect by customizing the script at the point of the module call.
+```
+S = script("S.scad");
+S(X=42).M();
+```
+
 ## Missing and Multiple Definitions
 In OpenSCAD2 it is illegal to define the same name twice within the same scope:
 you get a duplicate definition error.
@@ -189,6 +253,6 @@ it has to be done explicitly using customization syntax: `object(overrides)`.
    ```
    Once again, you need to use the syntax for explicitly customizing an object.
    ```
-   include script("defaults.scad")(include script("overrides.scad"));
+   include script("defaults.scad")(use script("overrides.scad"));
    ...
    ```
