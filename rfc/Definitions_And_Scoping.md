@@ -147,8 +147,11 @@ If there are missing definitions, the problem should be easy to fix: just define
 Eg, just write `x=undef;` to eliminate an "x is not defined" error message.
 
 Duplicate definitions can happen by accident.
-* You have `use`d two different library scripts that define the same name,
-  and you never noticed the conflict. To fix this problem, use selective import
+* You have `used`d or `include`d two different library scripts that define the same name X,
+  and you never noticed the conflict. This is dangerous: the last definition of X wins,
+  and the first library is forced to use the second library's definition of X,
+  which probably breaks the first library.
+  To fix this problem, use selective import
   (the `using` command) to import only the names you actually want from one of the libraries.
 * You have `use`d a library script and imported a name X which you have also defined locally.
   Let's assume this is an accident, and that you did not intend to modify the internal workings
@@ -170,7 +173,7 @@ it has to be done explicitly using customization syntax: `object(overrides)`.
    Your intent is to customize the behaviour of S
    by overriding its definition of X with your own.
    In OpenSCAD2, you have to explicitly customize S
-   using function call notation: `S(X=42)`,
+   using `S(X=42)`,
    and then `include` the resulting object.
    ```
    include script("S.scad")(X = 42);
