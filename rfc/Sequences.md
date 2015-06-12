@@ -135,6 +135,8 @@ when code is upgraded to the new OpenSCAD2 syntax by the upgrade tool.
 
 So we'll support `seq[v]` for all sequence types.
 
+Reversing a list: `reverse(list) = list[[len(list)-1,len(list)-2..0]];`
+
 ## Objects
 Groups have been replaced by [objects](Objects.md).
 An object consists of a set of named fields,
