@@ -226,13 +226,13 @@ GB = script("MCAD/gridbeam.scad");
 GB(beam_is_hollow = 0).zBeam(3);
 ```
 
-The OpenSCAD2 syntax is more flexible,
-since you can customize either at the `use` statement,
-or at the point of a module call.
+OpenSCAD2 has improved support for parameterized libraries, because
+* You can consistently `use` any library, even if it is parameterized.
+* You can customize at the point of a module call.
 
-This is a significant syntactic change in how parameterized libraries are used,
-which needs better justification than "it's more flexible".
-The rationale is in [Definitions and Scoping](Definitions_And_Scoping.md).
+Still, this is a significant syntactic change in how parameterized libraries are used.
+The rationale for multiple definition errors is given
+[here](Definitions_And_Scoping.md#missing-and-multiple-definitions).
 
 ## Writing a Library Script
 
