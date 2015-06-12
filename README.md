@@ -33,10 +33,10 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Module Call Syntax](rfc/Functions.md#module-call-syntax)
 * [Objects](rfc/Objects.md):
     [Scripts denote Objects](rfc/Objects.md#scripts-denote-objects),
-    [`script(filename)`](rfc/Objects.md#the-script-function),
+    [`script`](rfc/Objects.md#the-script-function),
     [Object API](rfc/Objects.md#the-object-api),
-    [Object Literals](rfc/Objects.md#object-literals),
-    [Customization](rfc/Objects.md#customizatioin),
+    [Literals `{}`](rfc/Objects.md#object-literals),
+    [Customization](rfc/Objects.md#customization),
     [`include`](rfc/Objects.md#inclusion),
     [Composition `<*`](rfc/Objects.md#object-composition),
     [The CSG Tree](rfc/Objects.md#the-csg-tree)
