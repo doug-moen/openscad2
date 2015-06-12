@@ -1,21 +1,27 @@
 # Objects
 
-"Geometric objects", or "objects" for short,
-are a new kind of value which has multiple roles in OpenSCAD2.
+A "geometric object", or "object" for short, is a first class value that represents an OpenSCAD script.
+* An object contains named fields, which correspond to the top level definitions in a script.
+  These fields are referenced as `object.name`.
+* An object contains geometry, a sequence of shapes and objects,
+  which correspond to the top level geometry statements in a script.
+  Geometry is referenced using [sequence operations](Sequences.md).
+* Objects are constructed by `script(filename)`, which reads an object from a script file,
+  and by `{script}`, which is an object literal.
+* Objects may be transformed.
+  `object(name1=val1,...)` customizes an object, re-evaluating its script with specified
+  definitions overridden by new values, returning a new object.
+
+Objects have multiple roles in OpenSCAD2.
 * Objects are the replacement for groups in the CSG tree.
-  An object contains geometry: a possibly empty sequence of shapes and objects,
-  which can be referenced using [sequence operations](Sequences.md).
-* An object also contains a possibly empty set of named fields,
-  which can be referenced using `.` notation: `object.name`.
-  These may be parameters or metadata which describe the contained geometry.
-  But objects can be used in any situation where a set of named fields is required.
-* An OpenSCAD2 script is evaluated to an object.
-* External library files are referenced as objects.
-  The `include` and `use` operators now take objects as arguments.
-* An object literal is a script enclosed in braces: `{script}`.
-* An object can be customized using function call notation:
-  `object(name1=val1,...)` re-evaluates the script with specified
-  definitions overridden by new values, and returns a new object.
+* A geometric model is represented by an object, which encapsulates both its geometry and its parameters.
+* Library scripts are referenced as objects. The `include` and `use` operators now take objects as arguments.
+  Library scripts with tweakable top-level parameters, like
+  [gridbeam.scad](https://github.com/openscad/MCAD/blob/master/gridbeam.scad),
+  are parameterized objects.
+* A set of model parameters, by itself, can be represented as an object.
+* The ability to access fields and customize a parameterized model or library
+  makes new programming idioms possible.
 
 ## Scripts denote Objects
 
