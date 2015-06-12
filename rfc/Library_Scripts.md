@@ -192,6 +192,47 @@ powerful because it is more [composable](Composable_Building_Blocks.md).
   (So it could be an object name, an object literal, an object customization.)
 * Ditto for `using`.
 
+## Parameterized Libraries
+Some library scripts contain tweakable top-level parameters.
+For example,
+* [MCAD/lego_compatibility.scad](https://github.com/openscad/MCAD/blob/master/lego_compatibility.scad)
+  contains 12 parameters for 3D printed lego blocks. You can tweak `cylinder_precision`
+  to control the number of polygons used in cylindrical features. You might want to tweak
+  the remaining parameters to build Duplo blocks.
+* [MCAD/gridbeam.scad](https://github.com/openscad/MCAD/blob/master/gridbeam.scad)
+  has 7 parameters.
+
+In OpenSCAD1, you can't `use` a parameterized library, you must `include` it.
+To set a parameter, you assign a value after you include the script.
+For example,
+```
+include <MCAD/gridbeam.scad>
+beam_is_hollow = 0;
+zBeam(3);
+```
+
+In OpenSCAD2, this code won't work, you'll get a multiple definition error for `beam_is_hollow`.
+What you do instead is customize the library script.
+Also, it's now recommended to `use` all libraries.
+For example,
+```
+use script("MCAD/gridbeam.scad")(beam_is_hollow = 0);
+zBeam(3);
+```
+or
+```
+GB = script("MCAD/gridbeam.scad");
+GB(beam_is_hollow = 0).zBeam(3);
+```
+
+The OpenSCAD2 syntax is more flexible,
+since you can customize either at the `use` statement,
+or at the point of a module call.
+
+This is a significant syntactic change in how parameterized libraries are used,
+which needs better justification than "it's more flexible".
+The rationale is in [Definitions and Scoping](Definitions_And_Scoping.md).
+
 ## Writing a Library Script
 
 There is an almost universal desire among the authors of library scripts
