@@ -44,6 +44,19 @@ It works like this:
 * If the old syntax is consistently used, then that script is "legacy".
 * It's an error to mix the two definition syntaxes within the same script.
 
+If a script does not contain any of the old "trigger syntax",
+then it is interpreted as OpenSCAD2. The "trigger syntax" is currently:
+* `function f(...) = ...;`
+* `module m(...) ...`
+* `include <...>`
+* `use <...>`
+
+Scripts that don't contain any of this syntax do not have any definitions
+in the function or module namespaces. They just have assignment statements
+and geometry. They probably won't break in OpenSCAD2. If we discover existing files
+with only variable assignments and geometry that nevertheless break in OpenSCAD2,
+then we'll fix the problem by adding more triggers, or by revising the language.
+
 ### Semantics of Backward Compatibility Mode
 In backwards compatibility mode,
 * There are 3 namespaces, for variables, functions and modules.
