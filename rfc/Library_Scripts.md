@@ -211,7 +211,8 @@ beam_is_hollow = 0;
 zBeam(3);
 ```
 
-In OpenSCAD2, this code won't work, you'll get a multiple definition error for `beam_is_hollow`.
+This code won't work after conversion to OpenSCAD2 syntax,
+you'll get a multiple definition error for `beam_is_hollow`.
 What you do instead is customize the library script.
 Also, it's now recommended to `use` all libraries.
 For example,
