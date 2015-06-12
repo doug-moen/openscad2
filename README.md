@@ -33,10 +33,15 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Module Call Syntax](rfc/Functions.md#module-call-syntax)
 * [Objects](rfc/Objects.md):
     [Scripts denote Objects](rfc/Objects.md#scripts-denote-objects),
-    [Library Files](rfc/Objects.md#library-files),
+    [`script(filename)`](rfc/Objects.md#the-script-function),
+    [Object API](rfc/Objects.md#the-object-api),
     [Object Literals](rfc/Objects.md#object-literals),
-    [The CSG Tree](rfc/Objects.md#object-literals),
-    [Programming with Objects](rfc/Objects.md#jprogramming-with-objects)
+    [Customization](rfc/Objects.md#customizatioin),
+    [`include`](rfc/Objects.md#inclusion),
+    [Composition `<*`](rfc/Objects.md#object-composition),
+    [The CSG Tree](rfc/Objects.md#the-csg-tree)
+* [Programming with Objects](rfc/Programming_With_Objects.md)
+* [Library Scripts](rfc/Library_Scripts.md)
 * [Error Reporting](rfc/Error_Reporting.md)
 * [Backwards Compatibility](rfc/Backwards_Compatibility.md)
 * [Implementation](rfc/Implementation.md): Lexer, Parser, Analyzer, Coder, Evaluator
