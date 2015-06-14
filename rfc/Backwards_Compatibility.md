@@ -36,26 +36,45 @@ This list will change as we implement and test OpenSCAD2.
 
 ## Backward Compatibility Mode
 ### Mode Detection
-The compiler uses a heuristic to detect whether a script is OpenSCAD1 or OpenSCAD2.
-It works like this:
-* OpenSCAD2 introduces new syntax for defining functions and modules.
-  And it introduces new syntax that replaces `include <file>` and `use <file>`.
-* If the new syntax is consistently used within a script, then that script is "modern".
-* If the old syntax is consistently used, then that script is "legacy".
-* It's an error to mix the two definition syntaxes within the same script.
+The compiler automatically detects whether a script is OpenSCAD1 or OpenSCAD2:
+* If the script uses "old" syntax, then it is interpreted as OpenSCAD1.
+* If the script uses "new" syntax, then it is interpreted as OpenSCAD2.
+* If a mixture of "old" and "new" syntax is used, an error is reported.
+* If neither "old" nor "new" syntax is detected, then
+  by default the script is interpreted as OpenSCAD2.
 
-If a script does not contain any of the old "trigger syntax",
-then it is interpreted as OpenSCAD2. The "trigger syntax" is currently:
+"Old" syntax is any OpenSCAD1 syntax that could lead to functions or
+modules being defined, which would lead to more than one namespace being used.
+The specific patterns are:
 * `function f(...) = ...;`
 * `module m(...) ...`
 * `include <...>`
 * `use <...>`
 
-Scripts that don't contain any of this syntax do not have any definitions
-in the function or module namespaces. They just have assignment statements
-and geometry. They probably won't break in OpenSCAD2. If we discover existing files
+"New" syntax is any OpenSCAD2 syntax that could result in
+binding a name to a function value in the "variable" namespace,
+or calling a value as a function.
+* `function (params) ...` &mdash; a function literal
+* `id(params) = ...;` &mdash; the new function definition syntax
+* A function call with one of these forms:
+  `M.f(args)`, `a[i](args)`, `(expr)(args)`, `{script}(args)`.
+  The common element is that the function expression is not an identifier.
+* `use object;`
+* `using (names) object;`
+* `include object;`
+* Object literals used as expressions, outside the context that they
+  appear in OpenSCAD1 (which are as statements or module arguments).
+  This is because objects can contain function bindings.
+* `script(filename)`
+
+If an OpenSCAD1 script contains no "old" syntax,
+then it consists of just variable assignments and statements.
+There are no function or module definitions or references to external scripts.
+Few published or archived scripts are expected to be this simple,
+and in any case, such scripts are expected to be upward compatible with OpenSCAD2.
+If we discover existing files
 with only variable assignments and geometry that nevertheless break in OpenSCAD2,
-then we'll fix the problem by adding more triggers, or by revising the language.
+then we'll fix the problem by adding more triggers for "old" syntax, or by revising the language.
 
 ### Semantics of Backward Compatibility Mode
 In backwards compatibility mode,
@@ -83,7 +102,34 @@ ongoing process that we'll figure out during testing.
 ### Semantics of Script Inclusion
 What are the semantics when an OpenSCAD1 script includes an OpenSCAD2 script,
 or vice versa? How do we reconcile the difference between 1 namespace and 3 namespaces?
-* TBD
+TLDR: it works, but there are limitations.
+
+Consider the implementation. The following processing occurs in the semantic analyzer,
+which resolves all identifier references and generates code. This happens before evaluation.
+In the following, by "value" I mean unevaluated expression whose type may not be known
+at compile time.
+* Whenever a script is referenced, the script file is first
+  read and converted to an object. This happens even in the case of `include <filename>`:
+  in this case, we simulate the semantics with a different underlying implementation.
+* In the object that results from reading a pure OpenSCAD1 script,
+  each field contains up to 3 values, corresponding to the variable, function and module namespaces.
+* In the object that results from reading a pure OpenSCAD2 script,
+  each field contains a single value.
+* If an OpenSCAD1 script includes an OpenSCAD2 script, or vice versa,
+  then we are building a hybrid object where some of the fields are OpenSCAD1 style,
+  and some are OpenSCAD2 style.
+* If an OpenSCAD1 script references a field, it specifies whether it is fetching from
+  the variable, function or module namespace. If the field is actually an OpenSCAD2 field,
+  then we ignore the namespace specifier, and the lookup succeeds. The value might have the
+  wrong type, in which case there could be an error reported during evaluation.
+* If an OpenSCAD2 script references an OpenSCAD1 field,
+  then a compile time error occurs if the field has more than one value.
+
+Suppose that an OpenSCAD library script L is upgraded from OpenSCAD1 to OpenSCAD2 syntax.
+Suppose that a client script C, of type OpenSCAD1, references L.
+Does the process of upgrading L change the behaviour of C, or perhaps break C?
+Yeah there could be a behaviour change. So let's characterize the risk, and see
+how serious this is. TBD.
 
 ## Upgrade Tool
 The upgrade tool will automatically convert a script
