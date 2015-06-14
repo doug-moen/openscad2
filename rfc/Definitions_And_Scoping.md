@@ -138,6 +138,110 @@ shadow or hide bindings inherited from an outer scope.
 * Inside of that are the object literals, let constructs, and function literals
   contained in the script file.
 
+It is illegal to refer to a name that isn't defined.
+
+It is illegal to define the same name twice within the same scope:
+you get a duplicate definition error.
+
+## Effects of New Scoping Rules
+OpenSCAD 2015.03 already implements the "simple, consistent lexical scoping" rules
+if you just consider scripts with variable definitions, with no duplicate
+definitions, no function or module definitions, no `use` or `include` statements.
+
+In the new implementation, OpenSCAD1 will be tweaked to
+obey the scoping rules more fully, which will make the language
+behave more predictably and consistently, but will have little impact on backward compatibility.
+
+The new definitional syntax in OpenSCAD2 will fully obey these rules.
+
+### on Undefined Bindings
+OpenSCAD1 already gives warnings about undefined bindings:
+* WARNING: Ignoring unknown variable 'x'.
+* WARNING: Ignoring unknown function 'f'.
+* WARNING: Ignoring unknown module 'm'.
+
+The new implementation of OpenSCAD will promote these warnings to errors
+in both OpenSCAD1 and OpenSCAD2 modes.
+
+This will remove a source of confusion from the language.
+The [user manual entry about `include`](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Include_Statement)
+explains how, when overriding a variable in an included script,
+you must sometimes put the override *before* the include, and sometimes put it *after* the include.
+(Search for "j=4" in the linked document.)
+
+This makes the `include` statement more confusing than necessary,
+but the necessity to put the override before the include
+only happens if the variable being overridden is referenced but not defined
+in the script being included. The new implementation will make this situation an error.
+
+### on Duplicate Definitions
+The current OpenSCAD implementation makes this legal:
+```
+x=1;
+echo(x);  // ECHO: 17
+x=17;
+echo(x);  // ECHO: 17
+```
+The behaviour is quite confusing for new users.
+The [user manual section on Variables](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/General)
+contains a lengthy example script which explains this behaviour.
+<!-- As a new user, my initial reaction was stunned disbelief. -->
+
+In the new implementation,
+this code will cause a compile time error
+in both OpenSCAD1 and OpenSCAD2 mode.
+
+Duplicate definitions are not a feature,
+they are a side effect of the mechanism for overriding parameter settings
+in an included script. The latter is important and will continue to work.
+
+### on Function and Module Definitions
+In OpenSCAD1, the scope of a function or module definition
+is the entire block in which it occurs. For example, this is legal:
+```
+echo(f(1));
+y = 17;
+function f(x) = x+y;
+```
+This kind of code isn't compatible with the "sequential scoping, sequential evaluation"
+mental model that I want for OpenSCAD2. It's also not compatible with
+functions being ordinary values and function bindings being no different from other bindings
+
+We won't change this behaviour in OpenSCAD1,
+but the equivalent OpenSCAD2 code will give an error for the first line: "f is not defined".
+
+### on `use <F>`
+The current implementation of the `use` command violates the scoping rules.
+
+`use <F>` is only legal at the top level of a script file.
+It causes F to be searched for functions and modules.
+But F is placed last in the search order, after the script file itself, and *after* the global bindings.
+If a new release of OpenSCAD adds new functions and modules,
+these will shadow functions or modules imported from `use`d library scripts,
+which is a problem (adding new builtins could break existing code).
+It's also a violating of the scoping rules, which state that the global scope
+is outside of all other scopes.
+
+In the new implementation, scripts evaluate to objects,
+and objects are values that contain named fields.
+We have to decide if `use` adds named fields to the script file's object.
+
+The answer is yes. The `use <F>` command will add overrideable definitions
+of all the functions and modules in F, to the current object.
+And this fixes the scoping rule violation.
+If a search of the file level scope for a function or module fails
+(this scope now includes the definitions imported by `use`),
+then we proceed to the next enclosing scope, which is the global scope.
+
+### on `include <F>`
+The current implementation of `include <F>` works by textually
+substituting the contents of file F into the input stream at a low level.
+
+This won't work for the new implementation, since OpenSCAD1 scripts
+can meaningfully include OpenSCAD2 scripts, whereas you can't mix the
+old and new definition syntax in a single file.
+
+## Include
 The `include` operator has changed in OpenSCAD2 to support lexical scoping.
 
 In OpenSCAD1, `include <F>` works by textually including the specified file F.
