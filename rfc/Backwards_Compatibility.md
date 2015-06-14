@@ -100,36 +100,15 @@ Figuring out what bugs do and do not need to be emulated will be an
 ongoing process that we'll figure out during testing.
 
 ### Semantics of Script Inclusion
-What are the semantics when an OpenSCAD1 script includes an OpenSCAD2 script,
-or vice versa? How do we reconcile the difference between 1 namespace and 3 namespaces?
-TLDR: it works, but there are limitations.
+An OpenSCAD1 script may include an OpenSCAD2 script, or vice versa.
+This generally works, but interoperability problems may arise
+if the OpenSCAD1 code relies on the existence of 3 namespaces
+to distinguish bindings with the same name but different type.
+* For example, an OpenSCAD1 script S might define a variable and a module
+  with the same name X. If the OpenSCAD2 script includes S,
+  then it will report an error if it tries to use the value of X.
 
-Consider the implementation. The following processing occurs in the semantic analyzer,
-which resolves all identifier references and generates code. This happens before evaluation.
-In the following, by "value" I mean unevaluated expression whose type may not be known
-at compile time.
-* Whenever a script is referenced, the script file is first
-  read and converted to an object. This happens even in the case of `include <filename>`:
-  in this case, we simulate the semantics with a different underlying implementation.
-* In the object that results from reading a pure OpenSCAD1 script,
-  each field contains up to 3 values, corresponding to the variable, function and module namespaces.
-* In the object that results from reading a pure OpenSCAD2 script,
-  each field contains a single value.
-* If an OpenSCAD1 script includes an OpenSCAD2 script, or vice versa,
-  then we are building a hybrid object where some of the fields are OpenSCAD1 style,
-  and some are OpenSCAD2 style.
-* If an OpenSCAD1 script references a field, it specifies whether it is fetching from
-  the variable, function or module namespace. If the field is actually an OpenSCAD2 field,
-  then we ignore the namespace specifier, and the lookup succeeds. The value might have the
-  wrong type, in which case there could be an error reported during evaluation.
-* If an OpenSCAD2 script references an OpenSCAD1 field,
-  then a compile time error occurs if the field has more than one value.
-
-Suppose that an OpenSCAD library script L is upgraded from OpenSCAD1 to OpenSCAD2 syntax.
-Suppose that a client script C, of type OpenSCAD1, references L.
-Does the process of upgrading L change the behaviour of C, or perhaps break C?
-Yeah there could be a behaviour change. So let's characterize the risk, and see
-how serious this is. TBD.
+[Look here for implementation details.](Implementation.md#analyzer)
 
 ## Upgrade Tool
 The upgrade tool will automatically convert a script
