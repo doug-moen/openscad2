@@ -150,7 +150,7 @@ definitions, no function or module definitions, no `use` or `include` statements
 
 In the new implementation, OpenSCAD1 will be tweaked to
 obey the scoping rules more fully, which will make the language
-behave more predictably and consistently, but will have little impact on backward compatibility.
+more predictable and consistent, but will have little impact on backward compatibility.
 
 The new definitional syntax in OpenSCAD2 will fully obey these rules.
 
@@ -238,8 +238,18 @@ The current implementation of `include <F>` works by textually
 substituting the contents of file F into the input stream at a low level.
 
 This won't work for the new implementation, since OpenSCAD1 scripts
-can meaningfully include OpenSCAD2 scripts, whereas you can't mix the
-old and new definition syntax in a single file.
+can include OpenSCAD2 scripts, whereas you can't meaningfully mix the
+old and new definition syntax in a single file
+(since `f(x)` is interpreted differently in OpenSCAD1 vs OpenSCAD2 mode).
+
+In the new implementation, `include <F>` will read file F and compile it
+into an object O. Once the current script is analyzed, a second pass will
+find all the definitions in the block containing `include <F>` that
+override definitions within F, and use these definitions to customize the
+object O. The customized object O is then what's imported.
+
+This is a different implementation with basically the same semantics.
+Where the semantics differ are in the direction of lexical scoping.
 
 ## Include
 The `include` operator has changed in OpenSCAD2 to support lexical scoping.
