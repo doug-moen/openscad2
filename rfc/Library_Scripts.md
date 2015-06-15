@@ -116,20 +116,15 @@ external libraries. The standard features are:
 * **Import everything.**
   You can import all of a module's definitions into your namespace.
 
-To support selective import, we'll add the `using` command,
-which takes as arguments a list of names to import from an object,
-plus an object expression.
-So
+To support selective import, we'll add the `only` operator,
+which is composed with `use` as follows:
 ```
-using (name1, name2, ...) object;
+use only (name1, name2, ...) object;
 ```
-is an abbreviation for
-```
-name1 = object.name1;
-name2 = object.name2;
-...
-```
-The `using` command will be useful in porting OpenSCAD1 library `use` and `include`
+By itself, the `only` operator constructs a subset of an object
+containing only fields with the specified names.
+
+The `use only` command will be useful in porting OpenSCAD1 library `use` and `include`
 in cases where OpenSCAD2 reports name conflicts, eg caused by two libraries
 defining the same name, or a conflict between a library definition and a local definition.
 
@@ -164,7 +159,7 @@ print degrees(pi)
 </pre>
 <td>
 <pre>
-using (deg, PI) script("MCAD/math.scad");
+use only (deg, PI) script("MCAD/math.scad");
 echo(deg(PI));
 </pre>
 
@@ -185,12 +180,7 @@ echo(deg(PI));
 
 This interface matches the feature set of Python, but it's more
 powerful because it is more [composable](Composable_Building_Blocks.md).
-* `script(filename)` is an expression that can be used in any context
-  where an object is wanted.
-* The *object* argument of `use` is an expression
-  that evaluates to an object, rather than a fixed filename.
-  (So it could be an object name, an object literal, an object customization.)
-* Ditto for `using`.
+It is built by composing three generic operations: `script`, `use` and `only`.
 
 ## Parameterized Libraries
 Some library scripts contain tweakable top-level parameters.

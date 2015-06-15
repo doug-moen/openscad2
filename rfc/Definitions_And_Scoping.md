@@ -68,37 +68,6 @@ let (a = 2, f(x) = x + 1) f(a)
 ```
 is an expression that returns `3`.
 
-<!-- Deprecated in favour of <+
-## `use` and `using`
-
-`using(name1=value1, name2=value2, ...) object;` is an abbreviation for:
-```
-name1 = object.name1;
-name2 = object.name2;
-...
-```
-This syntax is also legal in `let`, and for specifying labelled arguments in function calls.
-
-`use object;` is similar to `using`, except that it imports all of the names defined in `object`
-that don't begin with `$` or `_`. This syntax is also legal in `let` and in function calls.
-
-This syntax is normally used to [import names from libraries](Library_Scripts.md),
-but it has other specialized uses. For example,
-```
-cylinder_args = {
-  h = 50;
-  d = 10;
-};
-cylinder(use cylinder_args);
-```
-
-This syntax is useful when composed
-with [object customization](Objects.md#customization).
-If `defaults` and `overrides` are two objects,
-then `defaults(use overrides)` is a new object where
-the fields of `overrides` override fields of `defaults` with the same name.
--->
-
 ## Lexical Scoping
 OpenSCAD2 is a block structured, lexically scoped language
 with simple, consistent scoping rules that apply
@@ -332,11 +301,11 @@ Duplicate definitions can happen by accident.
   and the first library is forced to use the second library's definition of X,
   which probably breaks the first library.
   To fix this problem, use selective import
-  (the `using` command) to import only the names you actually want from one of the libraries.
+  (`use only (names) library`) to import only the names you actually want from one of the libraries.
 * You have `use`d a library script and imported a name X which you have also defined locally.
   Let's assume this is an accident, and that you did not intend to modify the internal workings
   of the library by replacing its internal implementation of X with your X.
-  In that case, use selective import (`using`) to only import the names that you want
+  In that case, use selective import (`use only`) to only import the names that you want
   from the library.
 
 There are existing idioms that rely on duplicate definitions.

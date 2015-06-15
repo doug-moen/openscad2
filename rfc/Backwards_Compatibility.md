@@ -60,7 +60,6 @@ or calling a value as a function.
   `M.f(args)`, `a[i](args)`, `(expr)(args)`, `{script}(args)`.
   The common element is that the function expression is not an identifier.
 * `use object;`
-* `using (names) object;`
 * `include object;`
 * Object literals used as expressions, outside the context that they
   appear in OpenSCAD1 (which are as statements or module arguments).
