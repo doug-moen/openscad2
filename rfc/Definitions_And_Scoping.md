@@ -90,10 +90,13 @@ that a binding is not visible outside of its block.
 * A function literal is a block.
   The formal parameters are the identifiers
   that are bound to values by a function call.
+* The parenthesized argument list in a function call is a block.
+  Each labeled argument behaves like a definition.
 
 The scope of a binding begins at the following statement
 (for a script), or at the following definition (in a `let` bound definition list)
 or at the following formal parameter (for a function literal),
+or at the following argument (for a function call argument list),
 and continues to the end of the block.
 As a special case, forward references are legal within nested function or
 module bodies: this makes recursive definitions possible.
@@ -211,6 +214,18 @@ Are definitions added to the object by `use <F>` externally accessible?
 * If you include the object? Not sure.
 * If you use the object? Not sure.
 
+Quote from the forum, about limitations of `use`:
+> you cannot override a default.
+> Another similar issue is an include<> or use<> within the use<> cannot be
+> overridden (where defaults are set in that file), like include <units> &
+> include <materials> inside MCAD/bearing.scad - I once wanted to change units
+> it used.
+
+MCAD/bearings.scad includes MCAD/units.scad, then it references `epsilon`.
+Can you use bearings.scad and override `epsilon`?
+* In my current design, `epsilon` is overrideable if bearings.scad includes
+  units, but is not overrideable if it uses units.
+
 ### on `include <F>`
 The current implementation of `include <F>` works by textually
 substituting the contents of file F into the input stream at a low level.
@@ -227,7 +242,56 @@ override definitions within F, and use these definitions to customize the
 object O. The customized object O is then what's imported.
 
 This is a different implementation with basically the same semantics.
-Where the semantics differ are in the direction of lexical scoping.
+Where the semantics differ are in the direction of improved lexical scoping.
+
+#### Implicit vs Explicit Overrides
+In the new implementation, the main difference between `include`
+in OpenSCAD1 vs OpenSCAD2 are implicit vs explicit overrides.
+In OpenSCAD1, you can override definitions in an included file like this:
+```
+include <MCAD/gridbeam.scad>
+beam_is_hollow = 1; // override
+```
+In OpenSCAD2, overrides are explicit.
+An include statement may optionally be followed by 1 or more
+override statements, which contain definitions that override the
+included script:
+```
+include script("MCAD/gridbeam.scad");
+override beam_is_hollow = 1;
+```
+And this is just syntactic sugar for object customization.
+The compiler converts an include followed by a series of override statements
+into a customized include:
+```
+include script("MCAD/gridbeam.scad")(beam_is_hollow = 1);
+```
+In short, the scope of override definitions is made explicit,
+and that's an improvement in our scoping rules.
+
+#### Clarifying the scope of overrides
+Code that doesn't work in 2015.03:
+```
+include <foo> // has parameters 'x' and 'y'
+x = 1; // override x
+a = x + 1;
+y = a + 1; // override y. y is undef
+```
+This code will emit a "WARNING: unknown variable a",
+but then it will run and set y to undef.
+(This problem has been discussed in the forum.
+Google this: "The last value assigned to j is 4 and indeed the echo shows that, so why is k assigned undef? Seems like a bug in OpenScad".)
+
+This code is wrong because it involves a scoping violation,
+and it reports a compile error in the new implementation.
+Users won't have to wonder why `y` is `undef` because we won't evaluate the program.
+
+It becomes more obvious why this code is wrong if you
+translate it into an OpenSCAD2 customized include:
+```
+include script("foo")(x=1, y=a+1);
+a = x + 1;
+```
 
 ## Include
 The `include` operator has changed in OpenSCAD2 to support lexical scoping.
