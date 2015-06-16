@@ -191,16 +191,25 @@ which is a problem (adding new builtins could break existing code).
 It's also a violating of the scoping rules, which state that the global scope
 is outside of all other scopes.
 
-In the new implementation, scripts evaluate to objects,
-and objects are values that contain named fields.
-We have to decide if `use` adds named fields to the script file's object.
-
-The answer is yes. The `use <F>` command will add overrideable definitions
-of all the functions and modules in F, to the current object.
+In the new implementation, `use <F>` adds definitions
+of all the functions and modules in F to the current object.
 And this fixes the scoping rule violation.
 If a search of the file level scope for a function or module fails
 (this scope now includes the definitions imported by `use`),
 then we proceed to the next enclosing scope, which is the global scope.
+
+The definitions added by `use <F>` to the object
+do not conflict with explicit definitions of the same name and type:
+the explicit definition silently overrides the definition imported by `use`.
+
+If two definitions with the same name and type are imported by `use`
+from different libraries, then a warning is given (not an error).
+This is new behaviour.
+
+Are definitions added to the object by `use <F>` externally accessible?
+* As named fields? No.
+* If you include the object? Not sure.
+* If you use the object? Not sure.
 
 ### on `include <F>`
 The current implementation of `include <F>` works by textually
