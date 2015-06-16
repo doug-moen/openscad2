@@ -194,37 +194,32 @@ which is a problem (adding new builtins could break existing code).
 It's also a violating of the scoping rules, which state that the global scope
 is outside of all other scopes.
 
-In the new implementation, `use <F>` adds definitions
+In the new implementation, `use <F>` adds bindings
 of all the functions and modules in F to the current object.
 And this fixes the scoping rule violation.
 If a search of the file level scope for a function or module fails
-(this scope now includes the definitions imported by `use`),
+(this scope now includes the bindings imported by `use`),
 then we proceed to the next enclosing scope, which is the global scope.
 
-The definitions added by `use <F>` to the object
+The bindings added by `use <F>` to the object
 do not conflict with explicit definitions of the same name and type:
-the explicit definition silently overrides the definition imported by `use`.
+the explicit definition silently overrides the binding imported by `use`.
 
 If two definitions with the same name and type are imported by `use`
 from different libraries, then a warning is given (not an error).
 This is new behaviour.
 
-Are definitions added to the object by `use <F>` externally accessible?
-* As named fields? No.
-* If you include the object? Not sure.
-* If you use the object? Not sure.
-
-Quote from the forum, about limitations of `use`:
-> you cannot override a default.
-> Another similar issue is an include<> or use<> within the use<> cannot be
-> overridden (where defaults are set in that file), like include <units> &
-> include <materials> inside MCAD/bearing.scad - I once wanted to change units
-> it used.
-
-MCAD/bearings.scad includes MCAD/units.scad, then it references `epsilon`.
-Can you use bearings.scad and override `epsilon`?
-* In my current design, `epsilon` is overrideable if bearings.scad includes
-  units, but is not overrideable if it uses units.
+Are bindings added to the object by `use <F>` externally accessible?
+* As named fields? No. Use `include` if you want this behaviour.
+* If you include or use the object? Again, no.
+  Use `include` if you want this behaviour.
+  However, I need to research the backward compatibility impact of this decision.
+* Can these bindings be overridden by customization?
+  Yes. A use case is MCAD/bearing.scad, which references `epsilon` from units.scad,
+  which defines `epsilon=0.01`. `epsilon` should be considered
+  an overrideable parameter, with 0.01 as its default value.
+  Any script that uses units.scad and directly references epsilon,
+  should allow epsilon to be overridden by customization.
 
 ### on `include <F>`
 The current implementation of `include <F>` works by textually
@@ -292,6 +287,8 @@ translate it into an OpenSCAD2 customized include:
 include script("foo")(x=1, y=a+1);
 a = x + 1;
 ```
+
+#### Improved Lexical Scoping
 
 ## Include
 The `include` operator has changed in OpenSCAD2 to support lexical scoping.
