@@ -203,8 +203,25 @@ to make OOP work, the harder it is to learn and use.
 ## Bill of Materials
 
 Some users need to extract metadata from their model, eg to construct a "bill of materials".
-Unfortunately, they must rely on low level, non-declarative features to extract this information,
-like `echo` and `parent_module`.
+Or they need to translate their model to another modeling language
+(see [openscad2povray](https://github.com/archie305/openscad2povray).
+
+Currently, a "bill of materials" is commonly created by embedding `echo` statements
+in the code, then collecting and filtering the console output.
+OpenSCAD2Povray uses a combination of tricks, such as collecting `echo` output,
+using `parent_module` and `$parent_modules`, and post-processing the CSG tree.
+
+The problem with relying on features like `echo` and `parent_module`
+is that they are low-level and non-declarative, and are too tightly coupled
+to the current evaluator. In the future, we want to take advantage of OpenSCAD's
+[declarative semantics](Declarative_Semantics.md)
+to build a faster evaluator.
+Referential transparency means we don't have to evaluate the same identical expression
+more than once, we can cache results (which affects the number of echos that are executed).
+Order independence means we can evaluate subexpressions out of order, or concurrently
+(taking advantage of multiple cores), but this affects the order in which echos occur.
+
+We need to provide users with a high level, declarative way of accomplishing these tasks.
 The CSG tree is a pure value capable of storing all of the necessary metadata.
 It can become the basis of a better way to extract metadata.
 
@@ -213,11 +230,11 @@ which takes a target script as an argument.
 Makebom traverses the target CSG tree,
 and extracts metadata, which it returns as the 'bom'
 component of its object.
-If we provide a way to dump a selected part of the CSG tree as XML or JSON,
+If we provide a way to dump a selected part of the CSG tree as plain text or JSON,
 then you can extract the BOM like this:
 
 ```
-openscad -D target=mymodel.scad -i bom -o mybom.xml makebom.scad
+openscad -D target=mymodel.scad -i bom -o mybom.json makebom.scad
 ```
 with this implementation:
 ```
@@ -226,8 +243,15 @@ target = undef;
 extract_bom(object) = ...;
 bom = extract_bom(script(target));
 ```
-Until we have standard conventions for representing BOM metadata,
-each project will need its own implementation of `makebom.scad`.
+The same design pattern will work for openscad2povray.
+
+I'm supposing that OpenSCAD is extended with a `-i` flag
+to specify which subtree of the CSG tree to process,
+and that the `-o` flag is extended to support output of JSON or plain text.
+Plain text output requires that the node specified by `-i` is a string.
+JSON output requires that the node specified by `-i`
+consists of solely of `undef`, boolean, number, string, list and object values,
+which are output as the 6 JSON data types.
 
 ## the Conway Polyhedron Operators
 Mathematician John Conway has designed
