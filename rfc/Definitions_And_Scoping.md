@@ -253,18 +253,10 @@ include <MCAD/gridbeam.scad>
 beam_is_hollow = 1; // override
 ```
 In OpenSCAD2, overrides are explicit.
-An include statement may optionally be followed by 1 or more
-override statements, which contain definitions that override the
-included script:
+Overrides are specified by customizing the object before including it:
 ```
-include script("MCAD/gridbeam.scad");
-override beam_is_hollow = 1;
-```
-And this is just syntactic sugar for object customization.
-The compiler converts an include followed by a series of override statements
-into a customized include:
-```
-include script("MCAD/gridbeam.scad")(beam_is_hollow = 1);
+include script("MCAD/gridbeam.scad")(
+    beam_is_hollow = 1);
 ```
 In short, the scope of override definitions is made explicit,
 and that's an improvement in our scoping rules.
@@ -289,7 +281,9 @@ Users won't have to wonder why `y` is `undef` because we won't evaluate the prog
 It becomes more obvious why this code is wrong if you
 translate it into an OpenSCAD2 customized include:
 ```
-include script("foo")(x=1, y=a+1);
+include script("foo")(
+    x=1,
+    y=a+1);
 a = x + 1;
 ```
 
