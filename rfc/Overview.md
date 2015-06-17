@@ -134,7 +134,7 @@ linear_extrude(height=40, twist(h)=35*cos(h*2*pi/60)) {
 Objects are a powerful new addition to OpenSCAD,
 but they arise naturally as the answer to some questions:
 how can I make library scripts into first class values,
-and what does <tt>{</tt><i>script</i><tt>}</tt> mean in an expression?
+and what does <tt>{</tt><i>script</i><tt>}</tt> mean as an expression?
 
 Objects have multiple roles in OpenSCAD2.
 * An OpenSCAD2 script is evaluated to an object.
