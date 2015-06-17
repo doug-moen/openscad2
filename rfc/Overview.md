@@ -21,7 +21,7 @@ This causes two problems:
   This actually creates an ease-of-use problem,
   and we would be better off if the language looked less C-like.
 
-OpenSCAD2 provides a alternative to some of the syntax inherited from C.
+OpenSCAD2 provides an alternative to some of the syntax inherited from C.
 The goal is to make the syntax look more like high-school math.
 (Of course the old syntax continues to work.)
 
