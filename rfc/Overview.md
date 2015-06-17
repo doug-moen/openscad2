@@ -30,8 +30,8 @@ The goal is to make the syntax look more like high-school math.
 | `!a` | `not a` |
 | `a && b` | `a and b` |
 | `a || b` | `a or b`  |
-| `a ? b : c` | `if (a) b else c` |
-| `pow(a,x)` | `a^x` |
+| `a ? b : c` | `if (a) b else c` | consistent syntax for<br>statements and expressions
+| `pow(a,x)` | `a^x` | standard syntax for exponentiation<br>in math, physics + functional languages
 | `a % m` | `a mod m` | true mathematical modulus operator
 | `[a:z]`<br>`[a:k:z]` | `[a..z]`<br>`[a,a+k..z]` | range. Like set-builder notation<br>from high school math.
 | -         | `a[start..]`<br>`a[..end]`<br>`a[start..end]` | slice
