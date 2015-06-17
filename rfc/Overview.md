@@ -2,14 +2,15 @@
 
 OpenSCAD2 is a backwards compatible redesign of OpenSCAD.
 The main goals are expressive power and ease of use.
-* Everything is a first class value (including functions, modules, shapes, and objects)
-* Single unified namespace (instead of separate namespaces for variables, functions and modules)
-* Simple, consistent scoping rules eliminate a source of confusion
-* Backwards compatibility mode for old scripts that rely on 3 namespaces and old scoping rules
+* Everything is a first class value (including functions, modules, shapes, and objects).
+* Single unified namespace (instead of separate namespaces for variables, functions and modules).
+* Simple, consistent scoping rules eliminate a source of confusion.
+* OpenSCAD reports errors in more situations where something goes wrong. This makes bugs easier to diagnose.
+* Backwards compatibility mode for old scripts that rely on 3 namespaces and old scoping rules.
 * New syntax for function & module definitions, use and include,
-  required to support new semantics while preserving backwards compatibility
+  required to support new semantics while preserving backwards compatibility.
 * Objects result from treating scripts as first class values,
-  and add a lot of new expressive power
+  and add a lot of new expressive power.
 
 ## New Syntax
 OpenSCAD is a functional language with a C-like syntax.
