@@ -31,7 +31,7 @@ The goal is to make the syntax look more like high-school math.
 | `a && b` | `a and b` |
 | `a || b` | `a or b`  |
 | `a ? b : c` | `if (a) b else c` | consistent syntax for<br>statements and expressions
-| `pow(a,x)` | `a^x` | standard syntax for exponentiation<br>in math, physics + functional languages
+| `pow(x,2)` | `x^2` | standard syntax for exponentiation<br>in math, physics + functional languages
 | `a % m` | `a mod m` | true mathematical modulus operator
 | `[a:z]`<br>`[a:k:z]` | `[a..z]`<br>`[a,a+k..z]` | range. Like set-builder notation<br>from high school math.
 | -         | `a[start..]`<br>`a[..end]`<br>`a[start..end]` | slice
@@ -160,6 +160,7 @@ with specified definitions overridden by new values, and returns a new object.
 
 For example,
 ```
+// define lollipop object
 lollipop = {
   radius   = 10; // candy
   diameter = 3;  // stick
@@ -168,6 +169,8 @@ lollipop = {
   translate([0,0,height]) sphere(r=radius);
   cylinder(d=diameter,h=height);
 };
+
+// add a customized lollipop to our geometry
 lollipop(radius=15); // more candy!
 ```
 
