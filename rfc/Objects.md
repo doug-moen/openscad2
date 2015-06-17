@@ -113,9 +113,6 @@ This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCA
 
 ## Constructing New Objects from Old
 
-There are three ways to build a new object from an existing object:
-customization, inclusion and composition.
-
 ### Customization
 
 `object(name1=value1, name2=value2, ...)` customizes an object
@@ -154,6 +151,16 @@ lollipop_and_mint = {
 As a special case, `include script("filename");`
 is the OpenSCAD2 syntax for `include <filename>` in OpenSCAD1.
 
+Inclusion is a form of object inheritance. The use cases for `include` in OpenSCAD2
+are narrower than in the original language:
+* A model script includes another model in order to extend it with
+  new fields and geometry, as above. That's an exceptional case.
+  More commonly, you just reference the other model, as `lollipop;`
+  instead of `include lollipop;`.
+* A library script includes another library, for the purpose of
+  extending the other library's API. That's an exceptional case.
+  More commonly, you just use the library, as `use library;`.
+
 ### Composing Customization with Inclusion
 
 By composing the two operations, you have the general ability
@@ -181,10 +188,31 @@ mint_diameter=15;
 translate([mint_diameter*2, 0, 0])
   cylinder(h=mint_diameter/4, d=mint_diameter);
 ```
-The OpenSCAD1 version of this API suffers from bugs, which are described
-in [Definitions and Scoping](Definitions_And_Scoping.md).
-The OpenSCAD2 implementation of customization and inclusion is intended
-to preserve support for this feature, with better semantics.
+In the original language, the only way to override parameters within an object
+is via `include`, and it's not explicit which definitions are overrides.
+In OpenSCAD2, customization is a separate operation from inclusion.
+For example, you can customize a library you are using
+via `use library(name=value);`.
+
+### `only`
+The `only` operator returns a projection of an object
+containing only a specified subset of its fields.
+```
+only(name1, name2, ...) object
+```
+is equivalent to
+```
+{
+   name1 = object.name1;
+   name2 = object.name2;
+   ...
+}
+```
+This is composed with `use` in the following idiom:
+```
+use only (mm, inch) script("MCAD/units.scad");
+```
+See [Library Scripts](Library_Scripts.md).
 
 ### Object Composition
 If `defaults` and `overrides` are both objects,
@@ -203,7 +231,7 @@ include <defaults>
 include <overrides>
 ```
 in OpenSCAD1. Therefore, the object composition operator
-is expected to help in porting code to the new language.
+is expected to help in porting existing code to the new language.
 
 ## The CSG Tree
 Objects are the replacement for groups in the CSG tree.
