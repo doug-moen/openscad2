@@ -7,12 +7,22 @@ and to make the language as consistent and uniform as possible.
 This can't be done without syntax changes,
 so a secondary goal is to provide a beautiful and natural syntax.
 
-## Beautiful, Natural Syntax
-OpenSCAD is a 3D modelling tool, not a programming language.
-Users should not be expected to have experience with a C-like language
-in order to understand the syntax: exposure to high school math should be sufficient.
+## New Syntax
+OpenSCAD is a functional language with a C-like syntax.
+This causes two problems:
+* OpenSCAD is primarily a 3D modelling tool, not a programming language.
+  It is targetted at designers, not professional programmers.
+  Users should not be expected to have experience with a C-like language
+  in order to understand the syntax: exposure to high school math should be sufficient.
+* If you are a computer programmer (as opposed to a designer who happens to write programs),
+  then you are quite familiar with C-like languages: Javascript, Java, C#, etc.
+  For you, OpenSCAD causes cognitive dissonance: it has a C-like syntax,
+  but the idioms of C do not work. You can't increment a variable or mutate an array.
+  This actually creates an ease-of-use problem,
+  and we would be better off if the language looked less C-like.
 
-OpenSCAD2 provides a more human readable alternative to some of the syntax inherited from C.
+OpenSCAD2 provides a alternative to some of the syntax inherited from C.
+The goal is to make the syntax look more like high-school math.
 (Of course the old syntax continues to work.)
 
 | old | new | explanation
@@ -22,7 +32,7 @@ OpenSCAD2 provides a more human readable alternative to some of the syntax inher
 | `a || b` | `a or b`  |
 | `a ? b : c` | `if (a) b else c` |
 | `pow(a,x)` | `a^x` |
-| `a % m` | `a mod m` |
+| `a % m` | `a mod m` | true mathematical modulus operator
 | `[a:z]`<br>`[a:k:z]` | `[a..z]`<br>`[a,a+k..z]` | range. Like set-builder notation<br>from high school math.
 | -         | `a[start..]`<br>`a[..end]`<br>`a[start..end]` | slice
 
