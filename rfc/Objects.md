@@ -214,26 +214,43 @@ use only (mm, inch) script("MCAD/units.scad");
 ```
 See [Library Scripts](Library_Scripts.md).
 
-### Object Composition
+## Objects as Parameter Sets
+A set of model parameters can be represented as an object.
+This is used by a couple of idioms.
+
+Some authors create "header files" containing sets of model parameters.
+The `merge` operation given below is intended to
+support this coding style in OpenSCAD2.
+
+Some authors represent a parameter set as an array of name/value pairs,
+and use `search` to look up a parameter. In OpenSCAD2, a parameter array
+can be replaced by an object literal, and you can use `paramset.name`
+to look up a parameter. This way, it's also easy to organize parameters into a hierarchy.
+
+### `merge`
 If `defaults` and `overrides` are both objects,
-then `defaults <+ overrides` is the composition or union of those two objects.
+then `merge(defaults, overrides)` is the composition or union of those two objects.
 The resulting object has all of the fields found in either object,
 but if both objects define the same name, then the right argument `overrides` wins.
 
-This operator simulates the behaviour of `include` in OpenSCAD1.
+This operator simulates an idiomatic use of `include` in OpenSCAD1.
 In OpenSCAD2,
 ```
-include script("defaults") <+ script("overrides");
+include merge(script("defaults"), script("overrides"));
 ```
 has the same effect as
 ```
 include <defaults>
 include <overrides>
 ```
-in OpenSCAD1. Therefore, the object composition operator
-is expected to help in porting existing code to the new language.
+in OpenSCAD1.
+
+Now suppose that `object` is a base object
+that you want to customize using `parameters`.
+This works: `merge(object, parameters)`.
 
 ## The CSG Tree
+
 Objects are the replacement for groups in the CSG tree.
 
 The root of the CSG tree is the object denoted by the main script.
