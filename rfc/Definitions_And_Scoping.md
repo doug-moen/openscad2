@@ -405,8 +405,8 @@ it has to be done explicitly using customization syntax: `object(overrides)`.
    include <overrides.scad>
    ...
    ```
-   This is translated into OpenSCAD2 using the object composition operator `<+`.
+   This is translated into OpenSCAD2 using the merge operator.
    ```
-   include script("defaults.scad") <+ script("overrides.scad");
+   include merge(script("defaults.scad"), script("overrides.scad"));
    ...
    ```
