@@ -205,21 +205,26 @@ The bindings added by `use <F>` to the object
 do not conflict with explicit definitions of the same name and type:
 the explicit definition silently overrides the binding imported by `use`.
 
-If two definitions with the same name and type are imported by `use`
+If two bindings with the same name and type are imported by `use`
 from different libraries, then a warning is given (not an error).
 This is new behaviour.
 
 Are bindings added to the object by `use <F>` externally accessible?
 * As named fields? No. Use `include` if you want this behaviour.
-* If you include or use the object? Again, no.
-  Use `include` if you want this behaviour.
-  However, I need to research the backward compatibility impact of this decision.
+* If you `use` the object? No, use `include` if you want this behaviour.
+  The rationale is, if library B uses library A, then B has access to A's bindings,
+  but does not export A's API. If library B wants to export A's API,
+  then it should include A.
 * Can these bindings be overridden by customization?
   Yes. A use case is MCAD/bearing.scad, which references `epsilon` from units.scad,
   which defines `epsilon=0.01`. `epsilon` should be considered
   an overrideable parameter, with 0.01 as its default value.
   Any script that uses units.scad and directly references epsilon,
   should allow epsilon to be overridden by customization.
+* If you include the object, all bindings are copied from the included object
+  into the current object, and this includes bindings created by `use`,
+  which preserve their properties: they can be overridden, but are not exported
+  as named fields or via `use`.
 
 ### on `include <F>`
 The current implementation of `include <F>` works by textually
