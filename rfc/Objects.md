@@ -109,7 +109,10 @@ translate([-50,0,0]) lollipop;
 translate([50,0,0]) lollipop;
 ```
 
-This is a backwards-compatible reinterpretation of the `{...}` syntax in OpenSCAD1.
+Since objects are the replacement for groups,
+you can group shapes using `{shape1; shape2;}`.
+And this makes object literals
+a backwards-compatible reinterpretation of the `{...}` syntax.
 
 ## Constructing New Objects from Old
 
