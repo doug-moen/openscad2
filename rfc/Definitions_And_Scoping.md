@@ -183,11 +183,11 @@ We won't change this behaviour in OpenSCAD1,
 but the equivalent OpenSCAD2 code will give an error for the first line: "f is not defined".
 
 ### on `use <F>`
-The current implementation of the `use` command violates the scoping rules.
+Currently, `use <F>` is only legal at the top level of a script file.
+In the new implementation, it will be legal in any subscript, the same as `include <F>`.
 
-`use <F>` is only legal at the top level of a script file.
-It causes F to be searched for functions and modules.
-But F is placed last in the search order, after the script file itself, and *after* the global bindings.
+Currently, `use <F>` violates the scoping rules.
+F is placed last in the search order, after the script file itself, and *after* the global bindings.
 If a new release of OpenSCAD adds new functions and modules,
 these will shadow functions or modules imported from `use`d library scripts,
 which is a problem (adding new builtins could break existing code).
