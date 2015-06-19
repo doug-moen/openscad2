@@ -232,6 +232,8 @@ Are bindings added to an object by `use` externally accessible?
   which preserve their properties: they can be overridden, but are not exported
   as named fields or via `use`.
 
+See [Library Scripts](Library_Scripts.md) for more information about `use` in OpenSCAD2.
+
 ### on `include <F>`
 The current implementation of `include <F>` works by textually
 substituting the contents of file F into the input stream at a low level.
