@@ -22,8 +22,8 @@ You can use GEOME together with other libraries and there won't be name conflict
 ## Standard Shapes
 The first 8 shapes are the primitive shapes from
 [Conway's polyhedron notation](https://en.wikipedia.org/wiki/Conway_polyhedron_notation).
-* `tetrahedron` (== `pyramid(3)`)
-* `cube` (== `prism(4)`)
+* `tetrahedron` (`== pyramid(3)`)
+* `cube` (`== prism(4)`)
 * `octahedron`
 * `dodecahedron`
 * `icosahedron`
@@ -70,5 +70,9 @@ Some influences (incomplete):
 * George Hart
 * Henry Baker's transformation matrix library for OpenSCAD
 * Kit Wallace
-* [ShapeJS](http://abfab3d.com/)
 * ...
+
+Other systems I still need to look at:
+* [ShapeJS](http://abfab3d.com/)
+* [Generative Modelling Language](https://en.wikipedia.org/wiki/Generative_Modelling_Language)
+  @ [generative-modeling.org](http://www.generative-modeling.org/)
