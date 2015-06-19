@@ -238,7 +238,7 @@ to look up a parameter. This way, it's also easy to organize parameters into a h
 If `defaults` and `overrides` are both objects,
 then `merge(defaults, overrides)` is the composition or union of those two objects.
 The resulting object has all of the fields found in either object,
-but if both objects define the same name, then value is given by the `overrides` argument.
+but if both objects define the same field, then its value is given by the `overrides` argument.
 
 Nophead's Mendel90 project has `config.scad` which looks, in part, like this:
 ```
