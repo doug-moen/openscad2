@@ -182,7 +182,7 @@ functions being ordinary values and function bindings being no different from ot
 We won't change this behaviour in OpenSCAD1,
 but the equivalent OpenSCAD2 code will give an error for the first line: "f is not defined".
 
-### on `use <F>`
+### on `use`
 Currently, `use <F>` is only legal at the top level of a script file.
 In the new implementation, it will also be legal in object literals, the same as `include <F>`.
 
@@ -241,7 +241,9 @@ Are bindings added to an object by `use` externally accessible?
 
 See [Library Scripts](Library_Scripts.md) for more information about `use` in OpenSCAD2.
 
-### on `include <F>`
+### on `include`
+
+<!-- nothing to do with scoping; belongs in an implementation section
 The current implementation of `include <F>` works by textually
 substituting the contents of file F into the input stream at a low level.
 
@@ -258,6 +260,7 @@ object O. The customized object O is then what's imported.
 
 This is a different implementation with basically the same semantics.
 Where the semantics differ are in the direction of improved lexical scoping.
+-->
 
 #### Implicit vs Explicit Overrides
 In the new implementation, the main difference between `include`
@@ -292,9 +295,10 @@ Google this: "The last value assigned to j is 4 and indeed the echo shows that, 
 This code is wrong because it involves a scoping violation,
 and it reports a compile error in the new implementation.
 Users won't have to wonder why `y` is `undef` because we won't evaluate the program.
+But it's not clear why the compiler reports `a` is undefined.
 
-It becomes more obvious why this code is wrong if you
-translate it into an OpenSCAD2 customized include:
+It becomes more obvious why this code is wrong when the code is translated
+into OpenSCAD2, which requires a customized include:
 ```
 include script("foo")(
     x=1,
@@ -303,7 +307,14 @@ a = x + 1;
 ```
 
 #### Improved Lexical Scoping
+In the new implementation, the argument to `include` is compiled into an object,
+and then each binding is imported into the block. The imported bindings carry with them
+their lexical environment (the parent scope). In short, `include` supports lexical scoping,
+which the current implementation does not, since it works by pure text substitution.
 
+[More information about `include` in OpenSCAD2.](Objects.md#inclusion)
+
+<!--
 ## Include
 The `include` operator has changed in OpenSCAD2 to support lexical scoping.
 
@@ -327,6 +338,7 @@ causes unpredictable behaviour and chaos, as discussed in several forum posts.
 However, this feature is also deliberately used to allow the includer to override
 parameters in the includee. OpenSCAD2 provides a safe, lexically scoped mechanism for
 overriding definitions in an included script, [as discussed here](Objects.md).
+-->
 
 ## Dynamic Scoping
 OpenSCAD1 supports dynamic scoping in function and module calls.
@@ -363,6 +375,7 @@ S = script("S.scad");
 S(X=42).M();
 ```
 
+<!--
 ## Missing and Multiple Definitions
 In OpenSCAD2 it is illegal to define the same name twice within the same scope:
 you get a duplicate definition error.
@@ -425,3 +438,4 @@ it has to be done explicitly using customization syntax: `object(overrides)`.
    include merge(script("defaults.scad"), script("overrides.scad"));
    ...
    ```
+   -->
