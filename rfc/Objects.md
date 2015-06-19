@@ -164,6 +164,12 @@ are narrower than in the original language:
   extending the other library's API. That's an exceptional case.
   More commonly, you just use the library, as `use library;`.
 
+In OpenSCAD2, it's an error for a binding imported by `include`
+to conflict with another definition or `include` in the same block.
+Overrides are always specified explicitly, they don't happen implicitly.
+In the next few sections, we'll discuss several idioms for
+explicit overrides using customization and `merge`.
+
 ### Composing Customization with Inclusion
 
 By composing the two operations, you have the general ability
@@ -217,13 +223,11 @@ use only (mm, inch) script("MCAD/units.scad");
 ```
 See [Library Scripts](Library_Scripts.md).
 
-## Objects as Parameter Sets
+## Parameter Sets
 A set of model parameters can be represented as an object.
 This is used by a couple of idioms.
 
-Some authors create "header files" containing sets of model parameters.
-The `merge` operation given below is intended to
-support this coding style in OpenSCAD2.
+Some authors create scad files containing sets of model parameters.
 
 Some authors represent a parameter set as an array of name/value pairs,
 and use `search` to look up a parameter. In OpenSCAD2, a parameter array
@@ -234,23 +238,24 @@ to look up a parameter. This way, it's also easy to organize parameters into a h
 If `defaults` and `overrides` are both objects,
 then `merge(defaults, overrides)` is the composition or union of those two objects.
 The resulting object has all of the fields found in either object,
-but if both objects define the same name, then the right argument `overrides` wins.
+but if both objects define the same name, then value is given by the `overrides` argument.
 
-This operator simulates an idiomatic use of `include` in OpenSCAD1.
-In OpenSCAD2,
+Nophead's Mendel90 project has `config.scad` which looks, in part, like this:
 ```
-include merge(script("defaults"), script("overrides"));
+...a long list of default configuration settings...
+include <machine.scad> // override defaults for a particular machine
 ```
-has the same effect as
+Here's my translation of this code into OpenSCAD2:
 ```
-include <defaults>
-include <overrides>
+defaults = {
+...a long list of default configuration settings...
+};
+include merge(defaults, script("machine.scad"));
 ```
-in OpenSCAD1.
 
-Now suppose that `object` is a base object
-that you want to customize using `parameters`.
-This works: `merge(object, parameters)`.
+### `apply`
+`apply(base_object, parameter_set)` customizes the base object
+with the specified parameters. It has the same semantics as customization.
 
 ## The CSG Tree
 
