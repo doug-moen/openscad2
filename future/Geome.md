@@ -1,7 +1,7 @@
 # The GEOME geometry library
 
-## Fundamental Shapes
-The fundamental shapes are customizeable objects.
+## Standard Shapes
+The standard shapes are customizeable objects.
 You can literally write `cube;` as your first GEOME program,
 and you'll get a standard size cube. The first 8 shapes are
 also the primitive shapes from
@@ -24,10 +24,12 @@ But also, you can compose affine transformations using T1 * T2.
 * `move(x,y,z)`
 * `rotate(x,y,z)`
 * `scale(x,y,z)`
+* `mirror(x,y,z)`
 * ...
 
 ## Arrangement Operators
-The arrangement operators position objects relative to one another.
+The arrangement operators position objects relative to one another,
+or relative to the axes.
 There's no `center` argument to `cube`. Instead, you can use `align`
 to align it relative to the x,y,z axes.
 Details TBD.
@@ -35,7 +37,7 @@ Details TBD.
 ## Conway Transformations
 All of [Conway's operations](https://en.wikipedia.org/wiki/Conway_polyhedron_notation)
 on convex regular polyhedra are included.
-The domain of these operators may have to be restricted to convext regular polyhedra. We'll see.
+The domain of these operators may have to be restricted to convex regular polyhedra. We'll see.
 
 ## Other Shape Transformations
 * `wireframe(shape)` // convert any polyhedron to a wireframe
