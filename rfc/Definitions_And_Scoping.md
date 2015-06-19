@@ -193,7 +193,11 @@ these will shadow functions or modules imported from `use`d library scripts,
 which is a problem (adding new builtins could break existing code).
 It's also a violating of the scoping rules, which state that the global scope
 is outside of all other scopes.
+In the new implementation,
+bindings imported into a block by `use` are searched
+*before* the parent scope is searched.
 
+<!--
 In the new implementation, `use <F>` adds bindings
 of all the functions and modules in F to the current object.
 And this fixes the scoping rule violation.
@@ -204,14 +208,16 @@ then we proceed to the next enclosing scope, which is the global scope.
 The bindings added by `use <F>` to the object
 do not conflict with explicit definitions of the same name and type:
 the explicit definition silently overrides the binding imported by `use`.
+-->
 
-If two bindings with the same name and type are imported by `use`
-from different libraries, then a warning is given (not an error).
-This is new behaviour.
+The current implementation is silent if two bindings with the same name and type are imported by `use`
+from different libraries. This could mask bugs.
+In the new implementation, OpenSCAD1 will report a warning (so existing code won't break)
+and OpenSCAD2 will report an error.
 
-Are bindings added to the object by `use <F>` externally accessible?
+Are bindings added to an object by `use` externally accessible?
 * As named fields? No. Use `include` if you want this behaviour.
-* If you `use` the object? No, use `include` if you want this behaviour.
+* If you `use` the object? No.
   The rationale is, if library B uses library A, then B has access to A's bindings,
   but does not export A's API. If library B wants to export A's API,
   then it should include A.
