@@ -61,3 +61,14 @@ The domain of these operators may have to be restricted to convex regular polyhe
 
 ## Parametric Shape Constructors
 Use parametric functions to construct shapes. TBD.
+
+## Influences
+GEOME is designed entirely by ripping off other people's ideas,
+and then packaging those ideas into simple, composable and orthogonal shape operators.
+Some influences (incomplete):
+* John Conway
+* George Hart
+* Henry Baker's transformation matrix library for OpenSCAD
+* Kit Wallace
+* [ShapeJS](http://abfab3d.com/)
+* ...
