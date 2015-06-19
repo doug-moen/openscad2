@@ -11,7 +11,7 @@ instead, provide a single function plus "adverb" operations to tweak the output.
 All shapes are OpenSCAD2 customizable objects.
 The API exposed by shape objects is TBD.
 You can literally write `cube;` as your first GEOME program,
-and you'll get a standard size cube.
+and you'll get a standard size cube centered at the origin.
 Use operators to modify and place the cube.
 
 Some of the names in GEOME shadow built-in names.
