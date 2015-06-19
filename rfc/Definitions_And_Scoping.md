@@ -184,7 +184,7 @@ but the equivalent OpenSCAD2 code will give an error for the first line: "f is n
 
 ### on `use <F>`
 Currently, `use <F>` is only legal at the top level of a script file.
-In the new implementation, it will be legal in any subscript, the same as `include <F>`.
+In the new implementation, it will also be legal in object literals, the same as `include <F>`.
 
 Currently, `use <F>` violates the scoping rules.
 F is placed last in the search order, after the script file itself, and *after* the global bindings.
@@ -211,14 +211,14 @@ do not conflict with explicit definitions of the same name and type:
 the explicit definition silently overrides the binding imported by `use`.
 -->
 
+The bindings added to an object by `use` are not externally visible.
+They aren't visible as named fields, they can't be customized,
+they are invisible to clients that `use` or `include` the object.
+
 The current implementation is silent if two bindings with the same name and type are imported by `use`
 from different libraries. This could mask bugs.
 In the new implementation, OpenSCAD1 will report a warning (so existing code won't break)
 and OpenSCAD2 will report an error.
-
-The bindings added to an object by `use` are not externally visible.
-They aren't visible as named fields, they can't be customized,
-they are invisible to clients that `use` or `include` the object.
 
 <!--
 Are bindings added to an object by `use` externally accessible?
