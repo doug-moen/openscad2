@@ -195,7 +195,8 @@ It's also a violating of the scoping rules, which state that the global scope
 is outside of all other scopes.
 In the new implementation,
 bindings imported into a block by `use` are searched
-*before* the parent scope is searched.
+after the bindings created by definitions and `include`,
+but *before* the parent scope is searched.
 
 <!--
 In the new implementation, `use <F>` adds bindings
@@ -215,6 +216,11 @@ from different libraries. This could mask bugs.
 In the new implementation, OpenSCAD1 will report a warning (so existing code won't break)
 and OpenSCAD2 will report an error.
 
+The bindings added to an object by `use` are not externally visible.
+They aren't visible as named fields, they can't be customized,
+they are invisible to clients that `use` or `include` the object.
+
+<!--
 Are bindings added to an object by `use` externally accessible?
 * As named fields? No. Use `include` if you want this behaviour.
 * If you `use` the object? No.
@@ -231,6 +237,7 @@ Are bindings added to an object by `use` externally accessible?
   into the current object, and this includes bindings created by `use`,
   which preserve their properties: they can be overridden, but are not exported
   as named fields or via `use`.
+-->
 
 See [Library Scripts](Library_Scripts.md) for more information about `use` in OpenSCAD2.
 
