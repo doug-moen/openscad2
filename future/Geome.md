@@ -59,6 +59,20 @@ The domain of these operators may have to be restricted to convex regular polyhe
 * `wireframe(shape)` // convert any polyhedron to a wireframe
 * `tubify(shape)` // works on prisms and cylinders
 
+## Low Level Polyhedron Operations
+The `polyhedron` module is very powerful, as it can create any polyhedron.
+It's quite difficult to use correctly, since it's easy to have "inside out" faces,
+and there are no error messages for this.
+It would be nice to have a set of low level operations for directly constructing polyhedra
+which (a) can construct any valid polyhedron, and (b) cannot construct an invalid polyhedron.
+
+I don't really know how to do this.
+* Runsun's "faces" library is interesting.
+* The [Euler Operators](http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/model/euler-op.html)
+are interesting: they can construct any valid polyhedron, and they guarantee that any object they
+create obeys the [Euler-Poincaré Formula](http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/model/euler.html).
+Alas, the intermediate construction steps are often not valid polyhedra. They aren't that easy to use.
+
 ## Parametric Shape Constructors
 Use parametric functions to construct shapes. TBD.
 
