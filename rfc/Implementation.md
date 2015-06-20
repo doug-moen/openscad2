@@ -70,18 +70,21 @@ file and analyzing them to determine which bindings are imported.
 The AST produced by the analyzer is used by the upgrade tool to upgrade a script
 to OpenSCAD2 syntax and output the modified source file.
 
-Here are some details on the implementation of `include`,
-and how it works when an OpenSCAD1 script includes an OpenSCAD2 script,
-or vice versa.
-In the following, by "value" I mean unevaluated expression whose type may not be known
-at compile time.
-* Whenever a script is referenced, the script file is first
-  read and converted to an object. This happens even in the case of `include <filename>`:
-  in this case, we simulate the semantics with a different underlying implementation.
+## Object Implementation
+OpenSCAD scripts and `{...}` object literals are compiled into Object ASTs.
+
+An Object AST consists of:
+* `geometry`: a list of ASTs, one for each geometry statement
+* `public_bindings`: a map from identifiers to fields, which is populated from definitions and `include` statements
+* `use_bindings`: another map from identifiers to fields, which is populated from `use` statements
+* `parent_scope`. When resolving an identifier during semantic analysis,
+  the search order is `public_bindings`, then `use_bindings`, then `parent_scope`.
+
+While building the object,
 * In the object that results from reading a pure OpenSCAD1 script,
-  each field contains up to 3 values, corresponding to the variable, function and module namespaces.
+  each field contains up to 3 value ASTs, corresponding to the variable, function and module namespaces.
 * In the object that results from reading a pure OpenSCAD2 script,
-  each field contains a single value.
+  each field contains a single value AST.
 * If an OpenSCAD1 script includes an OpenSCAD2 script, or vice versa,
   then we are building a hybrid object where some of the fields are OpenSCAD1 style,
   and some are OpenSCAD2 style.
@@ -90,7 +93,43 @@ at compile time.
   then we ignore the namespace specifier, and the lookup succeeds. The value might have the
   wrong type, in which case there could be an error reported during evaluation.
 * If an OpenSCAD2 script references an OpenSCAD1 field,
-  then a compile time error occurs if the field has more than one value.
+  then a compile time error occurs if the field has more than one value AST.
+
+### Self Reference
+
+When an expression (a "value AST") derived from a definition is compiled,
+the semantic analyzer has special treatment for other identifier references within that
+expression that reference other fields in the same object. Eg, in
+```
+{ x = 1; y = x + 2; }
+```
+the expression for `y` is `x + 2`, which contains a reference to `x`,
+which is another field in the same object.
+These are called "self references", and they are compiled as references
+to the `$self` register in the virtual machine. For example, the above object
+is compiled as
+```
+{ x = 1; y = $self.x + 2; }
+```
+
+The `include` statement copies public bindings from the base object,
+into the object being constructed. Nothing additional needs to be done about
+self references at the time of include.
+
+Object customization, `object(name1=value1,name2=value2,...)`,
+needs to identify self reference within each value<sub>i</sub> expression,
+so that it can compile the expressions correctly.
+This means we need to determine the `public_bindings` map for `object`
+at the time that the customization expressions are analyzed.
+For example, ... TBD ... may also consider adding an explicit `$self` keyword to language.
+
+At run time, when a field of an object
+is referenced via `object.field`, the `$self` register is set to the value of object`,
+and the code for that field is evaluated. Objects use lazy evaluation. The evaluation of
+a field within a particular object happens once, then the result value is cached.
+
+This particular implementation is based on the implementation of inheritance and override
+in single-dispatch object oriented languages.
 
 ## Coder
 
@@ -99,6 +138,9 @@ code for the Evaluator. It figures out the run time data structures
 needed to represent local and global variables, and converts bound
 identifiers into indexes into the appropriate run time environment table.
 The output is an executable code tree.
+
+It would be awesome to use LLVM as the code generator.
+Not sure about the effort required.
 
 ## Evaluator
 The input of the evaluator is different from before.
