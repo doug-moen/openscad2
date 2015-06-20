@@ -97,31 +97,49 @@ While building the object,
 
 ### Self Reference
 
-When an expression (a "value AST") derived from a definition is compiled,
-the semantic analyzer has special treatment for other identifier references within that
+When an expression on the right side of a definition is compiled,
+the semantic analyzer has special treatment for identifiers within that
 expression that reference other fields in the same object. Eg, in
 ```
 { x = 1; y = x + 2; }
 ```
-the expression for `y` is `x + 2`, which contains a reference to `x`,
-which is another field in the same object.
-These are called "self references", and they are compiled as references
-to the `$self` register in the virtual machine. For example, the above object
+the expression for `y` is `x + 2`, which contains `x`,
+which is a reference to another field in the same object.
+These are called "self references", and they are compiled as indirections
+through the `$self` register in the virtual machine. For example, the above object
 is compiled as
 ```
 { x = 1; y = $self.x + 2; }
 ```
 
+OpenSCAD2 object customization, `object(name1=value1,name2=value2,...)`,
+needs to identify self reference within each value<sub>i</sub> expression,
+so that it can compile the expressions correctly.
+For example, in
+```
+base = { x = 1; y = x + 2; };
+customized = base(y = x + 3);
+```
+the `x` in `y = x + 3` on the second line is not defined in the lexical environment.
+It is a self-reference that can only be resolved using `base`.
+This means we need to determine the `public_bindings` map for the base object
+at the time that customization expressions are analyzed.
+
+This, in turn, puts restrictions on the kinds of expressions that can be used
+for the base object in a customize expression. Alternatively,
+* We could compile customize expressions at run time. Not really different from
+  the run-time lookup of identifiers that occurs in the current implementation,
+  but the current implementation has really slow function calls, and my goal
+  is to do better than this.
+* We could require self reference to be explicit within the argument list
+  of a customize expression. In the previous example, you would literally
+  need to type `base(y = $self.x + 3)` in order for self reference to work.
+  This gives us a simpler and faster implementation,
+  but adds another thing for users to learn.
+
 The `include` statement copies public bindings from the base object,
 into the object being constructed. Nothing additional needs to be done about
 self references at the time of include.
-
-Object customization, `object(name1=value1,name2=value2,...)`,
-needs to identify self reference within each value<sub>i</sub> expression,
-so that it can compile the expressions correctly.
-This means we need to determine the `public_bindings` map for `object`
-at the time that the customization expressions are analyzed.
-For example, ... TBD ... may also consider adding an explicit `$self` keyword to language.
 
 At run time, when a field of an object
 is referenced via `object.field`, the `$self` register is set to the value of object`,
