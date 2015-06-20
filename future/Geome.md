@@ -90,3 +90,4 @@ Other systems I still need to look at:
 * [ShapeJS](http://abfab3d.com/)
 * [Generative Modelling Language](https://en.wikipedia.org/wiki/Generative_Modelling_Language)
   @ [generative-modeling.org](http://www.generative-modeling.org/)
+* PLASM -- CSG functional programming language, http://www.plasm.net/
