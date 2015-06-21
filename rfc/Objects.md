@@ -291,3 +291,51 @@ In OpenSCAD2, the above call to `group()` returns an object, and is equivalent t
 ```
        { cube(12,true); sphere(8); }
 ```
+
+## Appendix: Customization with Self Reference
+
+Customization with self reference is either:
+<ul>
+<li>an optional, advanced feature we might implement later, or
+<li>a required feature that is needed to support existing OpenSCAD idioms,
+</ul>
+but I don't know which.
+
+### Customization with Self Reference
+
+OpenSCAD2 object customization, `object(name1=value1,name2=value2,...)`,
+needs to identify self reference within each value<sub>i</sub> expression,
+so that it can compile the expressions correctly.
+For example, in
+```
+base = { x = 1; y = x + 2; };
+customized = base(y = x + 3);
+```
+the `x` in `y = x + 3` on the second line is not defined in the lexical environment.
+It is a self-reference that can only be resolved using `base`.
+This means we need to determine the `public_bindings` map for the base object
+at the time that customization expressions are analyzed.
+
+This, in turn, puts restrictions on the kinds of expressions that can be used
+for the base object in a customize expression. Alternatively,
+* We could compile customize expressions at run time. Not really different from
+  the run-time lookup of identifiers that occurs in the current implementation,
+  but the current implementation has really slow function calls, and my goal
+  is to do better than this.
+* We could require self reference to be explicit within the argument list
+  of a customize expression. In the previous example, you would literally
+  need to type `base(y = $self.x + 3)` in order for self reference to work.
+  This gives us a simpler and faster implementation,
+  but adds another thing for users to learn.
+
+The `include` statement copies public bindings from the base object,
+into the object being constructed. Nothing additional needs to be done about
+self references at the time of include.
+
+At run time, when a field of an object
+is referenced via `object.field`, the `$self` register is set to the value of object`,
+and the code for that field is evaluated. Objects use lazy evaluation. The evaluation of
+a field within a particular object happens once, then the result value is cached.
+
+This particular implementation is based on the implementation of inheritance and override
+in single-dispatch object oriented languages.
