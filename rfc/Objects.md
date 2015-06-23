@@ -305,21 +305,44 @@ In OpenSCAD2, the above call to `group()` returns an object, and is equivalent t
        { cube(12,true); sphere(8); }
 ```
 
-## Appendix: Inheritance and Mixins
-A mixin is a standalone value
-that specifies a set of customizations and a set of extensions
-that can be applied to another object using the `with` operator.
-* Mixins are more powerful than the other OpenSCAD2 syntax
-  for object customization and extension.
-* Mixins provide the same power as class inheritance
-  in a single-dispatch object oriented programming language.
-* It is theoretically possible to write OpenSCAD1 code that requires the
-  use of mixins in order to be translated into OpenSCAD2.
-  It's not clear yet if anyone has actually written such code.
-* It's not yet clear if we actually need to support mixins in OpenSCAD2.
-  This is contingent on finding a compelling use case.
+## Mixins
+In the original language,
+it is possible to write an OpenSCAD script
+that is not intended to stand alone.
+Instead, it is only intended to be `include`d by another script.
+These scripts are called *mixins*.
+A mixin script may:
+* Refer to bindings that it does not define.
+  The including script is intended to supply these bindings.
+* Override bindings whose default values are set by the including script.
 
-### Mixins
+In OpenSCAD2, mixins are first class values
+that specify a set of customizations and a set of extensions
+that can be applied to a base object using the `with` operator:
+`base with mixin` returns a derived object.
+* In their most general form, mixins are constructed using the `mixin` keyword.
+  Mixins provide the same power as class inheritance
+  in a single-dispatch object oriented language.
+  It's not clear if we need this much power:
+  this is a speculative feature
+  that is contingent on finding compelling use cases.
+* As a special case, an object can be used as a mixin:
+  `base with extension`. The extension object can override
+  existing fields in the base, and add new fields and geometry.
+  The main limitation is that the extension object can't refer to
+  fields in the base that it doesn't itself define.
+* You can also `include` a mixin, but in that case,
+  the mixin must be a compile time constant.
+  The `with` operator works on run time values.
+
+OpenSCAD1 has a small incompatibility with the original language:
+all scripts stand alone, and must define all of the bindings they reference.
+A mixin script that intentionally does not define a binding it references
+may be ported to OpenSCAD1 by adding a `require id;` definition for each `id`
+that it references but does not define. Any script that uses `require`
+evaluates to a mixin instead of an object.
+
+### Mixins in OpenSCAD2
 A mixin literal has this syntax:
 ```
 mixin(prerequisites){body}
@@ -339,13 +362,14 @@ mixin(prerequisites){body}
   It is typically used when overriding a function:
   the new function can be defined in terms of the base function.
 
-A mixin is applied to a base object using `base_object with mixin`.
+A mixin is applied to a base object using `base with mixin`;
+this returns the derived object.
 
 The `with` operator is associative, thus `(obj with mixin1) with mixin2`
 is equivalent to `obj with (mixin1 with mixin2)`.
 Thus you can combine two mixins using `with`.
 
-### Example
+### Mixin Example
 ```
 2dpoint = {x=0; y=0; r=sqrt(x^2 + y^2);};
 pt = 2dpoint(3,4);
@@ -361,7 +385,7 @@ In this example, `x`, `y` and `z` must be defined before `r`.
 The ordering of names in the prerequisite list
 and the ordering of definitions in the body
 is used to compute the ordering of definitions in the derived script.
-This explains the peculiar ordering requirements in a mixin literal.
+This explains the peculiar ordering requirements for mixin literals.
 
 ### Customization with Self Reference
 
