@@ -354,6 +354,7 @@ echo(pt.r); // ECHO: 5
 3dmixin = mixin(x,y,r){z=0; r=sqrt(x^2 + y^2 + z^2);};
 3dpoint = 2dpoint with 3dmixin;
 ```
+`3dpoint` is equivalent to `{x=0; y=0; z=0; r=sqrt(x^2 + y^2 + z^2);}`.
 
 ### Customization with Self Reference
 
