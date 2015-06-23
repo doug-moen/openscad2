@@ -168,7 +168,7 @@ In OpenSCAD2, it's an error for a binding imported by `include`
 to conflict with another definition or `include` in the same block.
 Overrides are always specified explicitly, they don't happen implicitly.
 In the next few sections, we'll discuss several idioms for
-explicit overrides using customization and `merge`.
+explicit overrides using customization and `with`.
 
 ### Composing Customization with Inclusion
 
@@ -223,24 +223,30 @@ use only (mm, inch) script("MCAD/units.scad");
 ```
 See [Library Scripts](Library_Scripts.md).
 
+### `with`
+The `with` operator overrides fields within a base object,
+and adds new fields and geometry, as specified by an extension object.
+
+If `base` and `extension` are both objects,
+then `base with extension` customizes the base object with those fields in `extension` that are also in `base`,
+and extends the base object with those fields in `extension` that are not in `base`.
+The geometry within `extension` is added to the end of the base's geometry list.
+The result is a new object.
+If `base` is a shape or a list of shapes and objects, then it is first converted to an object.
+
+This could be used to add metadata to an existing shape or object.
+For example,
+```
+material(x)(shape) = shape with {$material = x;};
+material("nylon") cube(10);
+```
+
 ## Parameter Sets
 A set of model parameters can be represented as an object.
 This is used by a couple of idioms.
 
 Some authors create scad files containing sets of model parameters.
-
-Some authors represent a parameter set as an array of name/value pairs,
-and use `search` to look up a parameter. In OpenSCAD2, a parameter array
-can be replaced by an object literal, and you can use `paramset.name`
-to look up a parameter. This way, it's also easy to organize parameters into a hierarchy.
-
-### `merge`
-If `defaults` and `overrides` are both objects,
-then `merge(defaults, overrides)` is the composition or union of those two objects.
-The resulting object has all of the fields found in either object,
-but if both objects define the same field, then its value is given by the `overrides` argument.
-
-Nophead's Mendel90 project has `config.scad` which looks, in part, like this:
+For example, Nophead's Mendel90 project has `config.scad` which looks, in part, like this:
 ```
 ...a long list of default configuration settings...
 include <machine.scad> // override defaults for a particular machine
@@ -250,12 +256,19 @@ Here's my translation of this code into OpenSCAD2:
 defaults = {
 ...a long list of default configuration settings...
 };
-include merge(defaults, script("machine.scad"));
+include defaults with script("machine.scad");
 ```
+
+Some authors represent a parameter set as an array of name/value pairs,
+and use `search` to look up a parameter. In OpenSCAD2, a parameter array
+can be replaced by an object literal, and you can use `paramset.name`
+to look up a parameter. This way, it's also easy to organize parameters into a hierarchy.
 
 ### `apply`
 `apply(base_object, parameter_set)` customizes the base object
 with the specified parameters. It has the same semantics as customization.
+Unlike the `with` operator, this will report an error if `parameter_set`
+contains fields not within `base_object`.
 
 ## The CSG Tree
 
@@ -292,14 +305,35 @@ In OpenSCAD2, the above call to `group()` returns an object, and is equivalent t
        { cube(12,true); sphere(8); }
 ```
 
-## Appendix: Customization with Self Reference
+## Appendix: Mixins
+This appendix describes an advanced feature which might be deferred indefinitely,
+but which might be needed either for porting existing OpenSCAD code,
+or to support new work.
 
-Customization with self reference is either:
-<ul>
-<li>an optional, advanced feature we might implement later, or
-<li>a required feature that is needed to support existing OpenSCAD idioms,
-</ul>
-but I don't know which.
+### Customization with Self Reference
+
+### Strengths and Limitations of `with`
+An object has a dependency chain.
+`with` supports dependencies in the extension object, preserving those dependencies in the new object.
+[Really? Merge didn't do that.]
+Topological sort. Paradoxical dependencies cause an error.
+
+Paradox example with original language:
+```
+-- foo.scad --
+x = 1;
+y = x+1;
+-- bar.scad --
+include <foo.scad>
+x = y + 1;
+```
+This will currently produce a warning: undefined variable y.
+
+### A Solution: Mixin Objects
+
+new syntax: `mixin(a,b,c){..script..}`.
+The `with` operator is extended to support mixins.
+`$super`.
 
 ### Customization with Self Reference
 
