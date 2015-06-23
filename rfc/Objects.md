@@ -325,7 +325,7 @@ A mixin literal has this syntax:
 mixin(prerequisites){body}
 ```
 * The *prerequisites* is a comma separated list of identifiers
-  that must be defined by the object. They must be written in
+  that must be defined by the base object. They must be written in
   the same order that the names are defined within the object's script.
 * The *body* is just a script that overrides existing bindings,
   and adds new bindings and geometry.
@@ -334,8 +334,12 @@ mixin(prerequisites){body}
   Within the body, definitions that override pre-existing object fields
   must be written in the same order that the names appear in the
   prerequisite list.
+* Within the *body*, `$base` is a special variable
+  that denotes the base object.
+  It is typically used when overriding a function:
+  the new function can be defined in terms of the base function.
 
-A mixin is added to an object using `object with mixin`.
+A mixin is applied to a base object using `base_object with mixin`.
 
 The `with` operator is associative, thus `(obj with mixin1) with mixin2`
 is equivalent to `obj with (mixin1 with mixin2)`.
