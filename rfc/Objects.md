@@ -305,10 +305,51 @@ In OpenSCAD2, the above call to `group()` returns an object, and is equivalent t
        { cube(12,true); sphere(8); }
 ```
 
-## Appendix: Mixins
-This appendix describes an advanced feature which might be deferred indefinitely,
-but which might be needed either for porting existing OpenSCAD code,
-or to support new work.
+## Appendix: Inheritance and Mixins
+A mixin is a standalone value
+that specifies a set of customizations and a set of extensions
+that can be applied to another object using the `with` operator.
+* Mixins are more powerful than the other OpenSCAD2 syntax
+  for object customization and extension.
+* Mixins provide the same power as class inheritance
+  in a single-dispatch object oriented programming language.
+* It is theoretically possible to write OpenSCAD1 code that requires the
+  use of mixins in order to be translated into OpenSCAD2.
+  It's not clear yet if anyone has actually written such code.
+* It's not yet clear if we actually need to support mixins in OpenSCAD2.
+  This is contingent on finding a compelling use case.
+
+### Mixins
+A mixin literal has this syntax:
+```
+mixin(prerequisites){body}
+```
+* The *prerequisites* is a comma separated list of identifiers
+  that must be defined by the object. They must be written in
+  the same order that the names are defined within the object's script.
+* The *body* is just a script that overrides existing bindings,
+  and adds new bindings and geometry.
+  All pre-existing object fields that are either referenced or overridden
+  in the body must be listed in the prerequisites.
+  Within the body, definitions that override pre-existing object fields
+  must be written in the same order that the names appear in the
+  prerequisite list.
+
+A mixin is added to an object using `object with mixin`.
+
+The `with` operator is associative, thus `(obj with mixin1) with mixin2`
+is equivalent to `obj with (mixin1 with mixin2)`.
+Thus you can combine two mixins using `with`.
+
+### Example
+```
+2dpoint = {x=0; y=0; r=sqrt(x^2 + y^2);};
+pt = 2dpoint(3,4);
+echo(pt.r); // ECHO: 5
+
+3dmixin = mixin(x,y,r){z=0; r=sqrt(x^2 + y^2 + z^2);};
+3dpoint = 2dpoint with 3dmixin;
+```
 
 ### Customization with Self Reference
 
