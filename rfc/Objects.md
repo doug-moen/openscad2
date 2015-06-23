@@ -355,7 +355,13 @@ echo(pt.r); // ECHO: 5
 3dpoint = 2dpoint with 3dmixin;
 echo(3dpoint); // ECHO: {x=0; y=0; z=0; r=sqrt(x^2 + y^2 + z^2);}
 ```
-
+When a new object is derived by applying a mixin to a base,
+the order of definitions in the derived object's script can be important.
+In this example, `x`, `y` and `z` must be defined before `r`.
+The ordering of names in the prerequisite list
+and the ordering of definitions in the body
+is used to compute the ordering of definitions in the derived script.
+This explains the peculiar ordering requirements in a mixin literal.
 
 ### Customization with Self Reference
 
