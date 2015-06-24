@@ -316,10 +316,21 @@ A mixin script may:
   The including script is intended to supply these bindings.
 * Override bindings whose default values are set by the including script.
 
+For example,
+[`dibond_config.scad`](https://github.com/nophead/Mendel90/blob/master/scad/conf/dibond_config.scad)
+in the [Mendel90](https://github.com/nophead/Mendel90) project
+is a mixin script that does both of these things.
+It's only designed to work when included by
+[`config.scad`](https://github.com/nophead/Mendel90/blob/master/scad/conf/config.scad).
+
+What does a mixin script denote?
+It doesn't denote an object: that doesn't make sense when some of the fields
+are computed using bindings that aren't defined by the script.
+Instead, a mixin script denotes a mixin value, which contains incomplete, unevaluated code.
+
 In OpenSCAD2, mixins are first class values
 that specify a set of customizations and a set of extensions
-that can be applied to a base object using the `with` operator:
-`base with mixin` returns a derived object.
+that can be applied to a base object using the `overlay` operator.
 * In their most general form, mixins are constructed using the `mixin` keyword.
   Mixins provide the same power as class inheritance
   in a single-dispatch object oriented language.
@@ -331,7 +342,6 @@ that can be applied to a base object using the `with` operator:
   existing fields in the base, and add new fields and geometry.
   The main limitation is that the extension object can't refer to
   fields in the base that it doesn't itself define.
-* You can also `include` a mixin.
 
 OpenSCAD1 has a small incompatibility with the original language:
 all scripts stand alone, and must define all of the bindings they reference.
