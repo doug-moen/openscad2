@@ -331,9 +331,7 @@ that can be applied to a base object using the `with` operator:
   existing fields in the base, and add new fields and geometry.
   The main limitation is that the extension object can't refer to
   fields in the base that it doesn't itself define.
-* You can also `include` a mixin, but in that case,
-  the mixin must be a compile time constant.
-  The `with` operator works on run time values.
+* You can also `include` a mixin.
 
 OpenSCAD1 has a small incompatibility with the original language:
 all scripts stand alone, and must define all of the bindings they reference.
@@ -342,7 +340,7 @@ may be ported to OpenSCAD1 by adding a `require id;` definition for each `id`
 that it references but does not define. Any script that uses `require`
 evaluates to a mixin instead of an object.
 
-### Mixins in OpenSCAD2
+### OpenSCAD2: Constructing a Mixin
 A mixin literal has this syntax:
 ```
 mixin(prerequisites){body}
@@ -362,6 +360,7 @@ mixin(prerequisites){body}
   It is typically used when overriding a function:
   the new function can be defined in terms of the base function.
 
+### OpenSCAD2: Applying a Mixin
 A mixin is applied to a base object using `base with mixin`;
 this returns the derived object.
 
@@ -369,7 +368,13 @@ The `with` operator is associative, thus `(obj with mixin1) with mixin2`
 is equivalent to `obj with (mixin1 with mixin2)`.
 Thus you can combine two mixins using `with`.
 
-### Mixin Example
+You can also `include` a mixin, and it will be applied
+to all of the definitions in the script before the `include`.
+The argument to `include` must be a compile time constant,
+whereas the `with` operator is more general, since it works on run time values.
+
+### Ordering Constraints on Mixins
+Consider this example:
 ```
 2dpoint = {x=0; y=0; r=sqrt(x^2 + y^2);};
 pt = 2dpoint(3,4);
@@ -386,6 +391,17 @@ The ordering of names in the prerequisite list
 and the ordering of definitions in the body
 is used to compute the ordering of definitions in the derived script.
 This explains the peculiar ordering requirements for mixin literals.
+
+### Using Objects as Mixins
+You can use an object in place of a mixin
+as the right argument to `with`.
+This doesn't provide the full power of a mixin,
+but it's useful for combining two objects that each represent
+a set of model parameters.
+
+The result of `defaults with overrides`,
+where `defaults` and `overrides` are both objects,
+is the ....
 
 ### Customization with Self Reference
 
