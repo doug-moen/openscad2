@@ -325,23 +325,20 @@ It's only designed to work when included by
 
 What does a mixin script denote?
 It doesn't denote an object: that doesn't make sense when some of the fields
-are computed using bindings that aren't defined by the script.
+depend on undefined bindings.
 Instead, a mixin script denotes a mixin value, which contains incomplete, unevaluated code.
 
 In OpenSCAD2, mixins are first class values
 that specify a set of customizations and a set of extensions
 that can be applied to a base object using the `overlay` operator.
 * In their most general form, mixins are constructed using the `mixin` keyword.
-  Mixins provide the same power as class inheritance
-  in a single-dispatch object oriented language.
-  It's not clear if we need this much power:
-  this is a speculative feature
-  that is contingent on finding compelling use cases.
-* As a special case, an object can be used as a mixin:
-  `base with extension`. The extension object can override
+  This syntax adds two features missing from mixin scripts in the original language:
+  the ability to refer to the base object when overriding a field definition,
+  and the ability to declare the fields that the base object must contain
+  (and optionally provide default values).
+* As a special case, objects can be used as mixins.
+  An overlay object can override
   existing fields in the base, and add new fields and geometry.
-  The main limitation is that the extension object can't refer to
-  fields in the base that it doesn't itself define.
 
 OpenSCAD1 has a small incompatibility with the original language:
 all scripts stand alone, and must define all of the bindings they reference.
