@@ -349,14 +349,18 @@ but existing code will trigger warning messages until the syntax is updated:
   by an including script, then it must begin with a `mixin` declaration that lists all
   of the undefined names. Without this, the undefined names produce warnings.
 
+In OpenSCAD2, these warnings become errors.
+
 ### OpenSCAD2: Constructing a Mixin
-A mixin literal has this syntax:
+A mixin expression has this syntax:
 ```
-mixin(prerequisites){body}
+mixin (prerequisites) {body}
 ```
-* The *prerequisites* is a comma separated list of identifiers
-  that must be defined by the base object. They must be written in
+* The *prerequisites* is a comma separated list specifying which fields
+  must be defined by the base object. They must be written in
   the same order that the names are defined within the object's script.
+  A prerequisite is either `id` or `id=value`; in the latter case,
+  you are suppying a default value.
 * The *body* is just a script that overrides existing bindings,
   and adds new bindings and geometry.
   All pre-existing object fields that are either referenced or overridden
@@ -369,18 +373,26 @@ mixin(prerequisites){body}
   It is typically used when overriding a function:
   the new function can be defined in terms of the base function.
 
+A script file `F` can begin with a mixin declaration
+of the form `mixin (prerequisites);`.
+The script file is evaluated to produce a mixin:
+eg, `script("F")` will return a mixin.
+
 ### OpenSCAD2: Applying a Mixin
-A mixin is applied to a base object using `base with mixin`;
-this returns the derived object.
+A mixin is applied to a base object using an overlay expression:
+`base overlay mixin` returns the derived object.
 
-The `with` operator is associative, thus `(obj with mixin1) with mixin2`
-is equivalent to `obj with (mixin1 with mixin2)`.
-Thus you can combine two mixins using `with`.
+The `overlay` operator is associative, thus `(obj overlay mixin1) overlay mixin2`
+is equivalent to `obj overlay (mixin1 overlay mixin2)`.
+Thus you can combine two mixins using `overlay`.
 
-You can also `include` a mixin, and it will be applied
-to all of the definitions in the script before the `include`.
-The argument to `include` must be a compile time constant,
-whereas the `with` operator is more general, since it works on run time values.
+The overlay statement `overlay mixin1;` is a variant of `include`
+that applies the mixin to all definitions in the script before
+the `overlay` statement.
+* `{include Object; overlay Mixin;}` is equivalent to `Object overlay Mixin`.
+* `{include Mixin1; include Mixin2;}` is equivalent to `Mixin1 overlay Mixin2`.
+* When using the statement form, the mixin argument must be a compile time constant,
+  whereas the expression form is more general, since it works on run time values.
 
 ### Ordering Constraints on Mixins
 Consider this example:
@@ -390,9 +402,10 @@ pt = 2dpoint(3,4);
 echo(pt.r); // ECHO: 5
 
 3dmixin = mixin(x,y,r){z=0; r=sqrt(x^2 + y^2 + z^2);};
-3dpoint = 2dpoint with 3dmixin;
+3dpoint = 2dpoint overlay 3dmixin;
 echo(3dpoint); // ECHO: {x=0; y=0; z=0; r=sqrt(x^2 + y^2 + z^2);}
 ```
+Note the ordering of the fields in `3dpoint`.
 When a new object is derived by applying a mixin to a base,
 the order of definitions in the derived object's script can be important.
 In this example, `x`, `y` and `z` must be defined before `r`.
@@ -403,12 +416,12 @@ This explains the peculiar ordering requirements for mixin literals.
 
 ### Using Objects as Mixins
 You can use an object in place of a mixin
-as the right argument to `with`.
+as the right argument to `overlay`.
 This doesn't provide the full power of a mixin,
 but it's useful for combining two objects that each represent
 a set of model parameters.
 
-The result of `defaults with overrides`,
+The result of `defaults overlay overrides`,
 where `defaults` and `overrides` are both objects,
 is the ....
 
