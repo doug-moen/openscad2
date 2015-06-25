@@ -341,14 +341,13 @@ that can be applied to a base object using the `overlay` operator.
   existing fields in the base, and add new fields and geometry.
 
 OpenSCAD1 fully supports mixins at the level of script files,
-but is also not fully backward compatible with the original language in this one respect.
-Existing uses of mixin scripts require a syntax change before they will compile:
+but existing code will trigger warning messages until the syntax is updated:
 * To include a script that overrides existing definitions,
   use `overlay <filename>` instead of `include <filename>`.
-  Without this, you get an error about multiply-defined names.
+  Without this, you get warnings about multiply-defined names.
 * If a mixin script contains references to bindings that are undefined unless supplied
   by an including script, then it must begin with a `mixin` declaration that lists all
-  of the undefined names. Without this, the undefined names produce an error.
+  of the undefined names. Without this, the undefined names produce warnings.
 
 ### OpenSCAD2: Constructing a Mixin
 A mixin literal has this syntax:
