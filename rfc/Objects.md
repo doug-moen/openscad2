@@ -390,7 +390,7 @@ The overlay statement `overlay mixin1;` is a variant of `include`
 that applies the mixin to all definitions in the script before
 the `overlay` statement.
 * `{include Object; overlay Mixin;}` is equivalent to `Object overlay Mixin`.
-* `{include Mixin1; include Mixin2;}` is equivalent to `Mixin1 overlay Mixin2`.
+* `{include Mixin1; overlay Mixin2;}` is equivalent to `Mixin1 overlay Mixin2`.
 * When using the statement form, the mixin argument must be a compile time constant,
   whereas the expression form is more general, since it works on run time values.
 
