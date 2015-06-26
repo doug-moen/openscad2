@@ -168,7 +168,7 @@ In OpenSCAD2, it's an error for a binding imported by `include`
 to conflict with another definition or `include` in the same block.
 Overrides are always specified explicitly, they don't happen implicitly.
 In the next few sections, we'll discuss several idioms for
-explicit overrides using customization and `with`.
+explicit overrides using customization and `overlay`.
 
 ### Composing Customization with Inclusion
 
@@ -223,12 +223,12 @@ use only (mm, inch) script("MCAD/units.scad");
 ```
 See [Library Scripts](Library_Scripts.md).
 
-### `with`
-The `with` operator overrides fields within a base object,
+### `overlay`
+The `overlay` operator overrides fields within a base object,
 and adds new fields and geometry, as specified by an extension object.
 
 If `base` and `extension` are both objects,
-then `base with extension` customizes the base object with those fields in `extension` that are also in `base`,
+then `base overlay extension` customizes the base object with those fields in `extension` that are also in `base`,
 and extends the base object with those fields in `extension` that are not in `base`.
 The geometry within `extension` is added to the end of the base's geometry list.
 The result is a new object.
@@ -237,7 +237,7 @@ If `base` is a shape or a list of shapes and objects, then it is first converted
 This could be used to add metadata to an existing shape or object.
 For example,
 ```
-material(x)(shape) = shape with {$material = x;};
+material(x)(shape) = shape overlay {$material = x;};
 material("nylon") cube(10);
 ```
 
@@ -267,7 +267,7 @@ to look up a parameter. This way, it's also easy to organize parameters into a h
 ### `apply`
 `apply(base_object, parameter_set)` customizes the base object
 with the specified parameters. It has the same semantics as customization.
-Unlike the `with` operator, this will report an error if `parameter_set`
+Unlike the `overlay` operator, this will report an error if `parameter_set`
 contains fields not within `base_object`.
 
 ## The CSG Tree
@@ -427,9 +427,9 @@ is the ....
 
 ### Customization with Self Reference
 
-### Strengths and Limitations of `with`
+### Strengths and Limitations of `overlay`
 An object has a dependency chain.
-`with` supports dependencies in the extension object, preserving those dependencies in the new object.
+`overlay` supports dependencies in the extension object, preserving those dependencies in the new object.
 [Really? Merge didn't do that.]
 Topological sort. Paradoxical dependencies cause an error.
 
@@ -447,7 +447,7 @@ This will currently produce a warning: undefined variable y.
 ### A Solution: Mixin Objects
 
 new syntax: `mixin(a,b,c){..script..}`.
-The `with` operator is extended to support mixins.
+The `overlay` operator is extended to support mixins.
 `$super`.
 
 ### Customization with Self Reference
