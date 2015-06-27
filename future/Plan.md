@@ -6,7 +6,18 @@ More errors are reported, and each error indicates the position within the sourc
 where the bad code is located. Ideally, the GUI will highlight the bad token in red.
 From the command line, error messages indicate filename:linenumber:column of the bad code.
 
-## Phase 2: Minimum Viable Product for First Class Functions
+## Phase 2: Overrides and Mixins
+The new Parser and Semantic Analyzer are implemented.
+The `include <file>` statement reads the file, analyzes it, issues warnings and errors,
+before the contents are interpolated into the including script.
+Mixin script files, `override` and `overlay <file>` are implemented.
+Lazy evaluation of objects eliminates some problems and bugs related to the ordering of
+definitions when a definition is overridden.
+This is still an "OpenSCAD1" with 3 namespaces, and there are no object or mixin values,
+but much of the groundwork
+required for the single namespace is now in place.
+
+## Phase 3: Minimum Viable Product for First Class Functions
 How small a subset of the new language do we need to support in order to get first class functions?
 
 My initial thought is that the unified namespace is required.
