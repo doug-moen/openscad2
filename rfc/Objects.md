@@ -427,8 +427,42 @@ replacement field expressions are in fact converted to pure values before being 
 
 So what are the options? Fix/clarify customize, or specify a different replacement syntax?
 * Fix/clarify customize.
+  * Limit customization so that the field list of the base object is known at compile time.
+  * Function call doesn't compile arguments until run time. (That's how it works now, but that's slow.)
+  * Use special syntax in the argument list for self reference: eg, `$self`.
 * Specify a different replacement syntax.
   * `include object overlay mixin(a,b){...};`
+  * Or something close to the original syntax:
+    <pre>
+    include object;
+    override x=1;
+    </pre>
+
+Another issue. This doesn't work in the current language:
+```
+include <foo.scad> // defines x and y
+a = x;
+y = a;
+```
+You get a message that a is undefined, and y becomes undef.
+Does this code work with mixins?
+```
+mixin(x,y);
+a = x;
+y = a;
+```
+According to my design, yes it works. The script of the base object defines x and y, in that order.
+This script is rewritten to define x, a, y in that order.
+
+This kind of thing will never work with customization as a function call.
+But it could be made to work for traditional 'include and override' syntax.
+```
+include <foo.scad>
+a = x;
+override y = a;
+```
+In this design, you have to override bindings in the same order that they were originally defined.
+Either that or I topologically sort the definitions and issue an error in the event of a cycle.
 
 ### Strengths and Limitations of `overlay`
 An object has a dependency chain.
