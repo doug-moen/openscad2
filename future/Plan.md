@@ -19,20 +19,20 @@ required for the single namespace is now in place.
 
 ## Phase 3: Minimum Viable Product for First Class Functions
 How small a subset of the new language do we need to support in order to get first class functions?
+* unified namespace
+* values, functions and module names all belong to the same namespace
+* shapes, groups, objects, mixins are not first class values yet
+* modules are not yet unified with functions
 
-My initial thought is that the unified namespace is required.
-This means new syntax:
+The unified namespace requires the new definition syntax:
 * function literals
 * new function definitions: `f(x) = x + 1`
-* `use object;` and `include object;`
-* `script("filename")`
+* module literals, which are a transitional syntax: `module(parameters)statement`
+* `script("filename")`, an object/mixin expression (doesn't return a value)
+* `use object;` and `include object;` and `overlay object;`
 
-We'd have to support modules in the unified namespace.
-That seems to imply first class shape values, objects, and other changes,
-so that the new syntax for defining functions that behave like modules actually works.
-
-An alternative is to introduce temporary scaffolding.
-A temporary syntax for module values, which remain distinct from functions.
+Transitional syntax for module values, which remain distinct from functions.
+A module literal is only legal in one context, in a definition:
 ```
 box = module(x,y,z) cube([x,y,z]);
 ```
