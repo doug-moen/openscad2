@@ -464,6 +464,10 @@ override y = a;
 In this design, you have to override bindings in the same order that they were originally defined.
 Either that or I topologically sort the definitions and issue an error in the event of a cycle.
 
+Within an `override` definition,
+the special variable `$super`
+is bound to the original field value from the base object which is being overridden.
+
 ### Strengths and Limitations of `overlay`
 An object has a dependency chain.
 `overlay` supports dependencies in the extension object, preserving those dependencies in the new object.
