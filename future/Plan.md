@@ -17,8 +17,8 @@ This is still an "OpenSCAD1" with 3 namespaces, and there are no object or mixin
 but much of the groundwork
 required for the single namespace is now in place.
 
-## Phase 3: Minimum Viable Product for First Class Functions
-How small a subset of the new language do we need to support in order to get first class functions?
+## Phase 3: First Class Functions
+A minimal subset of the new language that supports first class functions.
 * unified namespace
 * values, functions and module names all belong to the same namespace
 * shapes, groups, objects, mixins are not first class values yet
@@ -56,7 +56,7 @@ Then what happens? Things get messy.
     Unless the use of OpenSCAD2 syntax in the right side of a definition
     changes the binding to use the single namespace.
 
-## Phase 4: First Class Scripts: Objects and Mixins
+## Phase 4: First Class Script Files
 * `script(filename)` now returns a value (an object or mixin)
 * but `{script}` is not an object literal yet
 * dot notation for objects
