@@ -339,6 +339,7 @@ that can be applied to a base object using the `overlay` operator.
 * As a special case, objects can be used as mixins.
   An overlay object can override
   existing fields in the base, and add new fields and geometry.
+  See [`overlay` operator](#overlay).
 
 OpenSCAD1 fully supports mixins at the level of script files,
 but existing code will trigger warning messages until the syntax is updated:
@@ -414,18 +415,20 @@ and the ordering of definitions in the body
 is used to compute the ordering of definitions in the derived script.
 This explains the peculiar ordering requirements for mixin literals.
 
-### Using Objects as Mixins
-You can use an object in place of a mixin
-as the right argument to `overlay`.
-This doesn't provide the full power of a mixin,
-but it's useful for combining two objects that each represent
-a set of model parameters.
+## Customization with Self Reference
+There's a problem with the `object(args)` customization syntax.
+It's not clear that it supports "self reference": can the replacement field definitions
+refer to other fields in the object? It looks like a function call, so it appears that the
+replacement field expressions are in fact converted to pure values before being plugged in to the object.
+* The mixin feature has been carefully designed to support self reference.
+* I've claimed that `include object(args)` is the OpenSCAD2 replacement syntax for
+  the original OpenSCAD idiom of including a script then overriding some of its definitions.
+  The latter syntax *does* support self reference.
 
-The result of `defaults overlay overrides`,
-where `defaults` and `overrides` are both objects,
-is the ....
-
-### Customization with Self Reference
+So what are the options? Fix/clarify customize, or specify a different replacement syntax?
+* Fix/clarify customize.
+* Specify a different replacement syntax.
+  * `include object overlay mixin(a,b){...};`
 
 ### Strengths and Limitations of `overlay`
 An object has a dependency chain.
@@ -443,12 +446,6 @@ include <foo.scad>
 x = y + 1;
 ```
 This will currently produce a warning: undefined variable y.
-
-### A Solution: Mixin Objects
-
-new syntax: `mixin(a,b,c){..script..}`.
-The `overlay` operator is extended to support mixins.
-`$super`.
 
 ### Customization with Self Reference
 
