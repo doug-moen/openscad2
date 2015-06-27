@@ -56,4 +56,15 @@ Then what happens? Things get messy.
     Unless the use of OpenSCAD2 syntax in the right side of a definition
     changes the binding to use the single namespace.
 
-  
+## Phase 4: First Class Scripts: Objects and Mixins
+* `script(filename)` now returns a value (an object or mixin)
+* but `{script}` is not an object literal yet
+* dot notation for objects
+* `only(id1,id2,...) object`
+
+## Phase 5: First Class Geometry
+Now, everything is a first class value.
+* shapes are values
+* groups are unified with objects
+* `{script}` is an object literal
+* modules are unified with functions
