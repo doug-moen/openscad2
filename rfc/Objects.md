@@ -464,6 +464,19 @@ override y = a;
 In this design, you have to override bindings in the same order that they were originally defined.
 Either that or I topologically sort the definitions and issue an error in the event of a cycle.
 
+Alternatively, I could just use lazy evaluation.
+That means the order in which definitions are written
+only determines scoping, it doesn't determine the order in which
+the definitions are evaluated.
+* The Nix language in NixOS has a similar design.
+  Nix doesn't even bother to detect cycles,
+  it just goes into an infinite loop, which is also just like Haskell.
+* It simplifies the implementation if I don't have to reorder stuff.
+  Mixins are simplified since the ordering requirements go away.
+* How to echo a customized object?
+* The 'echo' command becomes kind of sketchy with lazy evaluation.
+  It will get invoked when geometry is evaluated (this is also lazy).
+
 Within an `override` definition,
 the special variable `$original`
 is bound to the original value from the definition which is being overridden.
