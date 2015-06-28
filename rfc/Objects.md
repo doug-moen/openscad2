@@ -134,6 +134,51 @@ openscad -Dname1=value1 -Dname2=value2 ... myscript.scad
 
 The new Customizer GUI under development does the same thing, only interactively.
 
+Customization is a relatively fast operation, since most of the
+structure of the new object is shared with the base object.
+Customization is also a limited operation that is only intended for
+overriding parameters in an object. Two things you can't do
+with customization, that you can do with `overlay`:
+* You can't add new fields to the object.
+* You can't create a dependency between two fields
+  in the new object, such that customizing one field updates the other.
+
+### `overlay`
+The `overlay` operator customizes fields within a base object,
+and adds new fields and geometry, as specified by an extension object.
+
+If `base` and `extension` are both objects,
+then `base overlay extension` customizes the base object with those fields in `extension` that are also in `base`,
+and extends the base object with those fields in `extension` that are not in `base`.
+The geometry within `extension` is added to the end of the base's geometry list.
+The result is a new object.
+
+If `base` is a shape or a list of shapes and objects, then it is first converted to an object.
+This could be used to add metadata to an existing shape or object.
+For example,
+```
+material(x)(shape) = shape overlay {$material = x;};
+material("nylon") cube(10);
+```
+
+If there are dependencies between fields in the extension object,
+then those dependences are preserved in the derived object.
+For example, in
+```
+base overlay {x=1; y=x+1;}
+```
+then regardless of what the `base` object contains,
+the derived object will contain two fields `x` and `y`,
+such that customizing `x` will update `y` based on the new value of `x`.
+
+### `overlay` with a mixin
+The `overlay` operation described in the previous section
+is limited by the fact that the extension object cannot refer
+to fields in the base object. This limitation is overcome
+by using a [mixin](#mixins) in place of an extension object:
+`base overlay mixin`.
+[Mixins are described here](#mixins).
+
 ### Inclusion
 
 `include object;` includes all of the fields and geometry
@@ -222,24 +267,6 @@ This is composed with `use` in the following idiom:
 use only (mm, inch) script("MCAD/units.scad");
 ```
 See [Library Scripts](Library_Scripts.md).
-
-### `overlay`
-The `overlay` operator overrides fields within a base object,
-and adds new fields and geometry, as specified by an extension object.
-
-If `base` and `extension` are both objects,
-then `base overlay extension` customizes the base object with those fields in `extension` that are also in `base`,
-and extends the base object with those fields in `extension` that are not in `base`.
-The geometry within `extension` is added to the end of the base's geometry list.
-The result is a new object.
-If `base` is a shape or a list of shapes and objects, then it is first converted to an object.
-
-This could be used to add metadata to an existing shape or object.
-For example,
-```
-material(x)(shape) = shape overlay {$material = x;};
-material("nylon") cube(10);
-```
 
 ## Parameter Sets
 A set of model parameters can be represented as an object.
@@ -353,31 +380,31 @@ but existing code will trigger warning messages until the syntax is updated:
 In OpenSCAD2, these warnings become errors.
 
 ### OpenSCAD2: Constructing a Mixin
-A mixin expression has this syntax:
-```
-mixin (prerequisites) {body}
-```
-* The *prerequisites* is a comma separated list specifying which fields
-  must be defined by the base object. They must be written in
-  the same order that the names are defined within the object's script.
-  A prerequisite is either `id` or `id=value`; in the latter case,
-  you are suppying a default value.
-* The *body* is just a script that overrides existing bindings,
-  and adds new bindings and geometry.
-  All pre-existing object fields that are either referenced or overridden
-  in the body must be listed in the prerequisites.
-  Within the body, definitions that override pre-existing object fields
-  must be written in the same order that the names appear in the
-  prerequisite list.
-* Within the *body*, `$base` is a special variable
-  that denotes the base object.
-  It is typically used when overriding a function:
-  the new function can be defined in terms of the base function.
+The first statement in a mixin script is a `require` statement,
+which lists the mixin's prerequisites. When the script is evaluated,
+the result is a mixin, instead of an object.
 
-A script file `F` can begin with a mixin declaration
-of the form `mixin (prerequisites);`.
-The script file is evaluated to produce a mixin:
-eg, `script("F")` will return a mixin.
+A `require` statement has the syntax `require (prerequisites);`.
+The *prerequisites* is a comma separated list specifying which fields
+must be defined by the base object.
+A prerequisite is either `id` or `id=value`; in the latter case,
+you are suppying a default value.
+
+Following the `require` statement are statements
+that override existing bindings,
+and add new bindings and geometry.
+All pre-existing fields in the base object that are referenced
+by the mixin script should be listed in the prerequisites,
+otherwise you'll get an error about an undefined name.
+
+To override a field in the base object, you need to use an `override`
+definition, which is just a regular definition prefixed with the `override`
+keyword. Within the body of an override definition,
+the special variable `$original` is bound to the original value in
+the base object field that is being overridden.
+`$original` allows the new field value to be defined in terms
+of the base field value. This is particularly useful
+when overriding functions.
 
 ### OpenSCAD2: Applying a Mixin
 A mixin is applied to a base object using an overlay expression:
@@ -395,6 +422,7 @@ the `overlay` statement.
 * When using the statement form, the mixin argument must be a compile time constant,
   whereas the expression form is more general, since it works on run time values.
 
+<!--
 ### Ordering Constraints on Mixins
 Consider this example:
 ```
@@ -402,7 +430,7 @@ Consider this example:
 pt = 2dpoint(3,4);
 echo(pt.r); // ECHO: 5
 
-3dmixin = mixin(x,y,r){z=0; r=sqrt(x^2 + y^2 + z^2);};
+3dmixin = {require(x,y,r); z=0; r=sqrt(x^2 + y^2 + z^2);};
 3dpoint = 2dpoint overlay 3dmixin;
 echo(3dpoint); // ECHO: {x=0; y=0; z=0; r=sqrt(x^2 + y^2 + z^2);}
 ```
@@ -414,7 +442,9 @@ The ordering of names in the prerequisite list
 and the ordering of definitions in the body
 is used to compute the ordering of definitions in the derived script.
 This explains the peculiar ordering requirements for mixin literals.
+-->
 
+<!--
 ## Customization with Self Reference
 There's a problem with the `object(args)` customization syntax.
 It's not clear that it supports "self reference": can the replacement field definitions
@@ -431,7 +461,7 @@ So what are the options? Fix/clarify customize, or specify a different replaceme
   * Function call doesn't compile arguments until run time. (That's how it works now, but that's slow.)
   * Use special syntax in the argument list for self reference: eg, `$self`.
 * Specify a different replacement syntax.
-  * `include object overlay mixin(a,b){...};`
+  * `include object overlay {...};`
   * Or something close to the original syntax:
     <pre>
     include object;
@@ -536,3 +566,4 @@ a field within a particular object happens once, then the result value is cached
 
 This particular implementation is based on the implementation of inheritance and override
 in single-dispatch object oriented languages.
+-->
