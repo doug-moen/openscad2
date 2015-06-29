@@ -90,6 +90,7 @@ Objects support all of the
 * `lollipop[1] == cylinder(3,50)`
 
 ## Object Literals
+
 The [First Class Values](First_Class_Values.md) principle requires object literals.
 
 An object literal is a script surrounded by brace brackets.
@@ -191,6 +192,54 @@ The `object` argument is a compile time constant.
   and allows new bindings imported from the object or mixin
   to override earlier bindings of the same name.
 
+In OpenSCAD2, one definition cannot override another definition of the same name
+unless this is made explicit in the source code. Otherwise, it is an error.
+
+Therefore, in order to translate an OpenSCAD1 `include <file>` statement
+into OpenSCAD2, you need to make explicit any overrides that are occurring.
+
+In general, `include <file.scad>` can be translated in two ways:
+* `include script("file.scad");` &mdash; the normal case
+* `overlay script("file.scad");` &mdash; if `file.scad` overrides previous definitions
+
+In OpenSCAD1, you can include a script, then customize that script by overriding
+some of its definitions. For example,
+```
+include <MCAD/bearing.scad>
+epsilon = 0.02;  // override epsilon within bearing.scad
+```
+In OpenSCAD2, this customization must be explicit.
+Normally, the simple customization (function call) syntax is all you need:
+```
+include script("MCAD/bearing.scad")(epsilon=0.02);
+```
+In more complex cases, you might need to use `overlay` to customize the included script.
+
+Note that you can also customize a library script referenced by `use`,
+something not possible in OpenSCAD1.
+```
+use script("MCAD/bearing.scad")(epsilon=0.02);
+```
+
+In OpenSCAD1, library scripts are referenced using either `use` or `include`,
+depending on how the library script is written. You may need to read the
+source to figure out how to reference it. In OpenSCAD2, `use` is recommended
+for referencing all library scripts, while `include` is only needed
+for special purposes.
+
+Inclusion is really a form of object inheritance.
+The use cases for `include` in OpenSCAD2 are narrower than in the original language:
+* A model script includes another model in order to extend it with
+  new fields and geometry. That's an exceptional case.
+  More commonly, you just reference the other model, as `lollipop;`
+  instead of `include lollipop;`.
+* A library script includes another library, for the purpose of
+  extending the other library's API. That's an exceptional case.
+  More commonly, you just use the library, as `use library;`.
+
+See [Library Scripts](Library_Scripts.md) for more discussion of `use`.
+
+<!--
 ### Inclusion
 
 `include object;` includes all of the fields and geometry
@@ -259,6 +308,7 @@ is via `include`, and it's not explicit which definitions are overrides.
 In OpenSCAD2, customization is a separate operation from inclusion.
 For example, you can customize a library you are using
 via `use library(name=value);`.
+-->
 
 ### `only`
 The `only` operator returns a projection of an object
