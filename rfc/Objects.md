@@ -174,8 +174,8 @@ such that customizing `x` will update `y` based on the new value of `x`.
 
 ### `overlay` with a mixin
 The `overlay` operation described in the previous section
-is limited by the fact that the extension object cannot refer
-to fields in the base object. This limitation is overcome
+is limited by the fact that the extension object cannot access
+fields in the base object. This limitation is overcome
 by using a [mixin](#mixins) in place of an extension object:
 `base overlay mixin`.
 [Mixins are described here](#mixins).
