@@ -116,7 +116,7 @@ a backwards-compatible reinterpretation of the `{...}` syntax.
 
 ## Constructing New Objects from Old
 
-### Customization
+### customization
 
 `object(name1=value1, name2=value2, ...)` customizes an object
 by overriding specified definitions with new values,
@@ -136,7 +136,7 @@ The new Customizer GUI under development does the same thing, only interactively
 
 Customization is a relatively fast operation, since most of the
 structure of the new object is shared with the base object.
-Customization is also a limited operation that is only intended for
+Customization is also a limited operation that is only good for
 overriding parameters in an object. Two things you can't do
 with customization, that you can do with `overlay`:
 * You can't add new fields to the object.
@@ -178,6 +178,18 @@ to fields in the base object. This limitation is overcome
 by using a [mixin](#mixins) in place of an extension object:
 `base overlay mixin`.
 [Mixins are described here](#mixins).
+
+### the `include` and `overlay` statements
+`include object;` includes all of the fields and geometry
+of a specified base object into the current object under construction.
+The `object` argument is a compile time constant.
+
+`overlay object;` does the same thing, with the following differences:
+* It's an error for a binding imported by `include`
+  to conflict with another definition or `include` in the same block.
+* The `overlay` statement takes either an object or a [mixin](#mixins) argument,
+  and allows new bindings imported from the object or mixin
+  to override earlier bindings of the same name.
 
 ### Inclusion
 
