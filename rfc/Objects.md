@@ -430,6 +430,7 @@ that can be applied to a base object using the `overlay` operator.
   existing fields in the base, and add new fields and geometry.
   See [`overlay` operator](#overlay).
 
+<!--
 OpenSCAD1 fully supports mixins at the level of script files,
 but existing code will trigger warning messages until the syntax is updated:
 * To include a script that overrides existing definitions,
@@ -440,6 +441,7 @@ but existing code will trigger warning messages until the syntax is updated:
   of the undefined names. Without this, the undefined names produce warnings.
 
 In OpenSCAD2, these warnings become errors.
+-->
 
 ### OpenSCAD2: Constructing a Mixin
 The first statement in a mixin script is a `require` statement,
