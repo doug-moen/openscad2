@@ -10,8 +10,13 @@ Objects can encapsulate a set of parameters for defining a model,
 and organize those parameters in a hierarchy,
 using dotted names like `model.component.subcomponent.param`.
 
-Currently this is being done using lists of name/value pairs
+Some authors currently do this using lists of name/value pairs
 and the `search` function, but the resulting code is cryptic.
+Objects are a better solution.
+
+Other authors put lists of parameters into separate scripts,
+which are then included. These parameter scripts would now be referenced as objects,
+and it's now possible to use dot notation to reference the parameters.
 
 ## Objects are Modules for Beginners
 In classic OpenSCAD, modules are parameterized shapes.
@@ -114,91 +119,28 @@ is a powerful idea which enables some new programming idioms.
 
 ## Prototype-Based Programming
 The "prototype" style of OpenSCAD programming
-is named after the classless style of object oriented programming
-called [Prototype-based programming](http://en.wikipedia.org/wiki/Prototype-based_programming).
+is named after the classless style of object oriented programming called
+[Prototype-based programming](http://en.wikipedia.org/wiki/Prototype-based_programming).
 Prototype based programming was designed to be just as powerful as class-based programming,
 except that it can be a lot simpler, requiring less complicated language mechanisms.
 
 In a prototype based language,
-* Instead of class definitions, you have object literals. We have them.
+* Instead of class definitions, you have object literals.
 * Instead of constructing an instance of a class,
   you clone an existing "prototype" object, and make changes to it.
-  This is done using "object customization" in OpenSCAD2.
+  This is done using [customization](Objects.md#customization) in OpenSCAD2.
 * There is some form of inheritance,
   where an object is defined to be just like a base object,
   except with some changes, which are specified by
   overriding existing fields and adding new fields.
-  This is done using [customization and inclusion](Objects.md#constructing-new-objects-from-old).
+  See [Object Inheritance](Inheritance.md)
+  for an account of object inheritance in OpenSCAD2.
 
-In short, OpenSCAD2 appears to have all of the necessary language mechanisms
+In short, although it wasn't a design goal,
+OpenSCAD2 appears to have all of the necessary language mechanisms
 required to support object oriented programming.
-Whether this is completely true will become clear in time, as OpenSCAD2 is implemented.
-However, it seems that prototype based programming can be mined for useful idioms and design patterns
-that can be reused in OpenSCAD2.
-
-<!--
-## Inheritance
-The "prototype" style of OpenSCAD programming
-is named after the classless style of object oriented programming
-called [Prototype-based programming](http://en.wikipedia.org/wiki/Prototype-based_programming).
-Prototype based programming was designed to be just as powerful as class-based programming,
-except that it's a lot simpler.
-
-In a prototype based language,
-instead of class definitions, you have object literals.
-Instead of constructing an instance of a class,
-you clone an existing "prototype" object, and make changes to it.
-This is done using "object customization" in OpenSCAD2.
-
-Prototype based languages have inheritance,
-where an object is defined to be just like a base object,
-except with some changes, which are made by overriding existing
-fields and adding new fields.
-Just as with classes in class-based OOP languages,
-base objects need to be designed with inheritance in mind.
-They need to provide fields that are "hooks" that can be overridden
-by derived objects.
-
-In OpenSCAD2, the simplest kind of inheritance is customization,
-where you just override existing fields.
-```
-big_lollipop = lollipop(radius=15, height=60);
-```
-
-The `include` command adds all of the fields and geometry of a specified object
-to the current object. It comes from OpenSCAD1, but the syntax has changed
-from `include <filename>` to `include object;`.
-
-You can extend a base object with new fields and geometry using the `include` command.
-```
-lollipop_and_mint = {
-   include lollipop;
-   mint_diameter = 15;
-   translate([mint_diameter*2, 0, 0])
-      cylinder(h=mint_diameter/4, d=mint_diameter);
-};
-```
-
-You can combine these two idioms and inherit from a customized base object.
-Insert example here.
-
-### Inheritance and Self Reference
-OpenSCAD2 has the same power as a single-dispatch object oriented language.
-The syntax `obj.f(x)` has the semantics of invoking a method within an object.
-This means we need to implement the semantics of "self reference".
-In Smalltalk, this feature is embodied by the `self` and `super` keywords.
-In OpenSCAD2, *self* and *super* are opcodes in the virtual machine,
-and it's the compiler's responsibility to insert these opcodes in the correct places.
-In other words, I don't think we need any additional syntax to make inheritance
-with single dispatch work. All of the OOP semantics come from composing these
-three features:
-* object literals
-* `include`
-* object customization
-
-And this is awesome, because the more syntax and language features we need
-to make OOP work, the harder it is to learn and use.
--->
+This may turn out to be useful in the future for structuring
+complex models or for writing new libraries of geometric objects.
 
 ## Bill of Materials
 

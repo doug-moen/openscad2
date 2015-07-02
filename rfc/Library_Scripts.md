@@ -72,8 +72,12 @@ This is true even for the June 2015 versions of the MCAD scripts.
 The OpenSCAD2 interface for referencing and parameterizing an external model script
 is given in [Objects](Objects.md). Briefly:
 * `script(filename)` reads a script file and returns an object.
-* `include object;` includes all of the named fields and geometry from another object
-  into the object currently being defined.
+  In most cases, there's no reason to use `include` anymore.
+  Instead, you can write code like this:
+  ```
+  // add a lollipop to our geometry
+  scale(2) script("lollipop.scad");
+  ```
 * `object(name1=value1,...)` customizes an object. The object's script is re-evaluated
   with overridden values for some of the script's definitions,
   and a new object is returned.
@@ -97,13 +101,14 @@ As a special case,
 
 In OpenSCAD2, the `include` and `use` commands have well defined
 and distinct use cases:
-* `include` is not intended for use with library scripts.
-  It's designed for model scripts, since it includes the model's geometry.
-  More generally, `include` is a form of
-  [*object inheritance*](Objects.md#inheritance)
-  in the OpenSCAD2 object system.
-* `use` is specifically designed for library scripts.
-  It imports top level definitions but not geometry or internal definitions.
+* `use` is specifically designed for referencing a library script, as a client.
+  It imports top level definitions but not example geometry or internal definitions.
+  The imported library APIs are not exported by the client script.
+* `include` is a form of *object inheritance*
+  (see [Object Inheritance](Inheritance.md)).
+  The use cases for `include` are much narrower and more specialized.
+  For example, if one library script wants to include another library's API
+  as part of its own (ie, inheritance), then it would `include` the other library.
 
 Most modern programming languages have a "module system" for referencing
 external libraries. The standard features are:
@@ -249,3 +254,23 @@ Annotations for the customizer GUI are out of scope for this RFC,
 but the new `use` command supports all of the other requirements.
 You just need to use identifiers starting with `_` for definitions
 that are part of the demo code.
+
+## `only`
+The `only` operator returns a projection of an object
+containing only a specified subset of its fields.
+```
+only(name1, name2, ...) object
+```
+is equivalent to
+```
+{
+   name1 = object.name1;
+   name2 = object.name2;
+   ...
+}
+```
+This is composed with `use` in the following idiom:
+```
+use only (mm, inch) script("MCAD/units.scad");
+```
+See [Library Scripts](Library_Scripts.md).

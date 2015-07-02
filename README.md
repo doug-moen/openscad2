@@ -37,10 +37,9 @@ in the sidebar, and either create a new issue with the same name as the RFC, or 
     [Object API](rfc/Objects.md#the-object-api),
     [Literals `{}`](rfc/Objects.md#object-literals),
     [Customization](rfc/Objects.md#customization),
-    [`include`](rfc/Objects.md#inclusion),
-    [Composition `<*`](rfc/Objects.md#object-composition),
     [The CSG Tree](rfc/Objects.md#the-csg-tree)
 * [Programming with Objects](rfc/Programming_With_Objects.md)
+* [Object Inheritance](rfc/Inheritance.md): `include`, `overlay`, mixins
 * [Library Scripts](rfc/Library_Scripts.md)
 * [Error Reporting](rfc/Error_Reporting.md)
 * [Backwards Compatibility](rfc/Backwards_Compatibility.md)

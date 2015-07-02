@@ -111,14 +111,16 @@ shadow or hide bindings inherited from an outer scope.
   contained in the script file.
 
 It is illegal to refer to a name that isn't defined.
-
 It is illegal to define the same name twice within the same scope:
 you get a duplicate definition error.
+These are changes from the original language,
+and there is more discussion in [Object Inheritance](Inheritance.md).
 
 ## Effects of New Scoping Rules
 OpenSCAD 2015.03 already implements the "simple, consistent lexical scoping" rules
 if you just consider scripts with variable definitions, with no duplicate
-definitions, no function or module definitions, no `use` or `include` statements.
+definitions, no function or module definitions, no `use` or `include` statements,
+and no geometry.
 
 In the new implementation, OpenSCAD1 will be tweaked to
 obey the scoping rules more fully, which will make the language
@@ -126,46 +128,23 @@ more predictable and consistent, but will have little impact on backward compati
 
 The new definitional syntax in OpenSCAD2 will fully obey these rules.
 
-### on Undefined Bindings
-OpenSCAD1 already gives warnings about undefined bindings:
-* WARNING: Ignoring unknown variable 'x'.
-* WARNING: Ignoring unknown function 'f'.
-* WARNING: Ignoring unknown module 'm'.
-
-The new implementation of OpenSCAD will promote these warnings to errors
-in both OpenSCAD1 and OpenSCAD2 modes.
-
-This will remove a source of confusion from the language.
-The [user manual entry about `include`](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Include_Statement)
-explains how, when overriding a variable in an included script,
-you must sometimes put the override *before* the include, and sometimes put it *after* the include.
-(Search for "j=4" in the linked document.)
-
-This makes the `include` statement more confusing than necessary,
-but the necessity to put the override before the include
-only happens if the variable being overridden is referenced but not defined
-in the script being included. The new implementation will make this situation an error.
-
-### on Duplicate Definitions
-The current OpenSCAD implementation makes this legal:
+### on Geometry
+In the current language,
 ```
-x=1;
-echo(x);  // ECHO: 17
-x=17;
-echo(x);  // ECHO: 17
+cube(x);
+x = 10;
 ```
-The behaviour is quite confusing for new users.
-The [user manual section on Variables](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/General)
-contains a lengthy example script which explains this behaviour.
-<!-- As a new user, my initial reaction was stunned disbelief. -->
+is legal. That violates the scoping rules,
+since `cube(x);` contains a forward reference to `x`.
 
-In the new implementation,
-this code will cause a compile time error
-in both OpenSCAD1 and OpenSCAD2 mode.
-
-Duplicate definitions are not a feature,
-they are a side effect of the mechanism for overriding parameter settings
-in an included script. The latter is important and will continue to work.
+So based on what I've said above and elsewhere,
+this code needs to work in OpenSCAD1,
+but the upgrade tool will rearrange the code to
+```
+x = 10;
+cube(x);
+```
+so that it will work in OpenSCAD2.
 
 ### on Function and Module Definitions
 In OpenSCAD1, the scope of a function or module definition
@@ -243,76 +222,13 @@ See [Library Scripts](Library_Scripts.md) for more information about `use` in Op
 
 ### on `include`
 
-<!-- nothing to do with scoping; belongs in an implementation section
-The current implementation of `include <F>` works by textually
-substituting the contents of file F into the input stream at a low level.
-
-This won't work for the new implementation, since OpenSCAD1 scripts
-can include OpenSCAD2 scripts, whereas you can't meaningfully mix the
-old and new definition syntax in a single file
-(since `f(x)` is interpreted differently in OpenSCAD1 vs OpenSCAD2 mode).
-
-In the new implementation, `include <F>` will read file F and compile it
-into an object O. Once the current script is analyzed, a second pass will
-find all the definitions in the block containing `include <F>` that
-override definitions within F, and use these definitions to customize the
-object O. The customized object O is then what's imported.
-
-This is a different implementation with basically the same semantics.
-Where the semantics differ are in the direction of improved lexical scoping.
--->
-
-#### Implicit vs Explicit Overrides
-In the new implementation, the main difference between `include`
-in OpenSCAD1 vs OpenSCAD2 are implicit vs explicit overrides.
-In OpenSCAD1, you can override definitions in an included file like this:
-```
-include <MCAD/gridbeam.scad>
-beam_is_hollow = 1; // override
-```
-In OpenSCAD2, overrides are explicit.
-Overrides are specified by customizing the object before including it:
-```
-include script("MCAD/gridbeam.scad")(
-    beam_is_hollow = 1);
-```
-In short, the scope of override definitions is made explicit,
-and that's an improvement in our scoping rules.
-
-#### Clarifying the scope of overrides
-Code that doesn't work in 2015.03:
-```
-include <foo> // has parameters 'x' and 'y'
-x = 1; // override x
-a = x + 1;
-y = a + 1; // override y. y is undef
-```
-This code will emit a "WARNING: unknown variable a",
-but then it will run and set y to undef.
-(This problem has been discussed in the forum.
-Google this: "The last value assigned to j is 4 and indeed the echo shows that, so why is k assigned undef? Seems like a bug in OpenScad".)
-
-This code is wrong because it involves a scoping violation,
-and it reports a compile error in the new implementation.
-Users won't have to wonder why `y` is `undef` because we won't evaluate the program.
-But it's not clear why the compiler reports `a` is undefined.
-
-It becomes more obvious why this code is wrong when the code is translated
-into OpenSCAD2, which requires a customized include:
-```
-include script("foo")(
-    x=1,
-    y=a+1);
-a = x + 1;
-```
-
-#### Improved Lexical Scoping
 In the new implementation, the argument to `include` is compiled into an object,
-and then each binding is imported into the block. The imported bindings carry with them
-their lexical environment (the parent scope). In short, `include` supports lexical scoping,
+and then each binding is imported into the block.
+The imported bindings carry with them their lexical environment (the parent scope).
+In short, `include` supports lexical scoping,
 which the current implementation does not, since it works by pure text substitution.
 
-[More information about `include` in OpenSCAD2.](Objects.md#inclusion)
+[More information about `include` in OpenSCAD2.](Inheritance.md)
 
 <!--
 ## Include
@@ -337,7 +253,7 @@ In OpenSCAD1, this mixing together of the definitions from the includer and the 
 causes unpredictable behaviour and chaos, as discussed in several forum posts.
 However, this feature is also deliberately used to allow the includer to override
 parameters in the includee. OpenSCAD2 provides a safe, lexically scoped mechanism for
-overriding definitions in an included script, [as discussed here](Objects.md).
+overriding definitions in an included script, [as discussed here](Inheritance.md).
 -->
 
 ## Dynamic Scoping
@@ -374,68 +290,3 @@ In OpenSCAD2, you can get the same effect by customizing the script at the point
 S = script("S.scad");
 S(X=42).M();
 ```
-
-<!--
-## Missing and Multiple Definitions
-In OpenSCAD2 it is illegal to define the same name twice within the same scope:
-you get a duplicate definition error.
-It is also illegal to refer to a name that isn't defined.
-
-The purpose of these errors is to make you aware that something funny is going on
-in your code, so that you can fix any problems.
-
-This creates a backward compatibility issue.
-There is existing OpenSCAD1 code that won't work when these restrictions are enforced.
-This code is expected to work okay in backward compatibility mode, but after
-upgrading the code to OpenSCAD2 syntax, the code will need to be changed.
-
-If there are missing definitions, the problem should be easy to fix: just define the missing bindings.
-Eg, just write `x=undef;` to eliminate an "x is not defined" error message.
-
-Duplicate definitions can happen by accident.
-* You have `used`d or `include`d two different library scripts that define the same name X,
-  and you never noticed the conflict. This is dangerous: the last definition of X wins,
-  and the first library is forced to use the second library's definition of X,
-  which probably breaks the first library.
-  To fix this problem, use selective import
-  (`use only (names) library`) to import only the names you actually want from one of the libraries.
-* You have `use`d a library script and imported a name X which you have also defined locally.
-  Let's assume this is an accident, and that you did not intend to modify the internal workings
-  of the library by replacing its internal implementation of X with your X.
-  In that case, use selective import (`use only`) to only import the names that you want
-  from the library.
-
-There are existing idioms that rely on duplicate definitions.
-If your code uses these idioms, you'll have to change it to use new idioms.
-You can override definitions in OpenSCAD2, but it can't happen accidently,
-it has to be done explicitly using customization syntax: `object(overrides)`.
-
-1. You have `include`d a script S that defines X,
-   and you have defined your own version of X.
-   ```
-   include <S.scad>
-   X = 42;
-   ```
-   Your intent is to customize the behaviour of S
-   by overriding its definition of X with your own.
-   In OpenSCAD2, you have to explicitly customize S
-   using `S(X=42)`,
-   and then `include` the resulting object.
-   ```
-   include script("S.scad")(X = 42);
-   ```
-
-2. You `include` a script containing default parameter settings,
-   then you `include` another script containing project-specific overrides.
-   This is followed by code that uses the resulting settings.
-   ```
-   include <defaults.scad>
-   include <overrides.scad>
-   ...
-   ```
-   This is translated into OpenSCAD2 using the merge operator.
-   ```
-   include merge(script("defaults.scad"), script("overrides.scad"));
-   ...
-   ```
-   -->

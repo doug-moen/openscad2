@@ -190,3 +190,22 @@ For performance reasons,
 the new evaluator will also use lazy evaluation, at least for object literals
 and object customization. The new language encourages you to use object
 customization freely, and I want to minimize the cost of this.
+
+<!-- nothing to do with scoping; belongs in an implementation section
+The current implementation of `include <F>` works by textually
+substituting the contents of file F into the input stream at a low level.
+
+This won't work for the new implementation, since OpenSCAD1 scripts
+can include OpenSCAD2 scripts, whereas you can't meaningfully mix the
+old and new definition syntax in a single file
+(since `f(x)` is interpreted differently in OpenSCAD1 vs OpenSCAD2 mode).
+
+In the new implementation, `include <F>` will read file F and compile it
+into an object O. Once the current script is analyzed, a second pass will
+find all the definitions in the block containing `include <F>` that
+override definitions within F, and use these definitions to customize the
+object O. The customized object O is then what's imported.
+
+This is a different implementation with basically the same semantics.
+Where the semantics differ are in the direction of improved lexical scoping.
+-->
