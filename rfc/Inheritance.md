@@ -354,7 +354,7 @@ but existing code will trigger warning messages until the syntax is updated:
 In OpenSCAD2, these warnings become errors.
 -->
 
-### OpenSCAD2: Constructing a Mixin
+### Constructing a Mixin
 The first statement in a mixin script is a `require` statement,
 which lists the mixin's prerequisites. When the script is evaluated,
 the result is a mixin, instead of an object.
@@ -381,7 +381,7 @@ the base object field that is being overridden.
 of the base field value. This is particularly useful
 when overriding functions.
 
-### OpenSCAD2: Applying a Mixin
+### Applying a Mixin
 A mixin is applied to a base object using an overlay expression:
 `base overlay mixin` returns the derived object.
 
