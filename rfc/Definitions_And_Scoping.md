@@ -73,6 +73,12 @@ OpenSCAD2 is a block structured, lexically scoped language
 with simple, consistent scoping rules that apply
 uniformly to all bindings.
 
+The [backward compatibility mechanism](Backwards_Compatibility.md)
+imposes a significant constraint on these scoping rules.
+An OpenSCAD script written in the original language,
+with no function or module definitions, and no `include` or `use` statements,
+must not change its meaning when interpreted as OpenSCAD2.
+
 A block is a syntactic construct that binds identifiers to values,
 and delimits the scope of those bindings. Lexical scoping means
 that a binding is not visible outside of its block.
@@ -93,8 +99,10 @@ that a binding is not visible outside of its block.
 * The parenthesized argument list in a function call is a block.
   Each labeled argument behaves like a definition.
 
-The scope of a binding begins at the following statement
-(for a script), or at the following definition (in a `let` bound definition list)
+For a script, the scope of a binding is the entire script:
+see [Scoping Rules for Scripts](Scoping_For_Scripts.md).
+
+Otherwise, the scope of a binding begins at the following definition (in a `let` bound definition list),
 or at the following formal parameter (for a function literal),
 or at the following argument (for a function call argument list),
 and continues to the end of the block.
