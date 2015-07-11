@@ -174,9 +174,15 @@ The `object` argument is a compile time constant.
 `overlay object;` does the same thing, with the following differences:
 * It's an error for a binding imported by `include`
   to conflict with another definition or `include` in the same block.
+  Just as definitions within a script are order independent,
+  the location and order of `include` statements is not important.
 * The `overlay` statement takes either an object or a [mixin](#mixins) argument,
   and allows new bindings imported from the object or mixin
   to override earlier bindings of the same name.
+  The script<br>
+  `{..; overlay M1; ..; overlay M2; ..;}`<br>
+  is equivalent to<br>
+  `{..; ..; ..;} overlay M1 overlay M2`.
 
 In OpenSCAD2, one definition cannot override another definition of the same name
 unless this is made explicit in the source code. Otherwise, it is an error.
