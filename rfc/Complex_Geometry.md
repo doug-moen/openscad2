@@ -23,3 +23,7 @@ it helps us avoid designing ourselves into a corner. If we have a roadmap
 for where we are going, we can add new features incrementally without fear
 that we'll have to break backward compatibility later when a new problem needs
 to be solved.
+
+## Complex Objects with Micro-fine Detail
+
+## Functional Geometry
