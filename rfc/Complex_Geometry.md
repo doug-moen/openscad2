@@ -25,6 +25,7 @@ that we'll have to break backward compatibility later when a new problem needs
 to be solved.
 
 ## Complex Objects with Micro-fine Detail
+
 One promise of 3D printing is that complexity is free.
 Sadly, with the mesh representation used by OpenSCAD and STL,
 the reality is that more complexity equals more triangles.
@@ -36,14 +37,29 @@ Too many triangles, and you can't render or print your model:
   Long preview and render times (from minutes to hours) are a well known problem
   with OpenSCAD.
 
-For OpenSCAD, a stop-gap measure is to replace CGAL with a new geometry
-engine that uses floating point numbers instead of variable-length rational
-numbers. This speeds up CSG operations and reduces memory pressure.
-Bob Cousins tried replacing CGAL with the Carve engine, and got a 10x speedup in rendering
-times. While this sounds like an impressive improvement, it's not nearly enough.
-Sure, it will cut a 2 hour rendering time down to 18 minutes, but we can do much better
-with functional geometry, and it doesn't fix the fundamental limitation with STL files,
-where the most complex models you might want to print can't be sliced if they are rendered
-as STL.
+A common layer height for consumer 3D printers is 0.1mm. Consider a 100mm cube, partitioned into
+"voxels" that are 0.1mm cubes, which represent the smallest printable detail.
+That's a total of 1 billion voxels.
+Consider models with complex internal structure all the way down to the printer's resolution:
+this would require billions of triangles, if represented by a mesh.
+That's far beyond the capacity of either OpenSCAD, or of a slicer working on an STL file.
+
+Models of this complexity are being designed and printed, just not with a mesh/STL based toolchain.
+* [An ultrastiff, ultralight 3D printed material](http://news.mit.edu/2014/new-ultrastiff-ultralight-material-developed-0619)
+* [MIT OpenFab project](http://openfab.mit.edu/)
+
+Meanwhile, designers using STL based tools are running into the limits:
+* ["At Shapeways we are starting to see a bunch more data exhibits this type of density. Scanned data, digital fabrics and fractal art all push the limits of what triangle formats can comfortably express."](http://abfab3d.com/2015/02/27/voxels-versus-triangles/)
+
+To solve this problem, we need to extend our modelling toolchain so that we have an alternative
+to the mesh for representing complex models. The proposed alternative is:
+* For the in-memory representation of a rendered model, use functional representation (F-Rep)
+  instead of CGAL-style boundary representation (B-Rep).
+* To export a rendered model to a file, to be consumed by a slicer for 3D printing,
+  use SVX, which is a voxel file format.
 
 ## Functional Geometry
+
+## Multiple Materials
+
+## Multiple Colours
