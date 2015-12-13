@@ -90,11 +90,12 @@ by OpenSCAD can be rendered and previewed in a fraction of a second using F-Rep.
 The SVX voxel file format is the best alternative to STL that I can find for representing models
 too complex for a mesh.
 * It completely avoids mesh representation.
-* It is an incredibly simple format (compared to the byzantine complexity of AMF or 3MF),
+* It is a simple format (compared to the byzantine complexity of AMF or 3MF),
   and is easy to implement.
-* It is fairly easy to slice, as the representation is fairly slow level: it's already organized into slices.
-* An SVX file is on average half the size of the equivalent binary STL file.
-  [[Shapeways, 2015](http://abfab3d.com/2015/02/27/voxels-versus-triangles/)]
+* It is fairly easy to slice, as the representation is close to the g-code: it's already organized into slices.
+* An SVX file is on average half the size of the equivalent binary STL file
+  [[Shapeways, 2015](http://abfab3d.com/2015/02/27/voxels-versus-triangles/)].
+  This does mean that SVX files for models too complex for STL could be gigabytes in size.
 * You don't have to load the entire model into memory at once, in order to slice it and convert it
   to g-code. This is the most important part. You only need to load one slice at a time.
   You do one pass to construct a depth map, used to generate support,
