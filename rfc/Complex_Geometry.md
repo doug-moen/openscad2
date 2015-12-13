@@ -4,7 +4,7 @@ This is a roadmap for evolving OpenSCAD to solve the following problems:
 * Support objects with multiple materials and colours.
 * Support complex objects with micro-fine detail (more structure than can
   be feasibly represented by a mesh).
-* Better support for curved objects and organic forms.
+* Better support for curved objects and organic shapes.
 
 In support of complex objects, we'll add the following functionality:
 * Functional geometry: the ability to define geometric objects
