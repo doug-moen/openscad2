@@ -92,7 +92,8 @@ too complex for a mesh.
 * It completely avoids mesh representation.
 * It is a simple format (compared to the byzantine complexity of AMF or 3MF),
   and is easy to implement.
-* It is fairly easy to slice, as the representation is close to the g-code: it's already organized into slices.
+* It is easy to slice, as the representation is close to the g-code: it's already organized into slices.
+* The combination of SVX and F-Rep can give designers low-level control over each voxel the printer prints.
 * An SVX file is on average half the size of the equivalent binary STL file
   [[Shapeways, 2015](http://abfab3d.com/2015/02/27/voxels-versus-triangles/)].
   This does mean that SVX files for models too complex for STL could be gigabytes in size.
@@ -100,7 +101,7 @@ too complex for a mesh.
   to g-code. This is the most important part. You only need to load one slice at a time.
   You do one pass to construct a depth map, used to generate support,
   then you do a second pass to generate g-code.
-* The conversion from F-Rep to voxels is very simple, fast and memory efficient, compared to generating STL.
+* The conversion from F-Rep to voxels is simple, fast and memory efficient, compared to generating STL.
 
 The downside of SVX is that so far, only Shapeways supports it.
 So part of this project is to join an open source project like Cura and add SVX support.
