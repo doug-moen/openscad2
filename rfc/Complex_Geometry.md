@@ -21,7 +21,7 @@ and SVX is a voxel file format, while the other 2 are mesh formats.
 The reason for considering such a large set of changes all at once, is that
 it helps us avoid designing ourselves into a corner. If we have a roadmap
 for where we are going, we can add new features incrementally without fear
-that we'll have to break backward compatibility later when a new problem needs
+that we'll have to break backward compatibility later when the next problem needs
 to be solved.
 
 ## Complex Objects with Micro-fine Detail
@@ -51,12 +51,49 @@ Models of this complexity are being designed and printed, just not with a mesh/S
 Meanwhile, designers using STL based tools are running into the limits:
 * ["At Shapeways we are starting to see a bunch more data exhibits this type of density. Scanned data, digital fabrics and fractal art all push the limits of what triangle formats can comfortably express."](http://abfab3d.com/2015/02/27/voxels-versus-triangles/)
 
-To solve this problem, we need to extend our modelling toolchain so that we have an alternative
-to the mesh for representing complex models. The proposed alternative is:
-* For the in-memory representation of a rendered model, use functional representation (F-Rep)
-  instead of CGAL-style boundary representation (B-Rep).
+To solve this problem, we need to extend OpenSCAD and our downstream toolchain
+so that we have an alternative to the mesh for representing complex models. The proposed alternative is:
+* For the in-memory representation of a rendered model, support functional representation (F-Rep)
+  in addition to CGAL-style boundary representation (B-Rep).
 * To export a rendered model to a file, to be consumed by a slicer for 3D printing,
-  use SVX, which is a voxel file format.
+  support SVX, which is a voxel file format, in addition to STL.
+
+F-Rep is much faster and much more memory efficient than B-Rep (meshes).
+* The memory requirement for F-Rep is within a constant factor of the memory requirement
+  for the CSG tree. Rendering does *not* cause an explosion of memory consumption.
+* During rendering (conversion of the CSG tree to F-Rep),
+  the CSG operations run in constant time (or, proportional to the number of arguments).
+* Preview is extremely fast, from what I've seen of existing F-Rep modelling tools.
+  The cost of rendering the preview pane is proportional to the number of primitives in the CSG tree.
+  And this operation can be made highly parallel. IceSL implements preview entirely in the FPU.
+
+There are a few expensive operations in F-Rep. The trick is to design your model so that you don't need them.
+* Conversion from F-Rep to B-Rep is expensive. This is acceptable if it is only invoked while exporting to STL
+  or another mesh format. It's bad if the conversion occurs repeatedly during preview (see below).
+* Convex hull and Minkowski sum can't be efficiently implemented for F-Rep. You have to convert to B-Rep first
+  (see above), then run the operations on B-Rep. Fortunately, it seems (so far) that functional geometry provides
+  good alternatives to these operations, covering the standard use cases seen in OpenSCAD.
+
+The good news is that if you avoid the expensive stuff, then a model too complex to be rendered as a mesh
+by OpenSCAD can be rendered and previewed in a fraction of a second using F-Rep.
+
+The SVX voxel file format is the best alternative to STL that I can find for representing models
+too complex for a mesh.
+* It completely avoids mesh representation.
+* It is an incredibly simple format (compared to the byzantine complexity of AMF or 3MF),
+  and is easy to implement.
+* It is fairly easy to slice, as the representation is fairly slow level: it's already organized into slices.
+* An SVX file is on average half the size of the equivalent binary STL file.
+  [[Shapeways, 2015](http://abfab3d.com/2015/02/27/voxels-versus-triangles/)]
+* You don't have to load the entire model into memory at once, in order to slice it and convert it
+  to g-code. This is the most important part. You only need to load one slice at a time.
+  You do one pass to construct a depth map, used to generate support,
+  then you do a second pass to generate g-code.
+* The conversion from F-Rep to voxels is very simple, fast and memory efficient, compared to generating STL.
+
+The downside of SVX is that so far, only Shapeways supports it.
+So part of this project is to join an open source project like Cura and add SVX support.
+Fortunately, we get a lot of benefits from F-Rep even if SVX support is missing.
 
 ## Functional Geometry
 
