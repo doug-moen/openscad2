@@ -41,7 +41,7 @@ A common layer height for consumer 3D printers is 0.1mm. Consider a 100mm cube, 
 "voxels" that are 0.1mm cubes, which represent the smallest printable detail.
 That's a total of 1 billion voxels.
 Consider models with complex internal structure all the way down to the printer's resolution:
-this would require billions of triangles, if represented by a mesh.
+this could require billions of triangles, if represented by a mesh.
 That's far beyond the capacity of either OpenSCAD, or of a slicer working on an STL file.
 
 Models of this complexity are being designed and printed, just not with a mesh/STL based toolchain.
