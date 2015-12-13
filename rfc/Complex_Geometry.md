@@ -82,7 +82,7 @@ There are a few expensive operations in F-Rep. The trick is to design your model
   good alternatives to these operations, covering the standard use cases seen in OpenSCAD.
 * If your CSG tree contains millions of nodes, then you'll use a lot of memory and preview will be slow.
   But there's an alternative:
-  put the algorithm that generates all of this complexity into the function in an F-Rep node.
+  put the algorithm that generates all of this complexity into the functions of a small number of F-Rep nodes.
 
 The good news is that if you avoid the expensive stuff, then a model too complex to be rendered as a mesh
 by OpenSCAD can be rendered and previewed in a fraction of a second using F-Rep.
