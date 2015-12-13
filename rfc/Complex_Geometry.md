@@ -4,6 +4,7 @@ This is a roadmap for evolving OpenSCAD to solve the following problems:
 * Support objects with multiple materials and colours.
 * Support complex objects with micro-fine detail (more structure than can
   be feasibly represented by a mesh).
+* Better support for curved objects and organic forms.
 
 In support of complex objects, we'll add the following functionality:
 * Functional geometry: the ability to define geometric objects
@@ -13,6 +14,8 @@ In support of complex objects, we'll add the following functionality:
   Boundary Representation).
 * Voxels: the ability to export a model as a voxel file (like SVX), instead of to
   a mesh file (like STL).
+
+Functional geometry is also a better way to construct curved objects.
 
 I will also consider what's needed to import and export models as
 AMF, 3MF and SVX. All 3 formats support multiple materials and colours,
@@ -66,6 +69,10 @@ F-Rep is much faster and much more memory efficient than B-Rep (meshes).
 * Preview is extremely fast, from what I've seen of existing F-Rep modelling tools.
   The cost of rendering the preview pane is proportional to the number of primitives in the CSG tree.
   And this operation can be made highly parallel. IceSL implements preview entirely in the FPU.
+* Currently, curved objects are implemented using polygonal approximations. `$fn` controls the resolution:
+  the higher the resolution, the more memory is consumed and the slower things get.
+  With functional geometry, curved objects are represented analytically, and previewed
+  at effectively infinite resolution (`$fn = ∞`) for free.
 
 There are a few expensive operations in F-Rep. The trick is to design your model so that you don't need them.
 * Conversion from F-Rep to B-Rep is expensive. This is acceptable if it is only invoked while exporting to STL
