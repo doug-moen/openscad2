@@ -73,10 +73,9 @@ There are a few expensive operations in F-Rep. The trick is to design your model
 * Convex hull and Minkowski sum can't be efficiently implemented for F-Rep. You have to convert to B-Rep first
   (see above), then run the operations on B-Rep. Fortunately, it seems (so far) that functional geometry provides
   good alternatives to these operations, covering the standard use cases seen in OpenSCAD.
-* If your CSG tree contains millions of nodes, then yeah, you'll use a lot of memory and preview will be slow.
-  But there's an alternative to this style of programming.
-  If you can put the algorithm that generates all of this complexity into the function in an F-Rep node,
-  then you can solve this problem.
+* If your CSG tree contains millions of nodes, then you'll use a lot of memory and preview will be slow.
+  But there's an alternative:
+  put the algorithm that generates all of this complexity into the function in an F-Rep node.
 
 The good news is that if you avoid the expensive stuff, then a model too complex to be rendered as a mesh
 by OpenSCAD can be rendered and previewed in a fraction of a second using F-Rep.
