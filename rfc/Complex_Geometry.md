@@ -109,6 +109,14 @@ Fortunately, we get a lot of benefits from F-Rep even if SVX support is missing.
 
 ## Functional Geometry
 
+Functional geometry is ...
+
+Function geometry is awesome because ...
+
+Functional geometry is gaining in popularity within the 3D printing community.
+
+Functional geometry works like this: ...
+
 ## Multiple Materials
 
 ## Multiple Colours
