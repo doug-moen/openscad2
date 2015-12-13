@@ -70,7 +70,7 @@ F-Rep is much faster and much more memory efficient than B-Rep (meshes).
   The cost of rendering the preview pane is proportional to the number of primitives in the CSG tree.
   And this operation can be made highly parallel. IceSL implements preview entirely in the FPU.
 * Currently, curved objects are implemented using polygonal approximations. `$fn` controls the resolution:
-  the higher the resolution, the more memory is consumed and the slower things get.
+  the higher the resolution, the more memory is consumed and the longer you wait for a preview.
   With functional geometry, curved objects are represented analytically, and previewed
   at effectively infinite resolution (`$fn = ∞`) for free.
 
@@ -109,13 +109,22 @@ Fortunately, we get a lot of benefits from F-Rep even if SVX support is missing.
 
 ## Functional Geometry
 
-Functional geometry is ...
+Functional geometry is the techne of defining geometric objects using functions.
+These functions map each point [x,y,z] in space onto some property of the object.
+The underlying representation is called F-Rep (functional representation),
+in contrast to the B-Rep (boundary representation) currently used by OpenSCAD.
 
-Function geometry is awesome because ...
+Functional geometry is awesome because ...
 
 Functional geometry is gaining in popularity within the 3D printing community.
+Here are some of the 3D modelling tools that use it:
+* [ImplicitCAD](http://www.implicitcad.org/) 2011
+* [ShapeJS](http://shapejs.shapeways.com/) 2013
+* [IceSL](http://www.loria.fr/~slefebvr/icesl/) 2013
+* [Antimony](http://www.mattkeeter.com/projects/antimony/3/) 2014
 
 Functional geometry works like this: ...
+high level and low level APIs
 
 ## Multiple Materials
 
