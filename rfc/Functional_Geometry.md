@@ -39,7 +39,8 @@ f[x,y,z] = x^2 + y^2 + z^2 - r^2
 More generally, `f[x,y,z]` is the distance of the point from the sphere's boundary,
 and `f` is called a *signed distance function*, a *distance function*, or a *distance field*.
 The 3D surface defined by `f[x,y,z]==0` is an *isosurface*.
-`f` is how a sphere of radius `r` is represented in F-Rep.
+`f` represents a sphere of radius `r` in F-Rep.
+(Although we use a slightly different definition in practice; see below.)
 
 There's one more wrinkle.
 In F-Rep, a distance function maps every point in 3D space onto a signed distance.
@@ -76,29 +77,47 @@ In OpenSCAD2, functional geometry has both a low-level and a high-level API.
 
 `2dshape` and `2dpattern` are the 2 dimensional analogues of the above.
 
-The low level API also contains utility operations that are used
+The low level API contains utility operations that are used
 to define new operations that map shapes onto shapes.
 Shapes can be queried at run-time for their distance function
 and their bounding box.
 
+`shape.f`
+> the distance function of a shape
+
+`shape.bbox`
+> the bounding box of a shape
+
 ## High Level API
-In this section, we define a collection of high level operations in OpenSCAD2,
-in order to show what is possible using functional geometry.
+In this section, we define a sample collection of high level operations in OpenSCAD2,
+to demonstrate how easy it is to define shapes using functional geometry.
+(The code for implementing any of these operations using a mesh is far more complex.)
 The issue of what the standard operations will be, and how backwards compatibility works,
 is left to a later date.
 
 ```
 sphere(r) = 3dshape(
-    f([x,y,z]) = x^2 + y^2 + z^2 - r^2,
+    f([x,y,z]) = sqrt(x^2 + y^2 + z^2) - r,
     bbox=[[-r,-r,-r],[r,r,r]]);
 ```
+> Same distance function as ImplicitCAD.
 
 ```
 circle(r) = 2dshape(
-    f([x,y]) = x^2 + y^2 - r^2,
+    f([x,y]) = sqrt(x^2 + y^2) - r,
     bbox=[[-r,-r],[r,r]]);
 ```
 
+```
+cylinder(h,r) = linear_extrude(h=h) circle(r);
+```
+
+```
+linear_extrude(h)(shape) = 3dshape(
+    f([x,y,z]) = max(shape.f(x,y), abs(z - h/2) - h/2),
+    bbox=[[shape.bbox[0].x,shape.bbox[0].y,-h/2],[shape.bbox[1].x,shape.bbox[1].y,h/2]);
+```
+> The result is centered. Based on ImplicitCAD.
 
 ### Notes
 
