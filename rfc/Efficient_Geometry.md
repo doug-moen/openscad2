@@ -70,13 +70,21 @@ too complex for a mesh.
 * The combination of SVX and F-Rep can give designers low-level control over each voxel the printer prints.
 * An SVX file is on average half the size of the equivalent binary STL file
   [[Shapeways, 2015](http://abfab3d.com/2015/02/27/voxels-versus-triangles/)].
+  That's about the same as compressed AMF ([see slide 12](http://slideplayer.com/slide/5297494/)).
   This does mean that SVX files for models too complex for STL could be gigabytes in size.
 * You don't have to load the entire model into memory at once, in order to slice it and convert it
   to g-code. This is the most important part. You only need to load one slice at a time.
   You do one pass to construct a depth map, used to generate support,
   then you do a second pass to generate g-code.
-* The conversion from F-Rep to voxels is simple, fast and memory efficient, compared to generating STL.
+  If no support is to be generated, then the SVX file could be streamed from OpenSCAD to the slicer?
+* The conversion from F-Rep to voxels is simpler, faster and more memory efficient than STL generation.
 
 The downside of SVX is that so far, only Shapeways supports it.
 So part of this project is to join an open source project like Cura and add SVX support.
 Fortunately, we get a lot of benefits from F-Rep even if SVX support is missing.
+
+An alternative is to stream G-Code directly from OpenSCAD to the 3D printer.
+That's the approach taken by ImplicitCAD and IceSL (modelling programs which use functional geometry),
+but it seems like a bad idea.
+A dedicated slicer tool will have more sophisticated features and support a broader
+range of printers, and how do you submit jobs to an online 3D printing service?
