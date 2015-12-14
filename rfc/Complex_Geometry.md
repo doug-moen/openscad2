@@ -118,7 +118,7 @@ Functional geometry is awesome because
 * Curved objects are represented exactly, rather than as polygonal approximations.
   Therefore, they don't lose resolution when they are scaled or transformed.
 * Functional Geometry APIs are a simple and elegant way to solve many modelling problems,
-  especially when modelling curved objects and organic shapes.
+  especially when modelling curved surfaces and organic shapes.
 * Plus all of the speed and efficiency benefits described earlier.
 
 Functional geometry is gaining in popularity within the 3D printing community.
@@ -127,6 +127,38 @@ Here are some of the 3D modelling tools that use it:
 * [ShapeJS](http://shapejs.shapeways.com/) 2013
 * [IceSL](http://www.loria.fr/~slefebvr/icesl/) 2013
 * [Antimony](http://www.mattkeeter.com/projects/antimony/3/) 2014
+
+### Basic Concepts
+
+The mathematical equation for a sphere of radius `r`: `x^2 + y^2 + z^2 = r^2`
+
+We can rewrite this as `x^2 + y^2 + z^2 - r^2 = 0`
+
+The above is an *implicit equation*,
+from which we can derive the *implicit function*
+```
+f[x,y,z] = x^2 + y^2 + z^2 - r^2
+```
+
+`f[x,y,z]` is:
+* zero if the point [x,y,z] is on the boundary of the sphere
+* negative if the point is inside the sphere
+* positive if the point is outside the sphere
+
+More generally, `f[x,y,z]` is the distance of the point from the sphere's boundary,
+and `f` is called a *signed distance function*, a *distance function*, or a *distance field*.
+`f` is how a sphere of radius `r` is represented in F-Rep.
+
+There's one more wrinkle.
+In F-Rep, a distance function maps every point in 3D space onto a signed distance.
+This representation is not restricted to representing finite geometrical objects.
+It can also represent infinite space-filling patterns.
+For examples, try a Google image search on
+[k3dsurf periodic lattice](https://www.google.ca/search?q=k3dsurf+periodic+lattice&num=100&safe=off&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjT0PKe3dvJAhVMooMKHc3JAHEQ_AUIBygB&biw=1440&bih=802).
+These infinite patterns are useful in 3D modelling:
+you can intersect them or subtract them from a finite 3D object.
+
+### Notes
 
 Functional geometry works like this: ...
 high level and low level APIs
