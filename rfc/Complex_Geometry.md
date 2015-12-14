@@ -114,7 +114,12 @@ These functions map each point [x,y,z] in space onto some property of the object
 The underlying representation is called F-Rep (functional representation),
 in contrast to the B-Rep (boundary representation) currently used by OpenSCAD.
 
-Functional geometry is awesome because ...
+Functional geometry is awesome because
+* Curved objects are represented exactly, rather than as polygonal approximations.
+  Therefore, they don't lose resolution when they are scaled or transformed.
+* Functional Geometry APIs are a simple and elegant way to solve many modelling problems,
+  especially when modelling curved objects and organic shapes.
+* Plus all of the speed and efficiency benefits described earlier.
 
 Functional geometry is gaining in popularity within the 3D printing community.
 Here are some of the 3D modelling tools that use it:
