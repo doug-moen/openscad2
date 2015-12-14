@@ -131,6 +131,14 @@ Here are some of the 3D modelling tools that use it:
 Functional geometry works like this: ...
 high level and low level APIs
 
+[The mathematical basis for F-Rep](https://christopherolah.wordpress.com/2011/11/06/manipulation-of-implicit-functions-with-an-eye-on-cad/)
+* rounded union of two objects
+* shell: constant width shell of an object
+* combining two circles to construct a torus
+
+ShapeJS on the abfab3d.com blog:
+* 
+
 ## Multiple Materials
 
 ## Multiple Colours
