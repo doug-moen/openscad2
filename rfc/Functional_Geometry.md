@@ -10,7 +10,7 @@ Functional geometry is awesome because
   Therefore, they don't lose resolution when they are scaled or transformed.
 * Functional Geometry APIs are a simple and elegant way to solve many modelling problems,
   especially when modelling curved surfaces and organic shapes.
-* Plus all of the speed and efficiency benefits described by [Efficient_Geometry.md](Efficient Geometry).
+* Plus all of the speed and efficiency benefits described by [Efficient Geometry](Efficient_Geometry.md).
 
 Functional geometry is gaining in popularity within the 3D printing community.
 Here are some of the 3D modelling tools that use it:
