@@ -133,7 +133,17 @@ runion(r,s1,s2) = 3dshape(
     f(p) = rmin(r, s1.f(p), s2.f(p)),
     bbox=[ min(s1.bbox[0],s2.bbox[0])-r, max(s1.bbox[1],s2.bbox[1])+r ]);
 ```
-> ImplicitCAD rounded union with radius `r`. (Why is the bbox padded by r?)
+> Create fillets! ImplicitCAD rounded union with radius `r`. (Why is the bbox padded by r?)
+Example:
+  ```
+  runion(r=8,
+  	cube([40,40,20]),
+  	translate([0,0,20]) cube([20,20,30]))
+  ```
+![rounded union](http://thingiverse-rerender-new.s3.amazonaws.com/renders/47/9e/1c/c8/e2/RoundedUnionCubeExample_preview_featured.jpg)
+
+
+
 
 
 ```
