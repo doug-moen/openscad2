@@ -51,6 +51,8 @@ F-Rep is much faster and much more memory efficient than B-Rep (meshes).
 There are a few expensive operations in F-Rep. The trick is to design your model so that you don't need them.
 * Conversion from F-Rep to B-Rep is expensive. This is acceptable if it is only invoked while exporting to STL
   or another mesh format. It's bad if the conversion occurs repeatedly during preview (see below).
+  * You may be aware that ImplicitCAD, circa 2012, had very slow and poor quality STL export.
+    These problems are solved in newer open source F-Rep projects like Antimony and AbFab3D.
 * Convex hull and Minkowski sum can't be efficiently implemented for F-Rep. You have to convert to B-Rep first
   (see above), then run the operations on B-Rep. Fortunately, it seems (so far) that functional geometry provides
   good alternatives to these operations, covering the standard use cases seen in OpenSCAD.
