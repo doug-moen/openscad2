@@ -119,10 +119,30 @@ linear_extrude(h)(shape) = 3dshape(
 ```
 > The result is centered. Based on ImplicitCAD.
 
-### Notes
+```
+union(s1,s2) = 3dshape(
+    f(p) = min(s1.f(p), s2.f(p)),
+    bbox=[ min(s1.bbox[0],s2.bbox[0]), max(s1.bbox[1],s2.bbox[1]) ]);
+```
+> Simplest case of a union. ImplicitCAD uses special case code where the
+> min and max in the bbox calculation ignore empty bounding boxes, but I've
+> omitted that for clarity.
 
-Functional geometry works like this: ...
-high level and low level APIs
+```
+runion(r,s1,s2) = 3dshape(
+    f(p) = rmin(r, s1.f(p), s2.f(p)),
+    bbox=[ min(s1.bbox[0],s2.bbox[0])-r, max(s1.bbox[1],s2.bbox[1])+r ]);
+```
+> ImplicitCAD rounded union with radius `r`. (Why is the bbox padded by r?)
+
+
+```
+complement(s) = 3dpattern(f(p) = -s.f(p));
+```
+> Convert a shape or pattern to its inverse: all points inside the object
+> are now outside, and vice versa.
+
+### Notes
 
 [The mathematical basis for F-Rep](https://christopherolah.wordpress.com/2011/11/06/manipulation-of-implicit-functions-with-an-eye-on-cad/)
 * rounded union of two objects
