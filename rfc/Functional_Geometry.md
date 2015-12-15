@@ -19,6 +19,15 @@ Here are some of the 3D modelling tools that use it:
 * [IceSL](http://www.loria.fr/~slefebvr/icesl/) 2013
 * [Antimony](http://www.mattkeeter.com/projects/antimony/3/) 2014
 
+This paper is a good tutorial on how Functional Geometry works,
+and it also presents an original approach, which I'll call OpenFG,
+on how functional geometry can be integrated into a modelling language.
+
+I think my approach is more elegant, powerful, and easy to use, than
+any other FG system that I've looked at so far. It introduces a single
+shape constructor `make_shape`, and implements most of the OpenSCAD geometry
+primitives, 2D and 3D, in a few hundred lines of OpenSCAD2 code.
+
 ## Functional Representation (F-Rep)
 
 The mathematical equation for a sphere of radius `r` is `x^2 + y^2 + z^2 = r^2`.
@@ -58,7 +67,7 @@ by Christopher Olah, inventor of ImplicitCAD.
 ## Low Level API
 In OpenSCAD2, functional geometry has both a low-level and a high-level API.
 * The high level API includes familiar operations like sphere(), translate() and intersection(),
-  plus additional operations and options made possible by F-Rep.
+  plus exciting new operations like shell() and perimeter_extrude().
 * The low level API allows users to directly define new primitive operations
   using distance functions, and is perhaps the analogue of polyhedron() for B-Rep.
 
@@ -88,19 +97,102 @@ and their bounding box.
 `shape.bbox`
 > the bounding box of a shape
 
-## High Level API
+## Weird Shapes
+A distance function can express an arbitrary set of points in 3-space,
+which could be a 2D surface, a 1D path, an isolated 0D point,
+or a [fractal with a non-integer Hausdorff dimension](https://en.wikipedia.org/wiki/List_of_fractals_by_Hausdorff_dimension).
+It's not limited to well formed, finite 3D solids.
+* The upside is that this is very powerful and expressive. We can make productive use of weird shapes,
+  and I haven't explored all of the possibilities yet.
+* The downside is that we are giving users the ability to create pathological, malformed distance functions,
+  and we have little ability to detect a malformed function and issue an error message.
+  So we need to ensure that preview, STL export and SVX export produce some kind of valid result
+  even if the distance function is pathological. We can't enter an infinite loop, crash, or export
+  a non-manifold STL file.
+
+Infinite space filling patterns are useful. They can be intersected with or subtracted from finite 3D solids.
+Existing functional geometry systems make good use of this.
+My insight is that we should use the bounding box [[-inf,-inf,-inf],[inf,inf,inf]] if the pattern is infinite in all directions. An infinite cylinder extending along the Z axis, with unit radius, would have bounding box [[-1,-1,-inf],[1,1,inf]]. Following this strategy, the intersection of the X, Y and Z cylinders would have a finite bbox with no special case code. is_finite(shape) tests the bounding box to determine if a shape is finite.
+
+The empty set is a useful pattern. In ImplicitCAD, the bbox for the empty set is [[0,0,0],[0,0,0]], and there is ugly special case code in union to ignore empty shapes when computing the bbox for a union. Perhaps a better bbox for the empty shape is [[inf,inf,inf],[-inf,-inf,-inf]]. This has a height, width and depth of -inf, and may turn out to work correctly in bbox calculations with no special case code. Check and see when the Tutorial is complete. is_empty(shape) returns true if the height, width or depth of the bbox is <= 0.
+
+A 2D object occupying the X-Y plane is directly expressible, without introducing a special type for 2D shapes,
+or introducing a "2D subsystem".
+```
+square(n) = cuboid([n,n,0]);
+```
+We can test for a 2D object: minz and maxz are 0, width and depth are > 0.
+So can we use this representation without any special casing? Do all of the polymorphic shape operators work
+correctly on this representation without special casing? I think preview would work.
+
+The PLASM language supports 1D shapes, and these are commonly used. A 3D cylinder is constructed as the cross-product
+of a 1D line segment by a 2D circle. This would also work in Functional Geometry.
+So this is something to play with in the future. Nothing new needs to be added to support this.
+
+## Examples
 In this section, we define a sample collection of high level operations in OpenSCAD2,
 to demonstrate how easy it is to define shapes using functional geometry.
 (The code for implementing any of these operations using a mesh is far more complex.)
-The issue of what the standard operations will be, and how backwards compatibility works,
+The issue of what the standard high level API will be, and how backwards compatibility works,
 is left to a later date.
+
+### Primitive Shapes
+Here I'll define 3 primitive shapes: sphere, cuboid and cylinder.
+The main lesson will be learning how to write a distance function.
 
 ```
 sphere(r) = 3dshape(
     f([x,y,z]) = sqrt(x^2 + y^2 + z^2) - r,
     bbox=[[-r,-r,-r],[r,r,r]]);
 ```
-> Same distance function as ImplicitCAD.
+
+In the F-Rep section, I said that `f([x,y,z]) = x^2 + y^2 + z^2 - r^2`
+is a distance function for a sphere, so why did we change it?
+
+There are many different ways to write a distance function that produce the same visible result.
+The main requirement is that the isosurface of the distance function at 0
+(the set of all points such that f[x,y,z] == 0)
+is the boundary of the desired object, and there are infinitely many functions that satisfy this
+requirement for any given shape.
+
+But the isosurface at 0 is not the only thing you need to consider.
+A distance function defines an infinite family of isosurfaces,
+and they are all important, particular when you use the `shell` primitive.
+Consider
+```
+sp = sphere(10);
+```
+`sp.f` is the distance function. Because of the way we defined `sphere`,
+the isosurface of `sp.f` at -1 is a sphere of radius 9, the isosurface at 1
+is a sphere of radius 11, and so on. All of the isosurfaces of `sp` are spheres.
+As a result, `shell(1) sp` will return a spherical shell with outer radius 10
+and inner radius 9. The `shell` operator provides direct access to the other isosurfaces.
+(See the Shell section, which is later.)
+
+```
+cuboid(sz) = 3dshape(
+  f([x,y,z]) = max([abs(x-sz.x/2), abs(y-sz.y/2), abs(z-sz.z/2)]),
+  bbox=[ [0,0,0], sz ]);
+```
+I have similar comments for `cuboid`.
+The distance function is designed so that all of the isosurfaces of a given
+cuboid are nested cuboids, and `shell` works as expected.
+
+Here's a thought experiment. Consider defining the distance function for `cuboid`
+so the the distance to the boundary is measured in millimeters along a vector that points to the centre.
+With this definition, only the isosurface at 0 would be a true cuboid. The isosurfaces at positive values
+would have increasingly convex sides, so that at large values, the surface would approach a sphere.
+The isosurfaces at negative values would have increasingly concave sides.
+This behaviour would be visible using `shell`.
+
+Note the use of `max` in the distance function for `cuboid`.
+Generally speaking, if your distance function computes the max of a function of `x` and a function of `y`,
+then your shape will have a right angle between the X and Y axes.
+Read [Olah's essay](https://christopherolah.wordpress.com/2011/11/06/manipulation-of-implicit-functions-with-an-eye-on-cad/) for more discussion of this.
+
+```
+cylinder(h,r) = linear_extrude(h=h) circle(r);
+```
 
 ```
 circle(r) = 2dshape(
@@ -109,15 +201,46 @@ circle(r) = 2dshape(
 ```
 
 ```
-cylinder(h,r) = linear_extrude(h=h) circle(r);
-```
-
-```
 linear_extrude(h)(shape) = 3dshape(
     f([x,y,z]) = max(shape.f(x,y), abs(z - h/2) - h/2),
-    bbox=[[shape.bbox[0].x,shape.bbox[0].y,-h/2],[shape.bbox[1].x,shape.bbox[1].y,h/2]);
+    bbox=[ [shape.bbox[0].x,shape.bbox[0].y,-h/2], [shape.bbox[1].x,shape.bbox[1].y,h/2] ]);
 ```
-> The result is centered. Based on ImplicitCAD.
+> The result of `linear_extrude` is centred.
+
+The distance function for `linear_extrude` computes the max
+of a function of x & y with a function of z,
+and the result is a right angle between the X/Y plane and the Z axis.
+See above.
+
+### Translation
+translate(), align(), pack???.
+No need for center= options.
+
+### Shell
+
+### Scaling
+the effect of non-isotropic scaling on `shell`. Need for `spheroid`.
+
+### CSG Operations
+everything, nothing, complement,
+union, intersection, difference
+
+meaning of 'max' and 'min' in a distance function
+
+### Rounded edges and Fillets
+rcuboid, runion
+
+### Perimeter_extrude
+
+### Unclassified
+```
+rcuboid(r,sz) = 3dshape(
+  f([x,y,z]) = rmax(r, [abs(x-sz.x/2), abs(y-sz.y/2), abs(z-sz.z/2)]),
+  bbox=[ [0,0,0], sz ]);
+```
+> Cuboid with rounded corners (radius=r) from ImplicitCAD.
+> All ImplicitCAD primitives that generate sharp corners have a rounding option.
+> `rmax` is a utility function for creating rounded corners.
 
 ```
 union(s1,s2) = 3dshape(
