@@ -12,8 +12,8 @@ Functional geometry is awesome because
   especially when modelling curved surfaces and organic shapes.
 * Plus all of the speed and efficiency benefits described by [Efficient Geometry](Efficient_Geometry.md).
 
-Functional geometry is gaining in popularity within the 3D printing community.
-Here are some of the 3D modelling tools that use it:
+Functional geometry is gaining popularity within the 3D printing community.
+Here are some 3D modelling tools that use it:
 * [ImplicitCAD](http://www.implicitcad.org/) 2011
 * [ShapeJS](http://shapejs.shapeways.com/) 2013
 * [IceSL](http://www.loria.fr/~slefebvr/icesl/) 2013
