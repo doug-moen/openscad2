@@ -5,6 +5,8 @@ These functions map each point [x,y,z] in space onto some property of the object
 The underlying representation is called F-Rep (functional representation),
 in contrast to the B-Rep (boundary representation) currently used by OpenSCAD.
 
+## Functional Geometry is Awesome
+
 Functional geometry is awesome because
 * Curved objects are represented exactly, rather than as polygonal approximations.
   Therefore, they don't lose resolution when they are scaled or transformed.
@@ -12,12 +14,41 @@ Functional geometry is awesome because
   especially when modelling curved surfaces and organic shapes.
 * Plus all of the speed and efficiency benefits described by [Efficient Geometry](Efficient_Geometry.md).
 
-Functional geometry is gaining popularity within the 3D printing community.
+## Functional Geometry is Gaining Popularity
+
+Functional geometry is gaining popularity in the 3D printing community.
 Here are some 3D modelling tools that use it:
 * [ImplicitCAD](http://www.implicitcad.org/) 2011
 * [ShapeJS](http://shapejs.shapeways.com/) 2013
 * [IceSL](http://www.loria.fr/~slefebvr/icesl/) 2013
 * [Antimony](http://www.mattkeeter.com/projects/antimony/3/) 2014
+
+Each of these tools uses a different design for the graphics kernel.
+
+ImplicitCAD is a pure F-Rep system written in Haskell.
+ImplicitCAD has really good functional representations for primitives.
+The rounded cuboid is much simpler and faster than Antimony's code.
+ImplicitCAD has problems: its STL export is slow and of poor quality.
+
+ShapeJS's geometry kernel is AbFab3D, written in Java.
+It's a voxel based with F-Rep inside, and it is memory intensive.
+It's sponsored by Shapeways, so there is SVX support,
+and a lot of work has been done on the STL export code.
+
+IceSL is a hybrid of B-Rep, together with a pure? F-Rep system.
+It gets speed by using a GPU to preview the geometry, or generate G-Code.
+(F-Rep is highly parallizeable, and well suited to GPU implementation.)
+No STL support. No source code, it's proprietary.
+
+Antimony uses Adaptively Sampled Distance Fields (ASDF),
+which wraps F-Rep within a hierarchical oct-tree like structure
+for improved scaleability. The kernel is written in C++, but most of
+the graphics primitives are written in Python for extensibility.
+Preview seems really fast (compared to OpenSCAD).
+STL generation seems pretty good: it uses edge and feature detection
+to avoid the obvious glitches seen in ImplicitCAD generated STL.
+
+## My Approach
 
 This paper is a good tutorial on how Functional Geometry works,
 and it also presents an original approach, which I'll call OpenFG,
@@ -226,6 +257,18 @@ everything, nothing, complement,
 union, intersection, difference
 
 meaning of 'max' and 'min' in a distance function
+
+Note: ImplicitCAD and Antimony use max for union and min for intersection.
+Although this is a common implementation, [Schmitt 2002]
+(http://grenet.drimm.u-bordeaux1.fr/pdf/2002/SCHMITT_BENJAMIN_2002.pdf)
+says "it is well known that using min/max functions for set-theoretic
+operations causes problems in further transformations of the model due to C1 discontinuity of
+the resulting function (see Fig. 1.3). Further blending, offsetting, or metamorphosis can result
+in unnecessary creases, edges, and tearing of such an object." (page 26, and figure 1.3 on page 20).
+His solution is to use an alternative function, one which is differentiable.
+My interpretation is that you need to round any sharp edges and add fillets to sharp corners
+to avoid this alleged problem. I'm going to wait and see if we can actually detect a problem
+once we have working code, before worrying about a fix.
 
 ### Rounded edges and Fillets
 rcuboid, runion
