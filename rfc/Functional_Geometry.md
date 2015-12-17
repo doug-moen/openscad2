@@ -45,7 +45,7 @@ which wraps F-Rep within a hierarchical oct-tree like structure
 for improved scaleability. The kernel is written in C++, but most of
 the graphics primitives are written in Python for extensibility.
 Preview seems really fast (compared to OpenSCAD).
-STL generation seems pretty good: it uses edge and feature detection
+STL generation is fast and high quality: it uses edge and feature detection
 to avoid the obvious glitches seen in ImplicitCAD generated STL.
 
 ## My Approach
@@ -94,6 +94,39 @@ you can intersect them or subtract them from a finite 3D object.
 An essay on
 [the mathematical basis of F-Rep](https://christopherolah.wordpress.com/2011/11/06/manipulation-of-implicit-functions-with-an-eye-on-cad/)
 by Christopher Olah, inventor of ImplicitCAD.
+
+## Performance
+With B-Rep, CSG operations are algorithmically challenging.
+It is very expensive to generate the mesh.
+CPU and memory costs increase non-linearly with resolution.
+Once you have the mesh, preview is fast
+(but even then, preview of large meshes is sluggish in OpenSCAD).
+
+With F-Rep, the in-memory representation is a function closure,
+with the hierachical structure of a CSG tree
+of operation nodes and argument values.
+Therefore, CSG operations are fast and occur in constant time,
+and the memory cost is very low.
+The representation is resolution independent.
+However, rendering to the screen (preview) is expensive, since you have
+to call the distance function zillions of times.
+
+To speed up rendering, various approaches are used:
+* IceSL solves the problem using brute force. It uses the FPU for rendering,
+  and requires a high-end FPU on an Intel platform.
+  This works: preview is very fast, and they allegedly update
+  the preview on every keystroke as you edit an OpenSCAD script.
+  F-Rep is highly parallelizable, and well suited for FPU rendering.
+* You can cache distance values in a voxel array.
+  This is what ShapeJS and AbFab3D do.
+  But this is memory intensive: AbFab3D recommends a 64 bit JVM,
+  and ShapeJS has a web GUI where the heavy lifting is done by a Shapeways server.
+* Antimony uses ASDF (Adaptively Sampled Distance Fields). You cache distance values in
+  a hierarchical data structure based on an oct-tree, and use interpolation to
+  reconstruct values that aren't explicitly stored. The "adaptive" part means
+  that subvolumes with a lot of detail are sampled at a higher resolution than
+  smoother subvolumes. (By contrast, voxel grids are "regularly sampled distance fields".)
+  This approach requires less memory than a voxel grid, a regular voxel oct-tree, or a mesh.
 
 ## Low Level API
 In OpenSCAD2, functional geometry has both a low-level and a high-level API.
