@@ -282,31 +282,37 @@ No need for center= options.
 
 ### Shell
 
-`shell(n) shape`
-> hollows out the specified shape, leaving only a shell of the specified
-> thickness.
-> An analogy is 3D printing a shape without infill.
+#### `shell(n) shape`
+hollows out the specified shape, leaving only a shell of the specified
+thickness.
+An analogy is 3D printing a shape without infill.
 
 ```
-shell(n)(shape) = 3dshape(
-  f(p) = ...,
+shell(w)(shape) = 3dshape(
+  f(p) = abs(shape.f(p) + w/2) - w/2,
   bbox = shape.bbox );
 ```
+Explanation:
+* `f(p) = abs(shape.f(p))` is the zero-thickness shell of `shape`.
+* `f(p) = abs(shape.f(p)) - n` (for positive n) is a shell of thickness `n*2`,
+  centered on the zero-thickness shell given above.
+* `f(p) = shape.f(p) + n` (for positive n) is the isosurface of `shape` at `-n`
+  (it's smaller than `shape`)
 
-`inflate(n) shape`
-> returns the isosurface of `shape` at value `n`.
-> Positive values of `n` create a larger version of `shape`,
-> `n==0` is the identity transformation,
-> and negative values "deflate" the shape.
-> This is different from the scale transformation; it's more like
-> inflating a shape like a balloon, especially for non-convex objects.
+#### `inflate(n) shape`
+returns the isosurface of `shape` at value `n`.
+Positive values of `n` create a larger version of `shape`,
+`n==0` is the identity transformation,
+and negative values "deflate" the shape.
+This is different from the scale transformation; it's more like
+inflating a shape like a balloon, especially for non-convex objects.
 
 ![inflate](img/inflate.png)
 
 ```
 inflate(n)(shape) = 3dshape(
   f(p) = shape.f(p) - n,
-  bbox=[ shape.bbox[0]+n, shape.bbox[0]-n ]);
+  bbox=[ shape.bbox[0]-n, shape.bbox[1]+n ]);
 ```
 TODO: is the bbox calculation correct in all cases?
 
