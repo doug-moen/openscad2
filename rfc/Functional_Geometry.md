@@ -318,7 +318,110 @@ inflate(n)(shape) = 3dshape(
 TODO: is the bbox calculation correct in all cases?
 
 ### Scaling
+Scaling is tricky. Several functional geometry systems get it wrong?
+
+#### `isoscale(s)(shape)`
+This is an isotropic scaling operation:
+it scales a shape by the same factor `s` on all 3 axes,
+where `s` is a number.
+The code is easier to understand than for non-isotropic scaling.
+
+```
+isoscale(s)(shape) = 3dshape(
+  f(p) = s * shape.f(p / s),
+  bbox = s * shape.bbox
+);
+```
+
+Suppose that the distance function
+was instead `f(p)=shape.f(p/s)`,
+as it is in Antimony. We don't multiply the result by `s`.
+This is good enough to scale the isosurface at 0,
+which means the scaled shape will render correctly.
+But the other isosurfaces will be messed up.
+
+Why?
+* Suppose s < 0.
+* Suppose s > 0.
+
+#### `scale([sx,sy,sz])(shape)`
+
 the effect of non-isotropic scaling on `shell`. Need for `spheroid`.
+
+```
+getImplicit3 (Scale3 s@(sx,sy,sz) symbObj) =
+    let
+        obj = getImplicit3 symbObj
+        k = (sx*sy*sz)**(1/3)
+    in
+        \p -> k * obj (p ⋯/ s)
+getBox3 (Scale3 s symbObj) =
+    let
+        (a,b) = getBox3 symbObj
+    in
+        (s ⋯* a, s ⋯* b)
+```
+
+```
+scale(s)(shape) = 3dshape(
+  f(p) = (s.x*s.y*s.z)^(1/3) * shape.f(p / s),
+  bbox = s * shape.bbox
+);
+```
+
+explanation:
+* `f0(p) = shape.f(p/s)` correctly scales the isosurface at 0,
+  so the shape will render correctly.
+  But the other isosurfaces will be messed up,
+  because the distances between isosurfaces will also be scaled.
+  So `f0` isn't a valid distance function:
+  it will cause `shell` and `inflate` to not work, in some cases.
+* ImplicitCAD multiplies f0 by k=cube_root(s.x * s.y * s.z)
+  to get a valid distance function. I don't understand.
+  Suppose s=[27,1,1]. Then k=3. How can this be correct?
+* Antimony just uses `f0`; it doesn't even try to fix the other
+  isosurfaces. I don't think the correct code is even expressible.
+
+Antimony:
+```
+def scale_x(part, x0, sx):
+    # X' = x0 + (X-x0)/sx
+    return part.map(Transform(
+        '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals()
+                if x0 else '/Xf%g' % sx,
+        'Y',
+        '+f%(x0)g*f%(sx)g-Xf%(x0)g' % locals()
+                if x0 else '*Xf%g' % sx,
+        'Y'))
+def scale_xyz(part, x0, y0, z0, sx, sy, sz):
+   # X' = x0 + (X-x0)/sx
+   # Y' = y0 + (Y-y0)/sy
+   # Z' = z0 + (Z-z0)/sz
+   # X = x0 + (X'-x0)*sx
+   # Y = y0 + (Y'-y0)*sy
+   # Z = z0 + (Z'-z0)*sz
+   return part.map(Transform(
+      '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals(),
+      '+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals(),
+      '+f%(z0)g/-Zf%(z0)gf%(sz)g' % locals(),
+      '+f%(x0)g*-Xf%(x0)gf%(sx)g' % locals(),
+      '+f%(y0)g*-Yf%(y0)gf%(sy)g' % locals(),
+      '+f%(z0)g*-Zf%(z0)gf%(sz)g' % locals()))
+Shape Shape::map(Transform t) const
+{
+    return Shape("m" + (t.x_forward.length() ? t.x_forward : "_")
+                     + (t.y_forward.length() ? t.y_forward : "_")
+                     + (t.z_forward.length() ? t.z_forward : "_") + math,
+                 bounds.map(t));
+}
+```
+The scale functions also do translation, so you can scale an object locally without moving its origin point.
+With the translation removed, we get
+```
+   # X' = X/sx
+   # X = X'*sx
+```
+Antimony gets it wrong. It doesn't fix up the
 
 ### CSG Operations
 everything, nothing, complement,
