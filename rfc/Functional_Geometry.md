@@ -282,6 +282,34 @@ No need for center= options.
 
 ### Shell
 
+`shell(n) shape`
+> hollows out the specified shape, leaving only a shell of the specified
+> thickness.
+> An analogy is 3D printing a shape without infill.
+
+```
+shell(n)(shape) = 3dshape(
+  f(p) = ...,
+  bbox = shape.bbox );
+```
+
+`inflate(n) shape`
+> returns the isosurface of `shape` at value `n`.
+> Positive values of `n` create a larger version of `shape`,
+> `n==0` is the identity transformation,
+> and negative values "deflate" the shape.
+> This is different from the scale transformation; it's more like
+> inflating a shape like a balloon, especially for non-convex objects.
+
+![inflate](img/inflate.png)
+
+```
+inflate(n)(shape) = 3dshape(
+  f(p) = shape.f(p) - n,
+  bbox=[ shape.bbox[0]+n, shape.bbox[0]-n ]);
+```
+TODO: is the bbox calculation correct in all cases?
+
 ### Scaling
 the effect of non-isotropic scaling on `shell`. Need for `spheroid`.
 
