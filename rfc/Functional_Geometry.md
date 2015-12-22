@@ -280,7 +280,7 @@ See above.
 translate(), align(), pack???.
 No need for center= options.
 
-### Shell
+### Shells and Isosurfaces
 
 #### `shell(n) shape`
 hollows out the specified shape, leaving only a shell of the specified
@@ -386,11 +386,40 @@ complement(s) = 3dpattern(f(p) = -s.f(p));
 > Convert a shape or pattern to its inverse: all points inside the object
 > are now outside, and vice versa.
 
+### Morphing
+"Distance fields are also commonly used for
+shape metamorphosis. Compared to mesh-based morphing
+techniques, volume-based morphing is easier to implement
+and can naturally morph surfaces of different genus."
+[[Bastos 2008](http://www.gpucomputing.net/sites/default/files/papers/2452/Bastos_GPU_ADF_SMI08.pdf)].
+
+Here's a simple morph operator based on linear interpolation
+of the distance functions:
+
+![morph](img/morph.png)
+<br>[image source](http://www.gpucomputing.net/sites/default/files/papers/2452/Bastos_GPU_ADF_SMI08.pdf)
+
+```
+morph(r,s1,s2) = 3dshape(
+  f(p) = ...,
+  bbox = ...
+);
+```
+`r` normally ranges from 0 to 1, where 0 returns s1, 1 returns s2.
+But values <0 or >1 can also be used.
+
+"Unfortunately, in most cases simple interpolation is
+unable to provide convincing metamorphoses, as it does not
+preserve or blend corresponding shape features. In order to
+improve morphing quality, we could use a warp function
+to guide the distance field interpolation, as proposed by
+Cohen-Or 'Three dimensional distance field metamorphosis'"
+[[Bastos 2008](http://www.gpucomputing.net/sites/default/files/papers/2452/Bastos_GPU_ADF_SMI08.pdf)].
+
 ### Notes
 
 [The mathematical basis for F-Rep](https://christopherolah.wordpress.com/2011/11/06/manipulation-of-implicit-functions-with-an-eye-on-cad/)
 * rounded union of two objects
-* shell: constant width shell of an object
 * combining two circles to construct a torus
 
 ShapeJS on the abfab3d.com blog:
