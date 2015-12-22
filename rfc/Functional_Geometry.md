@@ -401,9 +401,10 @@ of the distance functions:
 
 ```
 morph(r,s1,s2) = 3dshape(
-  f(p) = ...,
-  bbox = ...
+  f(p) = interp(r, s1.f(p), s2,f(p)),
+  bbox = interp(r, s1.bbox, s2.bbox)
 );
+interp(r,a,b) = a + (b - a)*r;
 ```
 `r` normally ranges from 0 to 1, where 0 returns s1, 1 returns s2.
 But values <0 or >1 can also be used.
