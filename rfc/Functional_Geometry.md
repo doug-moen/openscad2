@@ -308,7 +308,7 @@ This is different from the scale transformation; it's more like
 inflating a shape like a balloon, especially for non-convex objects.
 
 ![inflate](img/inflate.png)
-[image source](http://www.gpucomputing.net/sites/default/files/papers/2452/Bastos_GPU_ADF_SMI08.pdf)
+<br>[image source](http://www.gpucomputing.net/sites/default/files/papers/2452/Bastos_GPU_ADF_SMI08.pdf)
 
 ```
 inflate(n)(shape) = 3dshape(
