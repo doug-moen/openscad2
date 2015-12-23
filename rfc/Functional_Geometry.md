@@ -320,10 +320,10 @@ TODO: is the bbox calculation correct in all cases?
 ### Scaling
 Scaling is tricky. Several functional geometry systems get it wrong?
 
-#### `isoscale(s)(shape)`
+#### `isoscale(s) shape`
 This is an isotropic scaling operation:
 it scales a shape by the same factor `s` on all 3 axes,
-where `s` is a number.
+where `s` is a positive number.
 The code is easier to understand than for non-isotropic scaling.
 
 ```
@@ -341,10 +341,12 @@ which means the scaled shape will render correctly.
 But the other isosurfaces will be messed up.
 
 Why?
-* Suppose s < 0.
-* Suppose s > 0.
+* Suppose s < 1.
+* Suppose s > 1.
 
-#### `scale([sx,sy,sz])(shape)`
+#### Negative Scale Factor
+
+#### `scale([sx,sy,sz]) shape`
 
 the effect of non-isotropic scaling on `shell`. Need for `spheroid`.
 
