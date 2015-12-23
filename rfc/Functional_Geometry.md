@@ -315,7 +315,9 @@ inflate(n)(shape) = 3dshape(
   f(p) = shape.f(p) - n,
   bbox=[ shape.bbox[0]-n, shape.bbox[1]+n ]);
 ```
-TODO: is the bbox calculation correct in all cases?
+TODO: is the bbox calculation correct in all cases? No, not for non-isotropic scaling.
+The bbox could be bigger than this.
+Use f to compute the bbox from shape.bbox using ray-marching.
 
 ### Scaling
 Scaling is tricky. Several functional geometry systems get it wrong?
@@ -338,15 +340,33 @@ was instead `f(p)=shape.f(p/s)`,
 as it is in Antimony. We don't multiply the result by `s`.
 This is good enough to scale the isosurface at 0,
 which means the scaled shape will render correctly.
-But the other isosurfaces will be messed up.
-
-Why?
+But the other isosurfaces will be messed up. Why?
+* Suppose s > 1. Eg, s==2 and we are scaling a centred sphere with radius 3.
+  We want the result to be a sphere with radius 6.
+  If we pass in p=[6,0,0], that's converted to p/s = [3,0,0] before passed to the sphere's distance function,
+  which then returns 0, indicating that p is on the boundary. Good.
+  If we pass in p=[8,0,0], that's converted to p/s = [4,0,0], then shape.f(p/s) returns 1.
+  This indicates we are a minimum of 1 mm from the boundary, which is satisfies
+  the ray-march property. However, the inflate property is not satisfied, since the
+  bounding box returned by `inflate(1)scale(2)sphere(3)` will be too small.
 * Suppose s < 1.
-* Suppose s > 1.
+  The ray-march property fails, but the inflate property is satisfied.
+  
 
 #### Negative Scale Factor
+In OpenSCAD, a negative scaling factor passed to the scale() operator
+will cause a reflection about the corresponding axis. This isn't documented,
+but it is a natural consequence of how scaling is implemented by an affine transformation matrix.
+
+The scale operators discussed in this document don't work that way: a negative scaling factor
+results in garbage.
 
 #### `scale([sx,sy,sz]) shape`
+Non-isotropic scaling is hard ...
+
+I don't see a way to implement non-isotropic scaling in a way
+that satisfies both the ray-march and the inflate properties.
+The system needs to change.
 
 the effect of non-isotropic scaling on `shell`. Need for `spheroid`.
 
@@ -429,6 +449,23 @@ Antimony gets it wrong. It doesn't fix up the
 everything, nothing, complement,
 union, intersection, difference
 
+```
+complement(s) = 3dshape(
+  f(p) = -s.f(p)
+  bbox = [[-inf,-inf,-inf],[inf,inf,inf]] );
+```
+> Convert a shape or pattern to its inverse: all points inside the object
+> are now outside, and vice versa.
+
+```
+union(s1,s2) = 3dshape(
+    f(p) = min(s1.f(p), s2.f(p)),
+    bbox=[ min(s1.bbox[0],s2.bbox[0]), max(s1.bbox[1],s2.bbox[1]) ]);
+```
+> Simplest case of a union. ImplicitCAD uses special case code where the
+> min and max in the bbox calculation ignore empty bounding boxes, but I've
+> omitted that for clarity.
+
 meaning of 'max' and 'min' in a distance function
 
 Note: ImplicitCAD and Antimony use max for union and min for intersection.
@@ -446,9 +483,6 @@ once we have working code, before worrying about a fix.
 ### Rounded edges and Fillets
 rcuboid, runion
 
-### Perimeter_extrude
-
-### Unclassified
 ```
 rcuboid(r,sz) = 3dshape(
   f([x,y,z]) = rmax(r, [abs(x-sz.x/2), abs(y-sz.y/2), abs(z-sz.z/2)]),
@@ -457,15 +491,6 @@ rcuboid(r,sz) = 3dshape(
 > Cuboid with rounded corners (radius=r) from ImplicitCAD.
 > All ImplicitCAD primitives that generate sharp corners have a rounding option.
 > `rmax` is a utility function for creating rounded corners.
-
-```
-union(s1,s2) = 3dshape(
-    f(p) = min(s1.f(p), s2.f(p)),
-    bbox=[ min(s1.bbox[0],s2.bbox[0]), max(s1.bbox[1],s2.bbox[1]) ]);
-```
-> Simplest case of a union. ImplicitCAD uses special case code where the
-> min and max in the bbox calculation ignore empty bounding boxes, but I've
-> omitted that for clarity.
 
 ```
 runion(r,s1,s2) = 3dshape(
@@ -481,15 +506,10 @@ Example:
   ```
 ![rounded union](http://thingiverse-rerender-new.s3.amazonaws.com/renders/47/9e/1c/c8/e2/RoundedUnionCubeExample_preview_featured.jpg)
 
+### Perimeter_extrude
 
-
-
-
-```
-complement(s) = 3dpattern(f(p) = -s.f(p));
-```
-> Convert a shape or pattern to its inverse: all points inside the object
-> are now outside, and vice versa.
+### Infinite Patterns
+gyroid, infinite replication grid, etc
 
 ### Morphing
 "Distance fields are also commonly used for
