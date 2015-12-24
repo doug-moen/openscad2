@@ -106,6 +106,7 @@ the Functional Geometry API has both benefits and limitations.
 F-Rep (functional representation) is a leading alternative to B-Rep (boundary representation)
 as a general purpose representation for geometric objects. Examples of B-Rep include the
 OpenSCAD polyhedral mesh, and spline based representations.
+Like voxel representations, F-Rep is considered a volumetric representation.
 
 In F-Rep, a shape is represented by a distance field:
 a scalar field that specifies the minimum distance to a shape.
@@ -134,7 +135,7 @@ f[x,y,z] = sqrt(x^2 + y^2 + z^2) - r
 
 ### Constraints on Distance Functions
 A distance function returns a *minimum distance* `d`
-between the point and an object surface.
+between the point argument and the nearest object boundary.
 * If `d` is 0,
   then the point must be on an object boundary.
 * Otherwise, the nearest object boundary
@@ -142,8 +143,8 @@ between the point and an object surface.
   but it could be farther. There is room for flexibility
   because of isosurfaces, discussed below.
 
-A distance function must be monotonically increasing
-(for points outside of objects) or monotonically decreasing
+A distance function must be [strictly increasing](http://mathworld.wolfram.com/StrictlyIncreasingFunction.html)
+(for points outside of objects) or strictly decreasing
 (for points inside of objects) as the point gets
 increasingly farther away from the nearest object boundary.
 
