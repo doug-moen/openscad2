@@ -65,12 +65,18 @@ the Functional Geometry API has both benefits and limitations.
   The problem doesn't occur in preview mode, and it's not something you worry about
   in Functional Geometry either.
 
-* **annoyances** <br>
+* **high level annoyances** <br>
   Of course, Functional Geometry has its own limitations.
-  We will discover that Functional Representation has its own annoyances that affect
+  We will discover that the FG high level API has its own annoyances that affect
   the programming model.
 
-* **no `minkowski` or `hull`**
+* **low level annoyances** <br>
+  The FG low level API has an ease of use problem, similar to `polyhedron` in OpenSCAD.
+  It's possible to write a bad distance function for functional representation,
+  which could cause error messages or rendering problems later, and it's hard to
+  automatically detect and report these problems.
+
+* **no `minkowski` or `hull`** <br>
   There's no efficient implementation of Minkowski Sum and Convex Hull.
   Of course, we could convert functional representation to a mesh, and run the
   mesh versions of these operations, but that's even slower than OpenSCAD.
