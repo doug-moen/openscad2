@@ -3,17 +3,17 @@
 The Functional Geometry system provides both a low-level and a high-level API.
 * The high level API includes familiar operations like sphere(), translate()
   and intersection(),
-  plus new operations like shell() and perimeter_extrude().
+  plus new operations like shell(), morph() and perimeter_extrude().
 * The low level API allows users to directly define new primitive operations
-  using distance functions.
+  using functional representation.
 
-The low level API is impressively powerful. Most of the OpenSCAD geometry
+The low level API is quite powerful. Most of the OpenSCAD geometry
 primitives can be defined in a few hundred lines of OpenSCAD2.
-That's very impressive, compared to the code required to implement these
-operations on a mesh.
+That's very impressive, compared to the amount of code required to implement
+these operations on a mesh.
 The low level API is
 also subtle and tricky. So you can define `sphere()`, `union()`, etc, with 3
-lines of code per primitive, but they are subtle and tricky lines of code.
+lines of code per primitive, but they can be subtle and tricky lines of code.
 
 This document is a tutorial introduction to the low level API,
 which is illustrated by showing you how to define a lot of interesting
@@ -26,7 +26,65 @@ the idioms of creating geometry using Functional Representation.
 When compared to the mesh-based programming model of OpenSCAD,
 the Functional Geometry API has both benefits and limitations.
 
-...
+* **expressive power** <br>
+  A primary benefit of Functional Geometry is that you can define powerful new
+  geometric primitives with only a few lines of OpenSCAD2 code.
+  Most of OpenSCAD's geometry kernel can be implemented, quite simply,
+  at user level. By contrast, programming these same primitives using a mesh
+  is notoriously difficult, with lots of edge conditions to deal with,
+  and a lot of additional complexity if you use floating point (as opposed
+  to the slow and memory-inefficient rational numbers used by OpenSCAD).
+
+* **direct access to the representation of shapes** <br>
+  In OpenSCAD, shapes are opaque: you can't access their representation;
+  you can't even query the bounding box, let alone access the vertexes and faces.
+  This restriction is due to an engineering tradeoff: we want preview to be fast,
+  and we don't generate the mesh representation of CSG operations during preview.
+  If we were to provide access to the mesh during preview, then preview would become as slow as rendering.
+  Functional Geometry has no such tradeoff, and much of the programming power is due
+  to the fact that we provide full access to the underlying functional representation.
+
+* **curved surfaces** <br>
+  It's extremely easy to work with curved surfaces in Functional Geometry,
+  something that is a major weakness of OpenSCAD.
+  * A curved object is represented by its mathematical formula,
+    which makes curved surfaces and organic forms easy to define with very little code.
+  * Internally, a curved object is represented exactly. It's like programming in
+    OpenSCAD with `$fn=∞`. Curved objects can be rendered in the preview window at full resolution,
+    even for complex models.
+    By contrast, in OpenSCAD, curved surfaces are represented by polygonal
+    approximations that are chosen when the object is created, and errors accumulate as
+    these curved surfaces are further transformed. In OpenSCAD, you must find
+    a value of `$fn` that's high enough to achieve the print quality you want
+    while still low enough to prevent OpenSCAD from getting too slow or crashing while
+    you are working on the design.
+
+* **no "non-manifold objects"** <br>
+  The OpenSCAD rendering engine, based on CGAL, is very picky about "non-manifold objects",
+  so you have to use tricks to perturb your model in ways to avoid these errors.
+  The problem doesn't occur in preview mode, and it's not something you worry about
+  in Functional Geometry either.
+
+* **annoyances** <br>
+  Of course, Functional Geometry has its own limitations.
+  We will discover that Functional Representation has its own annoyances that affect
+  the programming model.
+
+* **no `minkowski` or `hull`**
+  There's no efficient implementation of Minkowski Sum and Convex Hull.
+  Of course, we could convert functional representation to a mesh, and run the
+  mesh versions of these operations, but that's even slower than OpenSCAD.
+  Even in OpenSCAD, these are slow operations that kill preview performance.
+  Fortunately, there are good alternatives to the OpenSCAD idioms that
+  use these operations, which preview quickly.
+
+* **not a boundary representation** <br>
+  Functional representation does not directly represent the boundary of an object in the
+  same way that a mesh does. This will lead to compromises when what you really want is
+  direct control over the mesh, for example in STL export. It may require you to
+  make additional decisions to configure space/time/accuracy tradeoffs during mesh generation.
+  I'm going to investigate a hybrid approach to mitigate this problem,
+  but using mesh features will take away from the simplicity of Functional Geometry programming.
 
 ## Functional Representation (F-Rep)
 
