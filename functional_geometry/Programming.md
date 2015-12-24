@@ -50,7 +50,7 @@ the Functional Geometry API has both benefits and limitations.
   * A curved object is represented by its mathematical formula,
     which makes curved surfaces and organic forms easy to define with very little code.
   * Internally, a curved object is represented exactly. It's like programming in
-    OpenSCAD with `$fn=∞`. Curved objects can be rendered in the preview window at full resolution,
+    OpenSCAD with `$fn=∞`. Curved objects can be exactly rendered in the preview window at full resolution,
     even for complex models.
     By contrast, in OpenSCAD, curved surfaces are represented by polygonal
     approximations that are chosen when the object is created, and errors accumulate as
