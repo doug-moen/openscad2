@@ -59,6 +59,15 @@ the Functional Geometry API has both benefits and limitations.
     while still low enough to prevent OpenSCAD from getting too slow or crashing while
     you are working on the design.
 
+* **complex objects with micro-fine detail** <br>
+  Using Functional Geometry, it is possible to create models that have huge
+  amounts of procedurally generated detail, without making preview too slow
+  or exceeding your memory limit. For example, fractal models or digital fabrics.
+  You can create complex models that would be impossible in OpenSCAD, because
+  too many triangles would be required. To fully realize these benefits, you need
+  to use the FG low level API, or yet-to-be-designed high level APIs,
+  since unioning a million objects is just as problematic in FG as it is in OpenSCAD.
+
 * **no "non-manifold objects"** <br>
   The OpenSCAD rendering engine, based on CGAL, is very picky about "non-manifold objects",
   so you have to use tricks to perturb your model in ways to avoid these errors.
