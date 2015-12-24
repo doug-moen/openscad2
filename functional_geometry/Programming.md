@@ -65,7 +65,7 @@ the Functional Geometry API has both benefits and limitations.
   or exceeding your memory limit. For example, fractals or digital fabrics.
   You can create complex models that would be impossible in OpenSCAD, because
   too many triangles would be required. To accomplish this, you need to use
-  either the (new) high level spatial repetition operators, or the low level API,
+  either the (new) high level spatial repetition and patterning operators, or the low level API,
   since unioning a million objects is just as problematic in FG as it is in OpenSCAD.
 
 * **no "non-manifold objects"** <br>
@@ -81,9 +81,9 @@ the Functional Geometry API has both benefits and limitations.
 
 * **low level annoyances** <br>
   The FG low level API has an ease of use problem, similar to `polyhedron` in OpenSCAD.
-  It's possible to write a bad distance function for functional representation,
+  It's possible to write a bad distance function for a primitive shape,
   which could cause error messages or rendering problems later, and it's hard to
-  automatically detect and report these problems.
+  automatically detect and report these problems when the shape is constructed.
 
 * **no `minkowski` or `hull`** <br>
   There's no efficient implementation of Minkowski Sum and Convex Hull.
@@ -95,11 +95,92 @@ the Functional Geometry API has both benefits and limitations.
 
 * **not a boundary representation** <br>
   Functional representation does not directly represent the boundary of an object in the
-  same way that a mesh does. This will lead to compromises when what you really want is
+  same way that a mesh does. This may lead to compromises when what you really want is
   direct control over the mesh, for example in STL export. It may require you to
   make additional decisions to configure space/time/accuracy tradeoffs during mesh generation.
-  I'm going to investigate a hybrid approach to mitigate this problem,
+  If necessary, I'll investigate a hybrid approach to mitigate this problem,
   but using mesh features will take away from the simplicity of Functional Geometry programming.
+
+## Functional Representation (F-Rep)
+
+F-Rep (functional representation) is a leading alternative to B-Rep (boundary representation)
+as a general purpose representation for geometric objects. Examples of B-Rep include the
+OpenSCAD polyhedral mesh, and spline based representations.
+
+In F-Rep, a shape is represented by a distance field:
+a scalar field that specifies the minimum distance to a shape.
+The distance is signed: negative inside the shape, zero on the boundary,
+and positive outside the shape.
+
+A distance field is a function that maps every point in space (specified as [x,y,z])
+to a distance value. A distance function can be derived from the mathematical equation
+for a shape. For example, a sphere of radius `r` has the equation
+```
+x^2 + y^2 + z^2 = r^2
+```
+This equation is true for all [x,y,z] points on the surface of the sphere.
+
+We can rewrite this as `x^2 + y^2 + z^2 - r^2 = 0`,
+and then derive a scalar field
+```
+f[x,y,z] = x^2 + y^2 + z^2 - r^2
+```
+which has the value zero for points on the surface of the sphere.
+
+To convert this to a distance field, we need one more transformation:
+```
+f[x,y,z] = sqrt(x^2 + y^2 + z^2) - r
+```
+
+### Constraints on Distance Functions
+A distance function returns a *minimum distance* `d`
+between the point and an object surface.
+* If `d` is 0,
+  then the point must be on an object boundary.
+* Otherwise, the nearest object boundary
+  must be at least `abs(d)` units away,
+  but it could be farther. There is room for flexibility
+  because of isosurfaces, discussed below.
+
+A distance function must be monotonically increasing
+(for points outside of objects) or monotonically decreasing
+(for points inside of objects) as the point gets
+increasingly farther away from the nearest object boundary.
+
+### Isosurfaces
+The isosurface at distance d of a distance field f
+is the set of all points p such that f(p)=d.
+The isosurface at distance 0 is the boundary of the shape.
+The isosurface at distance 1 is another boundary, a shell
+that encloses the shape, and is separated from it by a minimum distance of 1.
+Isosurfaces are important because they are used to compute shells.
+
+When you design a distance function, you aren't just specifying
+the boundary of the shape, you are also specifying an infinite family
+of isosurfaces that enclose or are enclosed by the shape.
+It's important to consider what all of these isosurfaces look like,
+because that will determine what shells look like, as computed by
+the `shell` and `inflate` operations.
+
+### Infinite Shapes
+Distance fields are not restricted to representing finite geometrical objects.
+They can also represent infinite space-filling patterns.
+For examples, try a Google image search on
+[k3dsurf periodic lattice](https://www.google.ca/search?q=k3dsurf+periodic+lattice&tbm=isch).
+These infinite patterns are useful in 3D modelling:
+you can intersect them or subtract them from a finite 3D object.
+
+### Other Resources
+
+This topic is hard to google, because so many different terms are used.
+Try F-Rep, FRep, functional representation,
+On the Representation of Shapes Using Implicit Functions,
+distance field, distance function, signed distance function,
+isosurface, procedural modeling.
+
+Try this essay on
+[the mathematical basis of F-Rep](https://christopherolah.wordpress.com/2011/11/06/manipulation-of-implicit-functions-with-an-eye-on-cad/)
+by Christopher Olah, inventor of ImplicitCAD.
 
 ## Functional Representation (F-Rep)
 
@@ -132,10 +213,6 @@ For examples, try a Google image search on
 [k3dsurf periodic lattice](https://www.google.ca/search?q=k3dsurf+periodic+lattice&tbm=isch).
 These infinite patterns are useful in 3D modelling:
 you can intersect them or subtract them from a finite 3D object.
-
-An essay on
-[the mathematical basis of F-Rep](https://christopherolah.wordpress.com/2011/11/06/manipulation-of-implicit-functions-with-an-eye-on-cad/)
-by Christopher Olah, inventor of ImplicitCAD.
 
 ## Low Level API
 In OpenSCAD2, functional geometry has both a low-level and a high-level API.
