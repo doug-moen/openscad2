@@ -171,6 +171,11 @@ For examples, try a Google image search on
 These infinite patterns are useful in 3D modelling:
 you can intersect them or subtract them from a finite 3D object.
 
+### Materials and Colours
+A material field or a colour field can be associated with a shape,
+assigning a material or colour to every point within the volume of a shape.
+This is an aspect of F-Rep that will be added to FG in a later revision.
+
 ### Other Resources
 
 This topic is hard to google, because so many different terms are used.
