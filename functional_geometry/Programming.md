@@ -221,14 +221,26 @@ actually support is an open question. We use 64 bit IEEE floats for geometry
 computations, so shapes could become degenerate as a result of floating point underflow.
 This suggests that the FG geometry engine should be very tolerant of degeneracy.
 
-My starting point for the design of Functional Geometry was
-[ImplicitCAD](http://www.implicitcad.org/)
-and [Antimony](http://www.mattkeeter.com/projects/antimony/3/).
-These systems have a similar shape representation, but they store a bounding
-box instead of a bounding box function. These systems both contain bugs in
-their distance functions and bounding box computations, which can't be fixed
-without an architectural change: the shape representation must change.
-Functional Geometry uses the simplest design I could find which actually works.
+### Rationale
+Why do we need to specify a bounding box?
+Because the geometry kernel needs it to render STL, and to pick a bounding box
+for the preview window.
+
+There are two kinds of F-Rep geometry systems:
+* Systems like Hyperfun or ShapeJS require the user to specify a global bounding
+  box for all the geometry in a project. But primitive operations can be coded without
+  specifying a bounding box, since that's the user's problem.
+* Systems like ImplicitCAD, Antimony and FG automatically compute a bounding box
+  for each shape and operator, so that the user doesn't have to, but this moves the
+  complexity into the definition of each primitive.
+
+Why do we need to specify a bounding box *function*, instead of just a single
+bounding box for the isosurface at value 0?
+Because it's required by `inflate`, and other operations that computes shells.
+In the general case, you can't predict the bounding box of a shell from
+the bounding box of the isosurface at 0. A few primitives
+have "weird" isosurfaces with unusual bounding boxes, including
+non-isotropic `scale`.
 
 ## Low Level API
 
@@ -275,6 +287,13 @@ or in the 2D case, isolines.
 For this particular `dist` function, all of the isolines are circles,
 so the shell of a circle is another circle.
 
+Most primitive operations, including `circle`, have isosurfaces that behave in a standard way:
+the bbox expands outwards by 1 unit for each increase in d by 1 unit.
+For these operations, the bbox function has the form:
+```
+bbox(d) = [[...]-d, [...]+d]
+```
+
 The range of our `dist` function is infinity to `-r`.
 
 A `bbox` function is required to return the empty bbox
@@ -283,8 +302,9 @@ In this case, the math works out so that this happens automatically,
 without using an `if` expression. Eg,
 ```
   c = circle(2);
-  c.bbox(-3) == [[1,1,1],[-1,-1,-1]]
+  c.bbox(-3) == [[1,1],[-1,-1]]
 ```
+And this bbox is empty since xmin > xmax, and ymin > ymax.
 
 The definition of `sphere` is very similar:
 ```
