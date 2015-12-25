@@ -1,6 +1,6 @@
 # Programming
 
-The Functional Geometry system provides both a low-level and a high-level API.
+The Functional Geometry system (FG) provides both a low-level and a high-level API.
 * The high level API includes familiar operations like sphere(), translate()
   and intersection(),
   plus new operations like shell(), morph() and perimeter_extrude().
