@@ -252,6 +252,7 @@ and bounding box functions.
 > the bounding box function of a shape
 
 ## Circle and Sphere
+A circle of radius `r`, centred on the origin:
 ```
 circle(r) = 2dshape(
     dist(p) = norm(p) - r,
