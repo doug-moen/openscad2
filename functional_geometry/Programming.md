@@ -203,6 +203,13 @@ Empty shapes are supported, but the bounding box must also be empty.
 A bounding box has zero width along the X axis if xmin >= xmax,
 which means the bounding box is empty. Likewise for the Y and Z axes.
 
+A bbox function should handle a distance argument outside the range of
+its associated dist function by returning the empty bounding box.
+This can happen when computing shells. If you are lucky, then an out of range
+distance argument will result in your bbox function returning a bounding box
+where xmin > xmax, or ymin > ymax, or zmin > zmax, just because the arithmetic
+works out that way, and not because you wrote special case code.
+
 Both finite and infinite shapes are supported.
 If a shape extends to infinity along any of the 6 cardinal directions,
 then this is indicated in the bounding box by setting xmin, ymin or zmin
@@ -243,6 +250,47 @@ and bounding box functions.
 
 `shape.bbox`
 > the bounding box function of a shape
+
+## Circle and Sphere
+```
+circle(r) = 2dshape(
+    dist(p) = norm(p) - r,
+    bbox(d)=[[-r,-r]-d,[r,r]+d]);
+```
+The `dist` function is derived from
+[the mathematical equation for a circle](https://en.wikipedia.org/wiki/Circle#Equations):
+```
+   x^2 + y^2 = r^2
+-> sqrt(x^2 + y^2) = r
+-> sqrt(x^2 + y^2) - r = 0
+-> dist([x,y]) = sqrt(x^2 + y^2) - r
+-> dist(p) = norm(p) - r
+```
+This particular `dist` function returns the shortest euclidean distance
+from the point to the perimeter of the circle.
+
+Every `dist` function defines an infinite family of isosurfaces,
+or in the 2D case, isolines.
+For this particular `dist` function, all of the isolines are circles,
+so the shell of a circle is another circle.
+
+The range of our `dist` function is infinity to `-r`.
+
+A `bbox` function is required to return the empty bbox
+if it is passed an argument outside the range of the `dist` function.
+In this case, the math works out so that this happens automatically,
+without using an `if` expression. Eg,
+```
+  c = circle(2);
+  c.bbox(-3) == [[1,1,1],[-1,-1,-1]]
+```
+
+The definition of `sphere` is very similar:
+```
+sphere(r) = 3dshape(
+    dist(p) = norm(p) - r,
+    bbox(d)=[[-r,-r,-r]-d,[r,r,r]+d]);
+```
 
 ## Primitive Shapes
 Here I'll define 3 primitive shapes: sphere, cuboid and cylinder.
