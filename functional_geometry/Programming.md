@@ -205,7 +205,9 @@ to -inf, or by setting xmax, ymax or zmax to inf.
 
 A distance field can, in principle, specify a degenerate shape that has zero thickness
 across some or all of its extension. Which classes of degenerate shapes that we
-actually support is an open question.
+actually support is an open question. We use 64 bit IEEE floats for geometry
+computations, so shapes could become degenerate as a result of floating point underflow.
+This suggests that the FG geometry engine should be very tolerant of degeneracy.
 
 My starting point for the design of Functional Geometry was
 [ImplicitCAD](http://www.implicitcad.org/)
