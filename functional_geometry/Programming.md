@@ -317,7 +317,7 @@ sphere(r) = 3dshape(
 ```
 union(s1,s2) = 3dshape(
     dist(p) = min(s1.dist(p), s2.dist(p)),
-    bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox[1]) ]);
+    bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
 intersection(s1,s2) = 3dshape(
     dist(p) = max(s1.dist(p), s2.dist(p)),
     bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
