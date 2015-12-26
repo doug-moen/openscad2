@@ -325,13 +325,14 @@ intersection(s1,s2) = 3dshape(
 Union and intersection are implemented as the minimum and maximum
 of the shape argument distance functions. This computes the union or
 intersection of all of the isosurfaces in the distance function.
-Whenever you see `min` and `max` in a distance function,
+Whenever you see `min` or `max` of a distance, in a distance function,
 a union or intersection is being computed.
+Also, it's likely that a sharp angle is being introduced into the shape.
 
 ## Rectangle and Cuboid
 Consider a general rectangle primitive, computed from `[[xmin,ymin],[xmax,ymax]]`.
-This is a polygon, which we can compute by intersecting 4 half-planes,
-one for each edge.
+This is a convex 4-sided polygon, which we can compute by
+[intersecting 4 half-planes](https://en.wikipedia.org/wiki/Convex_polytope#Intersection_of_half-spaces).
 
 Consider the half-plane containing all points such that x >= xmin.
 Rewrite this as xmin <= x.
@@ -355,10 +356,7 @@ box2([[xmin,ymin],[xmax,ymax]]) = 2dshape(
   bbox(d)=[ [xmin,ymin]-d, [xmax,ymax]+d ]);
 ```
 
-Now let's design a centred rectangle primitive, specified by `[dx,dy]`.
-(Why centred? I want to provide a library of centred simple shapes, combined
-with a rich set of operators for positioning shapes, relative to the axes,
-or relative to other shapes.)
+Now let's design a centred rectangle primitive, where the width and height are specified by `[dx,dy]`.
 
 The distance function is `max(-dx/2 - x, x - dx/2, -dy/2 - y, y - dy/2)`.
 
@@ -368,11 +366,12 @@ exploiting the fact that the distance is symmetric around the origin.
 Here's the code:
 ```
 rectangle([dx,dy]) = 2dshape(
-  dist([x,y,z]) = `max(abs(x) - dx/2, abs(y) - dy/2),
+  dist([x,y,z]) = max(abs(x) - dx/2, abs(y) - dy/2),
   bbox(d)=[ [-dx/2,-dy/2]-d, [dx/2,dy/2]+d ]);
 ```
 
-Cuboid is similar:
+Cuboid is similar; conceptually it works by
+[intersecting 6 half-spaces to make the 6 faces of the cuboid](https://en.wikipedia.org/wiki/Convex_polytope#Intersection_of_half-spaces):
 ```
 cuboid([dx,dy,dz]) = 3dshape(
   dist([x,y,z]) = max(abs(x)-dx/2, abs(y)-dy/2, abs(z)-dz/2),
