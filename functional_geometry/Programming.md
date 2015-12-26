@@ -313,7 +313,7 @@ sphere(r) = 3dshape(
   bbox(d)=[[-r,-r,-r]-d,[r,r,r]+d]);
 ```
 
-## Union and Intersection
+## CSG Operations
 ```
 union(s1,s2) = 3dshape(
   dist(p) = min(s1.dist(p), s2.dist(p)),
@@ -322,7 +322,7 @@ union(s1,s2) = 3dshape(
 ```
 intersection(s1,s2) = 3dshape(
   dist(p) = max(s1.dist(p), s2.dist(p)),
-  bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
+  bbox(d)=[ max(s1.bbox(d)[0],s2.bbox(d)[0]), min(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
 ```
 Union and intersection are implemented as the minimum and maximum
 of the shape argument distance functions. This computes the union or
@@ -330,6 +330,21 @@ intersection of all of the isosurfaces in the distance functions.
 Whenever you see `min` or `max` of a distance, in a distance function,
 a union or intersection is being computed.
 Also, it's likely that a sharp angle is being introduced into the shape.
+
+```
+complement(s) = 3dshape(
+  dist(p) = -s.dist(p),
+  bbox(d) = [[-inf,-inf,-inf],[inf,inf,inf]] );
+```
+The `complement` operation reverses the inside and outside of a shape.
+The result is infinite.
+It's useful when working with infinite space filling patterns,
+and for defining `difference`.
+
+```
+difference(a,b) = intersection(a, complement(b));
+```
+Subtract `b` from `a`.
 
 ## Rectangle and Cuboid
 Consider a general rectangle primitive, computed from `[[xmin,ymin],[xmax,ymax]]`.
@@ -418,8 +433,8 @@ This can be generalized to `linear_extrude`:
 ```
 linear_extrude(h)(s) = 3dshape(
   dist([x,y,z]) = max(s.dist([x,y]), abs(z) - h/2),
-  bbox(d)=[ [s.bbox(d)[0].x, s.bbox(d)[0].y, -h/2]-d,
-            [s.bbox(d)[1].x, s.bbox(d)[1].y, h/2]+d ]);
+  bbox(d)=[ [s.bbox(d)[0].x, s.bbox(d)[0].y, -h/2-d],
+            [s.bbox(d)[1].x, s.bbox(d)[1].y, h/2+d] ]);
 ```
 Now cylinder can be defined like this:
 ```
