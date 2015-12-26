@@ -236,7 +236,7 @@ There are two kinds of F-Rep geometry systems:
 
 Why do we need to specify a bounding box *function*, instead of just a single
 bounding box for the isosurface at value 0?
-Because it's required by `inflate`, and other operations that computes shells.
+Because it's required by `inflate`, and other operations that compute shells.
 In the general case, you can't predict the bounding box of a shell from
 the bounding box of the isosurface at 0. A few primitives
 have "weird" isosurfaces with unusual bounding boxes, including
