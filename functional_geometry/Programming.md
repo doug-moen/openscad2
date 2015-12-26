@@ -316,11 +316,13 @@ sphere(r) = 3dshape(
 ## Union and Intersection
 ```
 union(s1,s2) = 3dshape(
-    dist(p) = min(s1.dist(p), s2.dist(p)),
-    bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
+  dist(p) = min(s1.dist(p), s2.dist(p)),
+  bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
+```
+```
 intersection(s1,s2) = 3dshape(
-    dist(p) = max(s1.dist(p), s2.dist(p)),
-    bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
+  dist(p) = max(s1.dist(p), s2.dist(p)),
+  bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
 ```
 Union and intersection are implemented as the minimum and maximum
 of the shape argument distance functions. This computes the union or
