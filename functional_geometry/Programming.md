@@ -288,7 +288,7 @@ For this particular `dist` function, all of the isolines are circles,
 so the shell of a circle is another circle.
 
 Most primitive operations, including `circle`, have isosurfaces that behave in a standard way:
-the bbox expands outwards by 1 unit for each increase in d by 1 unit.
+the bbox expands outwards by 1 unit for each unit increase in d.
 For these operations, the bbox function has the form:
 ```
 bbox(d) = [[...]-d, [...]+d]
@@ -312,6 +312,74 @@ sphere(r) = 3dshape(
     dist(p) = norm(p) - r,
     bbox(d)=[[-r,-r,-r]-d,[r,r,r]+d]);
 ```
+
+## Union and Intersection
+```
+union(s1,s2) = 3dshape(
+    dist(p) = min(s1.dist(p), s2.dist(p)),
+    bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox[1]) ]);
+intersection(s1,s2) = 3dshape(
+    dist(p) = max(s1.dist(p), s2.dist(p)),
+    bbox(d)=[ min(s1.bbox(d)[0],s2.bbox(d)[0]), max(s1.bbox(d)[1],s2.bbox(d)[1]) ]);
+```
+Union and intersection are implemented as the minimum and maximum
+of the shape argument distance functions. This computes the union or
+intersection of all of the isosurfaces in the distance function.
+Whenever you see `min` and `max` in a distance function,
+a union or intersection is being computed.
+
+## Rectangle and Cuboid
+Consider a general rectangle primitive, computed from `[[xmin,ymin],[xmax,ymax]]`.
+This is a polygon, which we can compute by intersecting 4 half-planes,
+one for each edge.
+
+Consider the half-plane containing all points such that x >= xmin.
+Rewrite this as xmin <= x.
+The corresponding distance function is `xmin - x`.
+
+Here are the 4 half-planes, and their distance functions:
+```
+x >= xmin    xmin - x
+x <= xmax    x - xmax
+y >= ymin    ymin - y
+y <= ymax    y - ymax
+```
+Here is their intersection:
+```
+max(xmin - x, x - xmax, ymin - y, y - ymax)
+```
+And here's the code:
+```
+box2([[xmin,ymin],[xmax,ymax]]) = 2dshape(
+  dist([x,y]) = max(xmin - x, x - xmax, ymin - y, y - ymax),
+  bbox(d)=[ [xmin,ymin]-d, [xmax,ymax]+d ]);
+```
+
+Now let's design a centred rectangle primitive, specified by `[dx,dy]`.
+(Why centred? I want to provide a library of centred simple shapes, combined
+with a rich set of operators for positioning shapes, relative to the axes,
+or relative to other shapes.)
+
+The distance function is `max(-dx/2 - x, x - dx/2, -dy/2 - y, y - dy/2)`.
+
+We can simplify and speed it up: `max(abs(x) - dx/2, abs(y) - dy/2)`,
+exploiting the fact that the distance is symmetric around the origin.
+
+Here's the code:
+```
+rectangle([dx,dy]) = 2dshape(
+  dist([x,y,z]) = `max(abs(x) - dx/2, abs(y) - dy/2),
+  bbox(d)=[ [-dx/2,-dy/2]-d, [dx/2,dy/2]+d ]);
+```
+
+Cuboid is similar:
+```
+cuboid([dx,dy,dz]) = 3dshape(
+  dist([x,y,z]) = max(abs(x)-dx/2, abs(y)-dy/2, abs(z)-dz/2),
+  bbox(d)=[ [-dx/2,-dy/2,-dz/2]-d, [dx/2,dy/2,dz/2]+d ]);
+```
+
+
 
 ## Primitive Shapes
 Here I'll define 3 primitive shapes: sphere, cuboid and cylinder.
@@ -569,15 +637,6 @@ complement(s) = 3dshape(
 ```
 > Convert a shape or pattern to its inverse: all points inside the object
 > are now outside, and vice versa.
-
-```
-union(s1,s2) = 3dshape(
-    f(p) = min(s1.f(p), s2.f(p)),
-    bbox=[ min(s1.bbox[0],s2.bbox[0]), max(s1.bbox[1],s2.bbox[1]) ]);
-```
-> Simplest case of a union. ImplicitCAD uses special case code where the
-> min and max in the bbox calculation ignore empty bounding boxes, but I've
-> omitted that for clarity.
 
 meaning of 'max' and 'min' in a distance function
 
