@@ -267,8 +267,8 @@ and bounding box functions.
 A circle of radius `r`, centred on the origin:
 ```
 circle(r) = 2dshape(
-    dist(p) = norm(p) - r,
-    bbox(d)=[[-r,-r]-d,[r,r]+d]);
+  dist(p) = norm(p) - r,
+  bbox(d)=[[-r,-r]-d,[r,r]+d]);
 ```
 The `dist` function is derived from
 [the mathematical equation for a circle](https://en.wikipedia.org/wiki/Circle#Equations):
@@ -309,8 +309,8 @@ And this bbox is empty since xmin > xmax, and ymin > ymax.
 The definition of `sphere` is very similar:
 ```
 sphere(r) = 3dshape(
-    dist(p) = norm(p) - r,
-    bbox(d)=[[-r,-r,-r]-d,[r,r,r]+d]);
+  dist(p) = norm(p) - r,
+  bbox(d)=[[-r,-r,-r]-d,[r,r,r]+d]);
 ```
 
 ## Union and Intersection
@@ -326,7 +326,7 @@ intersection(s1,s2) = 3dshape(
 ```
 Union and intersection are implemented as the minimum and maximum
 of the shape argument distance functions. This computes the union or
-intersection of all of the isosurfaces in the distance function.
+intersection of all of the isosurfaces in the distance functions.
 Whenever you see `min` or `max` of a distance, in a distance function,
 a union or intersection is being computed.
 Also, it's likely that a sharp angle is being introduced into the shape.
@@ -380,6 +380,85 @@ cuboid([dx,dy,dz]) = 3dshape(
   bbox(d)=[ [-dx/2,-dy/2,-dz/2]-d, [dx/2,dy/2,dz/2]+d ]);
 ```
 
+## Cylinder and Linear_extrude
+
+We will construct a centred cylinder by intersecting 3 infinite shapes:
+two half-spaces (one for each end cap), and an infinite cylinder
+for the body. This is similar to the construction of a cuboid
+from six half-spaces.
+
+We'll first construct an infinite cylinder centered on the Z-axis.
+To do this, we just take the distance function for a centered circle,
+and put that into a 3D distance function:
+```
+dist([x,y,z]) = norm([x,y]) - r
+```
+We get infinite extension along the Z axis by ignoring the `z` parameter.
+
+The two half-spaces follow from our construction for cuboid.
+```
+z <= h/2    z - h/2
+z >= -h/2   -h/2 - z
+```
+The intersection of these three infinite solids is
+```
+max(norm([x,y]) - r, z - h/2, -h/2 - z)
+```
+We'll apply the same optimization for a centered object that we used for cuboid:
+```
+max(norm([x,y]) - r, abs(z) - h/2)
+```
+And here's the code:
+```
+cylinder(h,r) = 3dshape(
+  dist([x,y,z]) = max(norm([x,y]) - r, abs(z) - h/2),
+  bbox(d)=[ [-r,-r,-h/2]-d, [r,r,h/2]+d ]);
+```
+This can be generalized to `linear_extrude`:
+```
+linear_extrude(h)(s) = 3dshape(
+  dist([x,y,z]) = max(s.dist([x,y]), abs(z) - h/2),
+  bbox(d)=[ [s.bbox(d)[0].x, s.bbox(d)[0].y, -h/2]-d,
+            [s.bbox(d)[1].x, s.bbox(d)[1].y, h/2]+d ]);
+```
+Now cylinder can be defined like this:
+```
+cylinder(h,r) = linear_extrude(h) circle(r);
+```
+
+## Shells
+
+There are many different ways to write a distance function that produce the same visible result.
+The main requirement is that the isosurface of the distance function at 0
+(the set of all points such that f[x,y,z] == 0)
+is the boundary of the desired object, and there are infinitely many functions that satisfy this
+requirement for any given shape.
+
+But the isosurface at 0 is not the only thing you need to consider.
+A distance function defines an infinite family of isosurfaces,
+and they are all important, particular when you use the `shell` primitive.
+Consider
+```
+c = cuboid([10,20,30]);
+```
+`c.dist` is the distance function. Because of the way we defined `cuboid`,
+the isosurface of `c.dist` at -1 is cuboid(8,18,28]), the isosurface at 1
+is cuboid([12,22,32]), and so on. All of the isosurfaces of `c` are cuboids,
+although with varying aspect ratios.
+As a result, `shell(1) sp` will return a spherical shell with outer radius 10
+and inner radius 9. The `shell` operator provides direct access to the other isosurfaces.
+(See the Shell section, which is later.)
+
+I have similar comments for `cuboid`.
+The distance function is designed so that all of the isosurfaces of a given
+cuboid are nested cuboids, and `shell` works as expected.
+
+Here's a thought experiment. Consider defining the distance function for `cuboid`
+so the the distance to the boundary is measured in millimeters along a vector that points to the centre.
+With this definition, only the isosurface at 0 would be a true cuboid. The isosurfaces at positive values
+would have increasingly convex sides, so that at large values, the surface would approach a sphere.
+The isosurfaces at negative values would have increasingly concave sides.
+This behaviour would be visible using `shell`.
 
 
 ## Primitive Shapes
