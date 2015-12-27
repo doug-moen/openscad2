@@ -51,7 +51,8 @@ the Functional Geometry API has both benefits and limitations.
     which makes curved surfaces and organic forms easy to define with very little code.
   * Internally, a curved object is represented exactly. It's like programming in
     OpenSCAD with `$fn=∞`. Curved objects can be exactly rendered in the preview window at full resolution,
-    even for complex models.
+    even for complex models. You can zoom in many orders of magnitude without the abstraction
+    breaking down, limited only by floating point resolution.
     By contrast, in OpenSCAD, curved surfaces are represented by polygonal
     approximations that are chosen when the object is created, and errors accumulate as
     these curved surfaces are further transformed. In OpenSCAD, you must find
@@ -134,6 +135,10 @@ f[x,y,z] = sqrt(x^2 + y^2 + z^2) - r
 ```
 
 ### Constraints on Distance Functions
+We need to constrain distance functions so that the algorithms
+used to render shapes and export them to other data structures
+will still work.
+
 A distance function returns a *minimum distance* `d`
 between the point argument and the nearest object boundary.
 * If `d` is 0,
@@ -142,11 +147,14 @@ between the point argument and the nearest object boundary.
   must be at least `abs(d)` units away,
   but it could be farther. There is room for flexibility
   because of isosurfaces, discussed below.
+* If this constraint is violated, then the ray-marching algorithm
+  for directly rendering a shape on a GPU will not work.
 
 A distance function must be [strictly increasing](http://mathworld.wolfram.com/StrictlyIncreasingFunction.html)
 (for points outside of objects) or strictly decreasing
 (for points inside of objects) as the point gets
 increasingly farther away from the nearest object boundary.
+This paragraph is speculative.
 
 ### Isosurfaces
 The isosurface at distance d of a distance field f
@@ -240,7 +248,7 @@ Because it's required by `inflate`, and other operations that compute shells.
 In the general case, you can't predict the bounding box of a shell from
 the bounding box of the isosurface at 0. A few primitives
 have "weird" isosurfaces with unusual bounding boxes, including
-non-isotropic `scale`.
+anisotropic `scale`.
 
 ## Low Level API
 
@@ -347,7 +355,8 @@ difference(a,b) = intersection(a, complement(b));
 Subtract `b` from `a`.
 
 ## Rectangle and Cuboid
-Consider a general rectangle primitive, computed from `[[xmin,ymin],[xmax,ymax]]`.
+
+Consider an axis-aligned rectangle, specified by `[[xmin,ymin],[xmax,ymax]]`.
 This is a convex 4-sided polygon, which we can compute by
 [intersecting 4 half-planes](https://en.wikipedia.org/wiki/Convex_polytope#Intersection_of_half-spaces).
 
@@ -395,6 +404,16 @@ cuboid([dx,dy,dz]) = 3dshape(
   bbox(d)=[ [-dx/2,-dy/2,-dz/2]-d, [dx/2,dy/2,dz/2]+d ]);
 ```
 
+This technique can be generalized to model any convex polygon/polyhedron,
+by intersecting one half-plane/half-space for each edge/face.
+It can be further generalized to non-convex polytopes by using
+[Nef polygons/polyhedra](https://en.wikipedia.org/wiki/Nef_polygon),
+where both intersection and complement operations are used.
+
+However, this technique requires each edge/face to be examined in each
+call to the distance function. It will become inefficient for sufficently large
+numbers of edges/faces; for that, another approach should be found.
+
 ## Cylinder and Linear_extrude
 
 We will construct a centred cylinder by intersecting 3 infinite shapes:
@@ -409,6 +428,8 @@ and put that into a 3D distance function:
 dist([x,y,z]) = norm([x,y]) - r
 ```
 We get infinite extension along the Z axis by ignoring the `z` parameter.
+This way, every slice through the distance field that is parallel to the X-Y plane
+looks exactly the same.
 
 The two half-spaces follow from our construction for cuboid.
 ```
@@ -439,6 +460,106 @@ linear_extrude(h)(s) = 3dshape(
 Now cylinder can be defined like this:
 ```
 cylinder(h,r) = linear_extrude(h) circle(r);
+```
+
+## Rotate_extrude
+
+(Torus from Olah's essay):
+We can use the output of one of these functions as the input for another. For example, if we feed r = \sqrt{x^2+y^2} - k_1, the outwardness of a circle on the x,y-plane, into a new circle which we can think of as being on the r,z-plane, \sqrt{r^2+z^2}-k_2, we get a torus.
+That is, \sqrt{(\sqrt{x^2+y^2} - k_1)^2+z^2}-k_2 = 0 results in a torus.
+
+
+rotate_extrude from ImplicitCAD
+```
+getImplicit3 (RotateExtrude totalRotation round translate rotate symbObj) = 
+    let
+        tau = 2 * pi
+        k   = tau / 360
+        totalRotation' = totalRotation*k
+        obj = getImplicit2 symbObj
+        capped = Maybe.isJust round
+        round' = Maybe.fromMaybe 0 round
+        translate' :: ℝ -> ℝ2
+        translate' = Either.either 
+                (\(a,b) -> \θ -> (a*θ/totalRotation', b*θ/totalRotation')) 
+                (. (/k))
+                translate
+        rotate' :: ℝ -> ℝ
+        rotate' = Either.either 
+                (\t -> \θ -> t*θ/totalRotation' ) 
+                (. (/k))
+                rotate
+        twists = case rotate of
+                   Left 0  -> True
+                   _       -> False
+    in
+        \(x,y,z) -> minimum $ do
+            
+            let 
+                r = sqrt (x^2 + y^2)
+                θ = atan2 y x
+                ns :: [Int]
+                ns =
+                    if capped
+                    then -- we will cap a different way, but want leeway to keep the function cont
+                        [-1 .. (ceiling (totalRotation'  / tau) :: Int) + (1 :: Int)]
+                    else
+                        [0 .. floor $ (totalRotation' - θ) /tau]
+            n <- ns
+            let
+                θvirt = fromIntegral n * tau + θ
+                (rshift, zshift) = translate' θvirt 
+                twist = rotate' θvirt
+                rz_pos = if twists 
+                        then let 
+                            (c,s) = (cos(twist*k), sin(twist*k))
+                            (r',z') = (r-rshift, z-zshift)
+                        in
+                            (c*r' - s*z', c*z' + s*r')
+                        else (r - rshift, z - zshift)
+            return $
+                if capped
+                then MathUtil.rmax round' 
+                    (abs (θvirt - (totalRotation' / 2)) - (totalRotation' / 2))
+                    (obj rz_pos)
+                else obj rz_pos
+```
+
+ExtrudeOnEdgeOf from ImplicitCAD
+```
+getImplicit3 (ExtrudeOnEdgeOf symbObj1 symbObj2) =
+    let
+        obj1 = getImplicit2 symbObj1
+        obj2 = getImplicit2 symbObj2
+    in
+        \(x,y,z) -> obj1 (obj2 (x,y), z)
+getBox3 (ExtrudeOnEdgeOf symbObj1 symbObj2) =
+    let
+        ((ax1,ay1),(ax2,ay2)) = getBox2 symbObj1
+        ((bx1,by1),(bx2,by2)) = getBox2 symbObj2
+    in
+        ((bx1+ax1, by1+ax1, ay1), (bx2+ax2, by2+ax2, ay2))
+```
+```
+perimeter_extrude(a,b) = 3dshape(
+  dist([x,y,z]) = a.dist([b.dist([x,y]), z]),
+  bbox(d)=let ([[ax1,ay1],[ax2,ay2]] = a.bbox(d),
+               [[bx1,by1],[bx2,by2]] = b.bbox(d))
+          [[bx1+ax1, by1+ax1, ay1], [bx2+ax2, by2+ax2, ay2]] );
+```
+Extrude 2D object `a` around the perimeter of 2D object `b` to get a 3D object.
+The perimeter of 'b' lies on the X-Y plane. The (0,0) point of `a` is aligned with
+the perimeter as `a` is swept around the perimeter.
+
+If `a` and `b` are both circles, then you get a torus.
+
+This is ExtrudeOnEdgeOf from ImplicitCAD.
+Based on a few rendered examples, figure `a` is normal to the perimeter at each
+point on the perimeter, which is what you want. But how does it work?
+
+```
+rotate_extrude(r)(s) = perimeter_extrude(s, circle(r));
+torus(r1,r2) = rotate_extrude(r1) circle(r2);
 ```
 
 ## Shells
@@ -591,7 +712,7 @@ inflate(n)(shape) = 3dshape(
   f(p) = shape.f(p) - n,
   bbox=[ shape.bbox[0]-n, shape.bbox[1]+n ]);
 ```
-TODO: is the bbox calculation correct in all cases? No, not for non-isotropic scaling.
+TODO: is the bbox calculation correct in all cases? No, not for anisotropic scaling.
 The bbox could be bigger than this.
 Use f to compute the bbox from shape.bbox using ray-marching.
 
@@ -602,7 +723,7 @@ Scaling is tricky. Several functional geometry systems get it wrong?
 This is an isotropic scaling operation:
 it scales a shape by the same factor `s` on all 3 axes,
 where `s` is a positive number.
-The code is easier to understand than for non-isotropic scaling.
+The code is easier to understand than for anisotropic scaling.
 
 ```
 isoscale(s)(shape) = 3dshape(
@@ -638,13 +759,13 @@ The scale operators discussed in this document don't work that way: a negative s
 results in garbage.
 
 ### `scale([sx,sy,sz]) shape`
-Non-isotropic scaling is hard ...
+Anisotropic scaling is hard ...
 
-I don't see a way to implement non-isotropic scaling in a way
+I don't see a way to implement anisotropic scaling in a way
 that satisfies both the ray-march and the inflate properties.
 The system needs to change.
 
-the effect of non-isotropic scaling on `shell`. Need for `spheroid`.
+the effect of anisotropic scaling on `shell`. Need for `spheroid`.
 
 ```
 getImplicit3 (Scale3 s@(sx,sy,sz) symbObj) =
