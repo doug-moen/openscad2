@@ -20,6 +20,14 @@ As with OpenSCAD, there is a two stage processing model.
   a geometric representation: B-Rep or F-Rep, which is then used
   for rendering as a preview or exporting to a file.
 
+The F-Rep version of the scene will contain functions that were originally
+defined by OpenSCAD code. These functions will be called many times during rendering,
+which is performance sensitive. These F-Rep functions will either be compiled into
+GLSL (the OpenGL shader language), or compiled into optimized machine code
+using LLVM. My current intention is to use a subset of the modeling language
+for specifying F-Rep functions, rather than introducing a different, incompatible
+language for this purpose.
+
 The current OpenSCAD implementation of phase 2 generates a mesh from the bottom up.
 For the F-Rep implementation, I intend to create different F-Rep
 representations of a given abstract object, conditional on what
