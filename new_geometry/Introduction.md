@@ -1,4 +1,21 @@
-# New Geometry System
+# Red Mercury
+
+Red Mercury (RHg) is the code name for an experimental prototype
+which will test new technologies proposed for addition to OpenSCAD.
+
+Red Mercury contains the following technologies:
+* It is based on Functional Representation (F-Rep), not meshes (B-Rep).
+* It supports fast GPU-based preview, by executing the model (including CSG operations) on the GPU.
+  It does this by compiling the model into GLSL language.
+* It supports multiple colours and materials.
+* The modeling language is based on OpenSCAD2.
+
+RHg will contain a from-scratch implementation of the modeling language and geometry engine.
+The requirements of F-Rep, and compilation to GLSL, put significant design
+pressures on the modeling language. The language will be based on OpenSCAD2,
+with whatever modifications turn out to be required by the technology.
+
+## Old Introduction
 
 Proposal: change the OpenSCAD language and geometry kernel
 to support the following goals:
