@@ -1,5 +1,49 @@
 # The Geometry Processing Model
 
+## Geometric Representations
+
+The primary representation used by the RHg geometry engine is functional.
+Every shape contains a distance function, which computes the signed distance
+to the nearest surface from any [x,y,z] point in space.
+This functional representation is used for fast preview (it takes the place
+of OpenCSG). STL export by default occurs by constructing a mesh from the
+functional representation.
+
+A shape may optionally contain other representations.
+A polyhedral shape may contain a mesh representation.
+If the mesh is available, that's what's used for STL export.
+
+B-Spline representations can also be supported in this way.
+
+Colour and material information also has a functional representation.
+A shape may optionally have one or more attribute functions,
+which map every point in the shape's interior and surface onto
+attribute values, which are then mapped onto colour and material
+specifications during export, in whatever manner is appropriate,
+based on the capabilities of the 3D printer being used.
+
+This is a very general model: it permits an arbitrary number of user defined
+numeric attributes to be defined at each point within the printed shape.
+This generality is needed to support future 3D printing technology,
+such as HP's Multi-Jet Fusion technlogy:
+
+> The long-term vision for HP Multi Jet Fusion technology is to create parts with controllably variable—even quite
+> different—mechanical and physical properties within a single part or among separate parts processed simultaneously in
+> the working area. This is accomplished by controlling the interaction of the fusing and detailing agents with each other,
+> with the material to be fused, and with additional transforming agents.
+>
+> Examples of controllably variable properties that are potentially achievable
+> with HP Multi Jet Fusion technology include:
+> * Accuracy and detail
+> * Opacity or translucency (for plastics)
+> * Surface roughness, textures, and friction
+> * Strength, elasticity, and other material characteristics
+> * Color (surface and embedded)
+> * Electrical and thermal conductivity
+
+
+## Modeling Language
+
 The new modeling language has two subsets:
 * A high level, abstract, implementation-independent subset.
   Easy to use and suitable for novices and designers.
@@ -7,11 +51,11 @@ The new modeling language has two subsets:
   which means it imposes some restrictions not present in OpenSCAD.
   The high level API hides the implementation: you don't write code
   that assumes a mesh implementation. You don't write `cylinder(r,$fn=6)`
-  to construct a hexagon prism.
+  to construct a hexagonal prism.
 * A low level subset, suitable for expert users.
   It provides low level control over the geometry engine.
   It can be used to code new geometric primitives, and provides
-  full access to the internal representation of objects.
+  full access to the internal representation of geometric objects.
   This part will vary between different OpenSCAD implementations.
 
 As with OpenSCAD, there is a two stage processing model.
