@@ -7,7 +7,10 @@ Every shape contains a distance function, which computes the signed distance
 to the nearest surface from any [x,y,z] point in space.
 This functional representation is used for fast preview (it takes the place
 of OpenCSG). STL export by default occurs by constructing a mesh from the
-functional representation.
+functional representation (this requires a complex algorithm).
+Export to volumetric file formats, including voxel formats like SVX,
+is also supported, and this is easier starting from a functional representation
+than it is with a mesh.
 
 A shape may optionally contain other representations.
 A polyhedral shape may contain a mesh representation.
