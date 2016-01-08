@@ -21,12 +21,12 @@ The Web UI will have a text editor on the left, a preview window on the right.
 * text editor: Ace. https://ace.c9.io/#nav=embedding
 * preview window: renders preview using WebGL and ray-marching. https://www.shadertoy.com/
 
-## Plumbing
+### Plumbing
 "Flux" is a methodology for structuring complex UIs so that it is easy to reason
 about their behaviour. An escape from callback hell, but it works with current web UI
 technology. https://facebook.github.io/flux/docs/overview.html#content
 
-## UI Design
+### UI Design
 In the future, I'd like to explore advanced direct manipulation UIs for
 interacting with code and models. Better tools for visualizing the structure and relationships
 in the code and the model,
