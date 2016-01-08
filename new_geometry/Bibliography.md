@@ -14,3 +14,9 @@ This is the theory of R-Functions, and it's the basis of F-Rep.
 Vadim Shapiro](ftp://ftp.cs.wisc.edu/pub/users/prem/rfuns.pdf)
 
 ## F-Rep Modeling Tools
+
+## User Interface
+### Web Technology
+The Web UI will have a text editor on the left, a preview window on the right.
+* text editor: Ace. https://ace.c9.io/#nav=embedding
+* preview window: renders preview using WebGL and ray-marching. https://www.shadertoy.com/
