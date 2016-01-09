@@ -35,6 +35,7 @@ and explains how to fix it.
 
 * [A Complete Distance Field Representation]() 2001 <br>
 * [Dual Contouring of Hermite Data]() 2002 <br>
+  * [blog entry describing an implementation](https://upvoid.com/devblog/2013/05/terrain-engine-part-1-dual-contouring/)
 * [Feature-sensitive surface extraction from volume data]() 2001 <br>
 * [Feature Preserving Distance Fields](http://www3.cs.stonybrook.edu/~mueller/papers/qu_volvis04.pdf) 2004 <br>
   We present two distance field representations which can preserve
