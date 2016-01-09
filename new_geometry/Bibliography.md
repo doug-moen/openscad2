@@ -39,7 +39,9 @@ and explains how to fix it.
   This method seems popular. Lots of implementations and open source. One blog claims it is simpler to implement
   than marching cubes. The data structure is a voxel array, or octree, or ADF, augmented with surface normals
   and QEFs (quadratic error functions), all of which can be constructed from a distance function.
-  The design optionally supports multiple materials (a material index can be stored in each voxel).
+  The design optionally supports multiple materials: a material index is stored in each voxel,
+  and a polyhedral boundary is created at the interface between two different materials. Which is what's
+  needed for multi-material AMF export.
   * the Terrain Engine uses this: [part1](https://upvoid.com/devblog/2013/05/terrain-engine-part-1-dual-contouring/),
     [part2](https://upvoid.com/devblog/2013/07/terrain-engine-part-2-volume-generation-and-the-csg-tree/).
     Their engine supports multiple materials (only one material per voxel).
