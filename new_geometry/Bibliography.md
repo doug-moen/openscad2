@@ -25,19 +25,9 @@ It uses marching cubes to generate STL, which has two problems:
   which is a significant quality issue.
 
 Antimony added a new STL generator in May 2015
-that is much faster, and which supports "edge detection" (an experimental feature
+that is much faster, and which supports "feature detection" (an experimental feature
 that you need to enable using a checkbox in the GUI).
-Looks like either regular marching cubes, or extended marching cubes.
-```
- *  When feature detection is enabled, the Mesher implements the algorithm from
- *
- *  "Feature Sensitive Surface Extraction from Volume Data"
- *
- *  (Kobbelt, Leif P. and Botsch, Mario and
- *   Schwanecke, Ulrich and Seidel, Hans-Peter) 
- *
- *  SIGGRAPH 2001
-```
+It uses either regular marching cubes, or extended marching cubes when feature detection enabled.
 
 There is plenty of research which acknowledges the problem
 of reproducing sharp edges when generating a mesh,
@@ -52,9 +42,8 @@ the winner on the internet seems to be Dual Contouring:
   The design optionally supports multiple materials: a material index is stored in each voxel,
   and a polyhedral boundary is created at the interface between two different materials. Which is what's
   needed for multi-material AMF export.
-  * the Terrain Engine uses this: [part1](https://upvoid.com/devblog/2013/05/terrain-engine-part-1-dual-contouring/),
+  * The Upvoid Engine uses this: [part1](https://upvoid.com/devblog/2013/05/terrain-engine-part-1-dual-contouring/),
     [part2](https://upvoid.com/devblog/2013/07/terrain-engine-part-2-volume-generation-and-the-csg-tree/).
-    Their engine supports multiple materials (only one material per voxel).
 
 Other research:
 * [A Complete Distance Field Representation]() 2001 <br>
