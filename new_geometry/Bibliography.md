@@ -33,9 +33,16 @@ There is plenty of research which acknowledges the problem
 of reproducing sharp edges when generating a mesh,
 and explains how to fix it.
 
+* Extended marching cubes. Seems to be a predecessor to Dual Contouring.
 * [A Complete Distance Field Representation]() 2001 <br>
-* [Dual Contouring of Hermite Data]() 2002 <br>
-  * [blog entry describing an implementation](https://upvoid.com/devblog/2013/05/terrain-engine-part-1-dual-contouring/)
+* [Dual Contouring of Hermite Data](http://www.frankpetterson.com/publications/dualcontour/dualcontour.pdf) 2002 <br>
+  This method seems popular. Lots of implementations and open source. One blog claims it is simpler to implement
+  than marching cubes. The data structure is a voxel array, or octree, or ADF, augmented with surface normals
+  and QEFs (quadratic error functions), all of which can be constructed from a distance function.
+  The design optionally supports multiple materials (a material index can be stored in each voxel).
+  * the Terrain Engine uses this: [part1](https://upvoid.com/devblog/2013/05/terrain-engine-part-1-dual-contouring/),
+    [part2](https://upvoid.com/devblog/2013/07/terrain-engine-part-2-volume-generation-and-the-csg-tree/).
+    Their engine supports multiple materials (only one material per voxel).
 * [Feature-sensitive surface extraction from volume data]() 2001 <br>
 * [Feature Preserving Distance Fields](http://www3.cs.stonybrook.edu/~mueller/papers/qu_volvis04.pdf) 2004 <br>
   We present two distance field representations which can preserve
