@@ -27,14 +27,24 @@ It uses marching cubes to generate STL, which has two problems:
 Antimony added a new STL generator in May 2015
 that is much faster, and which supports "edge detection" (an experimental feature
 that you need to enable using a checkbox in the GUI).
-No idea how that works, yet.
+Looks like either regular marching cubes, or extended marching cubes.
+```
+ *  When feature detection is enabled, the Mesher implements the algorithm from
+ *
+ *  "Feature Sensitive Surface Extraction from Volume Data"
+ *
+ *  (Kobbelt, Leif P. and Botsch, Mario and
+ *   Schwanecke, Ulrich and Seidel, Hans-Peter) 
+ *
+ *  SIGGRAPH 2001
+```
 
 There is plenty of research which acknowledges the problem
 of reproducing sharp edges when generating a mesh,
 and explains how to fix it.
 
-* Extended marching cubes. Seems to be a predecessor to Dual Contouring.
-* [A Complete Distance Field Representation]() 2001 <br>
+Despite ImplicitCAD and Antimony using older algorithms,
+the winner on the internet seems to be Dual Contouring:
 * [Dual Contouring of Hermite Data](http://www.frankpetterson.com/publications/dualcontour/dualcontour.pdf) 2002 <br>
   This method seems popular. Lots of implementations and open source. One blog claims it is simpler to implement
   than marching cubes. The data structure is a voxel array, or octree, or ADF, augmented with surface normals
@@ -45,22 +55,12 @@ and explains how to fix it.
   * the Terrain Engine uses this: [part1](https://upvoid.com/devblog/2013/05/terrain-engine-part-1-dual-contouring/),
     [part2](https://upvoid.com/devblog/2013/07/terrain-engine-part-2-volume-generation-and-the-csg-tree/).
     Their engine supports multiple materials (only one material per voxel).
-* [Feature-sensitive surface extraction from volume data]() 2001 <br>
+
+Other research:
+* [A Complete Distance Field Representation]() 2001 <br>
+* [Feature-sensitive surface extraction from volume data](https://www.graphics.rwth-aachen.de/media/papers/feature1.pdf) 2001 <br>
+  This is "Extended marching cubes". Used by Antimony. Dual Contouring claims to be a refinement of this.
 * [Feature Preserving Distance Fields](http://www3.cs.stonybrook.edu/~mueller/papers/qu_volvis04.pdf) 2004 <br>
-  We present two distance field representations which can preserve
-  sharp features in original geometric models: the offset distance
-  field (ODF) and the unified distance field (UDF). The ODF is sampled
-  on a special curvilinear grid named an offset grid. The sample
-  points of the ODF are not on a regular grid and they can float in the
-  cells of a regular base grid. The ODF can naturally adapt to curvature
-  variations in the original mesh and can preserve sharp features.
-  We describe an energy minimization approach to convert geometric
-  models to ODFs. The UDF integrates multiple distance field representations
-  into one data structure. By adaptively using different
-  representations for different parts of a shape, the UDF can provide
-  high fidelity surface representation with compact storage and fast
-  rendering speed.
-  * How to perform CSG operations on these 2 representations is "future research".
 
 ## F-Rep Modeling Tools
 * [ShapeShop](http://www.shapeshop3d.com/) 2006 </br>
