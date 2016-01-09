@@ -53,6 +53,13 @@ and explains how to fix it.
   * How to perform CSG operations on these 2 representations is "future research".
 
 ## F-Rep Modeling Tools
+* [ShapeShop](http://www.shapeshop3d.com/) 2006 </br>
+  A simple interactive solid modeling tool for "blobby" shapes:
+  see also metablob/metaball modeling. Quite good for cartoon animals.
+  The main primitives seem to be linear_extrude of polygons with rounded endcaps,
+  rotate_extrude, and rounded union (aka blending).
+  Free download for Windows. Not open source. Abandoned 2008.
+  [Msc Thesis](http://www.shapeshop3d.com/downloads/ShapeShopMScThesis.pdf).
 
 ## User Interface
 ### Web Technology
