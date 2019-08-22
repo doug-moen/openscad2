@@ -64,6 +64,12 @@ preserved, they aren't values.
 
 A new style function definition defines the function in the variable,
 function and module namespaces.
+You can refer to the original OpenSCAD2 proposal
+for ["new style" function definitions](rfc/Functions.md),
+but briefly, the syntax looks like this:
+```
+f(x) = x + 1;
+```
 
 New style functions are lexically scoped closures. The scoping rules will
 need to be defined, but the scope of each non-local variable within a
@@ -160,7 +166,7 @@ which is a big change from OpenSCAD2.
 
 Inside of a new function definition, you exist in the pure blissful world
 of a single namespace. Scoping rules are simple and make sense.
-Is this even possible? How does it work? Within a new function,
+How does it work? Within a new function,
 * All local definitions exist in the variable namespace.
 * The syntax `f(x)` looks up `f` in the variable namespace.
 * Built-in functions like `sin` exist in the variable namespace.
@@ -176,6 +182,7 @@ outside a new function definition? The same way as always. A new function
 definition puts its name into all 3 namespaces, and that's what makes it
 accessible to code that uses the old scoping rules.
 
+<!--
 With this design, how does a new function access old-style functions and
 modules?
 * Maybe, using namespace prefixes: `f$foo` and `m$foo`.
@@ -186,3 +193,4 @@ modules?
 Suppose you write an old style function or module, and you want to accept
 a function value as an argument. How do you call that function?
 Using a namespace prefix, `v$arg(x)`.
+-->
