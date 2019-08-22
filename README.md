@@ -6,6 +6,18 @@ The goals are:
 
 **Summary**: Everything is now a first class value. Functions, modules, shapes, groups and even OpenSCAD scripts are first class values.
 
+------
+
+**2019 Update:** The OpenSCAD2 proposal was not accepted by some members of the OpenSCAD community,
+and it had some problems with backward compatibility.
+
+In early 2017, I wrote a new proposal, which was much simpler, and did a better job of preserving
+backward compatibility. Please read the [OpenSCAD bis Proposal](OpenSCADbis.md).
+
+The early prototype implementation of OpenSCAD2 has since evolved into the [Curv project](https://github.com/curv3d/curv).
+
+------
+
 **Why Is This So Big?** Making everything first class while retaining backward compatibility is a hard design problem: everything depends on everything else. It's important to map out all of the required changes in advance, before we start implementation.
 
 [**Overview: >> READ ME FIRST <<**](rfc/Overview.md)
