@@ -133,7 +133,8 @@ The `use only` command will be useful in porting OpenSCAD1 library `use` and `in
 in cases where OpenSCAD2 reports name conflicts, eg caused by two libraries
 defining the same name, or a conflict between a library definition and a local definition.
 
-TODO: add a `without` operator.
+TODO: add a `without` operator. Note this is called `except` in R7RS Scheme,
+which also defines a `rename` operator.
 
 Here's how OpenSCAD2 compares to the Python module system:
 

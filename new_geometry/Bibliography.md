@@ -17,6 +17,9 @@ Vadim Shapiro](ftp://ftp.cs.wisc.edu/pub/users/prem/rfuns.pdf)
 * [Abstract 3D Distance Fields: A Survey of Techniques and Applications](http://www.ann.jussieu.fr/~frey/papers/divers/Jones%20M.W.,%203d%20distance%20fields,%20a%20survey.pdf) 2006 <br>
   A distance field is a representation where at each point within the field we know the distance from that point to the closest point on any object within the domain. In addition to distance, other properties may be derived from the distance field, such as the direction to the surface, and when the distance field is signed, we may also determine if the point is internal or external to objects within the domain. The distance field has been found to be a useful construction within the areas of Computer Vision, Physics and Computer Graphics. This paper serves as an exposition of methods for the production of distance fields, and a review of alternative representations and applications of distance fields. In the course of this paper we present various methods from all three of the above areas, and we answer pertinent questions such as How accurate are these methods compared to each other?, How simple are they to implement? and What is the complexity and run-time of such methods?
 
+## Implementing F-Rep Operations
+* "Function Representation for Sweeping by a Moving Solid"
+
 ## Mesh Generation
 ImplicitCAD uses a naive distance field representation.
 It uses marching cubes to generate STL, which has two problems:
